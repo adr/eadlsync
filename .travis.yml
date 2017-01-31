@@ -1,0 +1,35 @@
+language: java
+  
+sudo: required
+dist: trusty
+
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+      
+jdk:
+  - oraclejdk8
+
+before_install:
+  - chmod +x gradlew
+
+script:
+  - ./gradlew check
+# - ./gradlew databaseTest
+
+# cache gradle dependencies
+# https://docs.travis-ci.com/user/languages/java#Caching
+
+
+after_success:
+  # enable codecov report
+  - ./gradlew jacocoTestReport
+  - bash <(curl -s https://codecov.io/bash) -t 80eac634-6442-4e43-be3f-697045cd39ff
+
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+cache:
+  directories:
+  - $HOME/.gradle/caches/
+  - $HOME/.gradle/wrapper/

@@ -1,5 +1,9 @@
 apply plugin: 'java'
+apply plugin: 'jacoco'
+
 version = '1.0-SNAPSHOT'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -16,3 +20,12 @@ sourceSets {
 dependencies {
     compile  'log4j:log4j:1.2.16'
 }
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+check.dependsOn jacocoTestReport

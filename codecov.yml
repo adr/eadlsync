@@ -1,0 +1,6 @@
+coverage:
+  ignore:
+
+  status:
+    patch: false
+comment: off
