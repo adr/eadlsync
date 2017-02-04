@@ -1,0 +1,34 @@
+{
+  "id": "http://localhost:8080/serepo/TestRepo",
+  "name": "TestRepo",
+  "updated": 1485262381000,
+  "lastUpdateUser": {
+    "name": "ADMentor-Client",
+    "email": "admentor@hsr.ch"
+  },
+  "links": [
+    {
+      "rel": "self",
+      "href": "http://localhost:8080/serepo/TestRepo"
+    },
+    {
+      "rel": "https://www.ifs.hsr.ch/serepo/api/rels/delete_repository",
+      "href": "http://localhost:8080/serepo/TestRepo"
+    },
+    {
+      "rel": "https://www.ifs.hsr.ch/serepo/api/rels/serepo_commits",
+      "href": "http://localhost:8080/serepo/TestRepo/commits"
+    }
+  ],
+  "authors": [
+    {
+      "name": "ADMentor-Client",
+      "email": "admentor@hsr.ch"
+    },
+    {
+      "name": "Tobias Boceck",
+      "email": "boceckts@gmail.com"
+    }
+  ],
+  "description": "Bachelor Thesis Test Repository"
+}

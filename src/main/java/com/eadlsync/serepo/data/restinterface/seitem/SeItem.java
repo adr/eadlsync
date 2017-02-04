@@ -1,30 +1,52 @@
-package com.eadlsync.sedata;
+package com.eadlsync.serepo.data.restinterface.seitem;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.eadlsync.serepo.data.atom.annotations.AtomEntry;
+import com.eadlsync.serepo.data.atom.annotations.AtomEntry.AtomContent;
+import com.eadlsync.serepo.data.atom.annotations.AtomId;
+import com.eadlsync.serepo.data.atom.annotations.AtomLink;
+import com.eadlsync.serepo.data.atom.annotations.AtomPerson;
+import com.eadlsync.serepo.data.atom.annotations.AtomTitle;
+import com.eadlsync.serepo.data.atom.annotations.AtomUpdated;
+import com.eadlsync.serepo.data.restinterface.common.Link;
+import com.eadlsync.serepo.data.restinterface.common.User;
+
+
+@AtomEntry
 public class SeItem {
 
+	@AtomId
 	private URI id;
-
+	
+	@AtomTitle
 	private String name;
-
+	
+	// TODO as atom-entry xml element
 	private String folder;
-
+	
+	@AtomUpdated
 	private Date updated;
-
+	
+	@AtomPerson
 	private User author;
-
+	
+	@AtomLink
 	private List<Link> links = new ArrayList<>();
-
+	
+	@AtomContent
 	private Content content;
-
+	
+	@AtomContent
 	public static class Content {
-
+		
+		@AtomContent.MediaType
 		private String mimetype;
-
+		
+		@AtomContent.Src
 		private String url;
 		
 		public Content() {

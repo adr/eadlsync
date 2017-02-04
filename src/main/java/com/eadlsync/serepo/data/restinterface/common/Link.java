@@ -1,9 +1,21 @@
-package com.eadlsync.sedata;
+package com.eadlsync.serepo.data.restinterface.common;
 
+import com.eadlsync.serepo.data.atom.annotations.AtomLink;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+
+@AtomLink
+@JsonInclude(Include.NON_NULL)
 public class Link {
 
+	@AtomLink.Title
 	private String title;
+
+	@AtomLink.Rel
 	private String rel;
+
+	@AtomLink.Href
 	private String href;
 
 	public Link() {

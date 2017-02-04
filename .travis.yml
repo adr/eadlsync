@@ -15,12 +15,8 @@ before_install:
   - chmod +x gradlew
 
 script:
+  - ./gradlew clean
   - ./gradlew check
-# - ./gradlew databaseTest
-
-# cache gradle dependencies
-# https://docs.travis-ci.com/user/languages/java#Caching
-
 
 after_success:
   # enable codecov report

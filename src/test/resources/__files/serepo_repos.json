@@ -1,0 +1,80 @@
+{
+  "id": "http://localhost:8080/serepo/repos",
+  "updated": 1485262381000,
+  "links": [
+    {
+      "rel": "self",
+      "href": "http://localhost:8080/serepo/repos"
+    },
+    {
+      "rel": "https://www.ifs.hsr.ch/serepo/api/rels/create_repository",
+      "href": "http://localhost:8080/serepo/repos"
+    }
+  ],
+  "repositories": [
+    {
+      "id": "http://localhost:8080/serepo/repos/",
+      "name": "",
+      "updated": 1485214310000,
+      "lastUpdateUser": {
+        "name": "Andreas",
+        "email": "abuechle@hsr.ch"
+      },
+      "links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:8080/serepo/repos/"
+        },
+        {
+          "rel": "https://www.ifs.hsr.ch/serepo/api/rels/delete_repository",
+          "href": "http://localhost:8080/serepo/repos/"
+        },
+        {
+          "rel": "https://www.ifs.hsr.ch/serepo/api/rels/serepo_commits",
+          "href": "http://localhost:8080/serepo/repos/commits"
+        }
+      ],
+      "authors": [
+        {
+          "name": "Andreas",
+          "email": "abuechle@hsr.ch"
+        }
+      ],
+      "description": null
+    },
+    {
+      "id": "http://localhost:8080/serepo/repos/TestRepo",
+      "name": "TestRepo",
+      "updated": 1485262381000,
+      "lastUpdateUser": {
+        "name": "ADMentor-Client",
+        "email": "admentor@hsr.ch"
+      },
+      "links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:8080/serepo/repos/TestRepo"
+        },
+        {
+          "rel": "https://www.ifs.hsr.ch/serepo/api/rels/delete_repository",
+          "href": "http://localhost:8080/serepo/repos/TestRepo"
+        },
+        {
+          "rel": "https://www.ifs.hsr.ch/serepo/api/rels/serepo_commits",
+          "href": "http://localhost:8080/serepo/repos/TestRepo/commits"
+        }
+      ],
+      "authors": [
+        {
+          "name": "ADMentor-Client",
+          "email": "admentor@hsr.ch"
+        },
+        {
+          "name": "Tobias Boceck",
+          "email": "boceckts@gmail.com"
+        }
+      ],
+      "description": "Bachelor Thesis Test Repository"
+    }
+  ]
+}

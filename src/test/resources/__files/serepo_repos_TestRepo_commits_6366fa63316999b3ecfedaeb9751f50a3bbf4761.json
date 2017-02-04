@@ -1,0 +1,20 @@
+{
+  "id": "http://localhost:8080/serepo/repos/TestRepo/commits/6366fa63316999b3ecfedaeb9751f50a3bbf4761",
+  "when": 1485262381000,
+  "shortMessage": "Test Commit",
+  "fullMessage": "Test Commit",
+  "author": {
+    "name": "ADMentor-Client",
+    "email": "admentor@hsr.ch"
+  },
+  "links": [
+    {
+      "rel": "self",
+      "href": "http://localhost:8080/serepo/repos/TestRepo/commits/6366fa63316999b3ecfedaeb9751f50a3bbf4761"
+    },
+    {
+      "rel": "https://www.ifs.hsr.ch/serepo/api/rels/show_seitems",
+      "href": "http://localhost:8080/serepo/repos/TestRepo/commits/6366fa63316999b3ecfedaeb9751f50a3bbf4761/seitems"
+    }
+  ]
+}

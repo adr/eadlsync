@@ -1,0 +1,57 @@
+{
+  "id": "http://localhost:8080/serepo/",
+  "repository": "TestRepo",
+  "updated": 1485262381000,
+  "links": [
+    {
+      "rel": "self",
+      "href": "http://localhost:8080/serepo/"
+    },
+    {
+      "rel": "https://www.ifs.hsr.ch/serepo/api/rels/create_commit",
+      "href": "http://localhost:8080/serepo/"
+    }
+  ],
+  "commits": [
+    {
+      "id": "http://localhost:8080/serepo/repos/TestRepo/commits/6366fa63316999b3ecfedaeb9751f50a3bbf4761",
+      "when": 1485262381000,
+      "shortMessage": "Test Commit",
+      "fullMessage": "Test Commit",
+      "author": {
+        "name": "ADMentor-Client",
+        "email": "admentor@hsr.ch"
+      },
+      "links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:8080/serepo/repos/TestRepo/commits/6366fa63316999b3ecfedaeb9751f50a3bbf4761"
+        },
+        {
+          "rel": "https://www.ifs.hsr.ch/serepo/api/rels/show_seitems",
+          "href": "http://localhost:8080/serepo/repos/TestRepo/commits/6366fa63316999b3ecfedaeb9751f50a3bbf4761/seitems"
+        }
+      ]
+    },
+    {
+      "id": "http://localhost:8080/serepo/repos/TestRepo/commits/860cc097a2926519d7ec486aaa235aaafd96789d",
+      "when": 1485189045000,
+      "shortMessage": "initial commit.",
+      "fullMessage": "initial commit.",
+      "author": {
+        "name": "Tobias Boceck",
+        "email": "boceckts@gmail.com"
+      },
+      "links": [
+        {
+          "rel": "self",
+          "href": "http://localhost:8080/serepo/repos/TestRepo/commits/860cc097a2926519d7ec486aaa235aaafd96789d"
+        },
+        {
+          "rel": "https://www.ifs.hsr.ch/serepo/api/rels/show_seitems",
+          "href": "http://localhost:8080/serepo/repos/TestRepo/commits/860cc097a2926519d7ec486aaa235aaafd96789d/seitems"
+        }
+      ]
+    }
+  ]
+}

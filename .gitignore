@@ -1,0 +1,28 @@
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err*
+
+# backup files
+*~
+
+# Gradle
+build/
+.gradle
+# generated when `gradlew --gui` is called
+ui/
+gradle-app.setting
+
+# IntelliJ IDEA
+out/
+*.iws
+.idea/
+*.ipr
+*.iml
+
+# Eclipse
+.settings/
+.classpath
+.project
+bin/
+
+# For Mac OS
+.DS_Store

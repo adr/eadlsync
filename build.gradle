@@ -18,7 +18,23 @@ sourceSets {
 }
 
 dependencies {
-    compile  'log4j:log4j:1.2.16'
+    compile  'log4j:log4j:1.2.9'
+    compile  'com.mashape.unirest:unirest-java:1.4.9'
+
+    // dependencies for se-repo data
+    compile  'org.jboss.resteasy:resteasy-atom-provider:3.0.17.Final'
+    compile  'org.jboss.resteasy:resteasy-jackson2-provider:3.0.17.Final'
+
+    // testing against web api
+    testCompile  'com.github.tomakehurst:wiremock:2.5.1'
+    testCompile  'junit:junit:4.12'
+}
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+    dependsOn 'cleanTest'
 }
 
 jacocoTestReport {

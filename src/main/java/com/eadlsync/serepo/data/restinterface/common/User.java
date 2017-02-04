@@ -1,8 +1,13 @@
-package com.eadlsync.sedata;
+package com.eadlsync.serepo.data.restinterface.common;
 
+import com.eadlsync.serepo.data.atom.annotations.AtomPerson;
+
+@AtomPerson
 public class User {
 
+	@AtomPerson.Name
 	private String name;
+	@AtomPerson.Email
 	private String email;
 
 	public User() {
