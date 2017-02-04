@@ -1,5 +1,7 @@
 coverage:
   ignore:
+    - "src/main/java/com/eadlsync/serepo/.*"
+    - "src/test/java/.*"
 
   status:
     patch: false

@@ -26,3 +26,6 @@ bin/
 
 # For Mac OS
 .DS_Store
+
+# Other
+*.xml
