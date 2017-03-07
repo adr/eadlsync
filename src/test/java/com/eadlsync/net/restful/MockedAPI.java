@@ -1,12 +1,10 @@
-package com.eadlsync.net;
+package com.eadlsync.net.restful;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 /**
  * Created by Tobias on 04.02.2017.
@@ -29,7 +27,7 @@ public class MockedAPI {
     @Before
     public void setUp() {
 
-        // TODO: check if local runtime is running otherwise mock the api
+        // TODO: check if local runtime is running otherwise restful the api
 
         String mockedServerPath = "/serepo/repos";
         String responseFilePath = mockedServerPath.substring(1).replaceAll("/", "_") + ".json";

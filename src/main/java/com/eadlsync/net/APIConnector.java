@@ -1,7 +1,6 @@
 package com.eadlsync.net;
 
-import java.io.IOException;
-
+import com.eadlsync.serepo.data.restinterface.seitem.SeItem;
 import com.eadlsync.serepo.data.restinterface.seitem.SeItemContainer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mashape.unirest.http.HttpResponse;
@@ -9,12 +8,18 @@ import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
+import java.io.IOException;
+import java.util.List;
+
 /**
  * Created by Tobias on 31.01.2017.
  */
 public class APIConnector {
 
-    public APIConnector() {
+    private String restfulUrl;
+
+    public APIConnector(String restfulUrl) {
+        this.restfulUrl = restfulUrl;
         initialize();
     }
 
@@ -42,9 +47,13 @@ public class APIConnector {
     }
 
     public SeItemContainer getSeItemContainerByUrl(String url) throws UnirestException {
-        HttpResponse<SeItemContainer> seItemsResponse = Unirest.get(url).asObject(SeItemContainer.class);
-        SeItemContainer seItems = seItemsResponse.getBody();
+        HttpResponse<SeItemContainer> seItemContainerResponse = Unirest.get(url).asObject(SeItemContainer.class);
+        SeItemContainer seItemContainer = seItemContainerResponse.getBody();
+        return seItemContainer;
+    }
 
+    public List<SeItem> getSeItems() throws UnirestException {
+        List<SeItem> seItems = getSeItemContainerByUrl(restfulUrl).getSeItems();
         return seItems;
     }
 

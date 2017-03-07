@@ -1,5 +1,6 @@
 package com.eadlsync.net;
 
+import com.eadlsync.net.restful.MockedAPI;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.junit.Assert;
 import org.junit.Test;

@@ -1,21 +1,21 @@
-package com.eadlsync.net;
+package com.eadlsync.net.restful;
 
-
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Tobias on 04.02.2017.
  */
-public class MockedAPITest extends MockedAPI{
+public class MockedAPITest extends MockedAPI {
 
     @Test
     public void testSEReposResponse() throws UnirestException, IOException {
