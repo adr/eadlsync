@@ -16,10 +16,7 @@ import java.util.List;
  */
 public class APIConnector {
 
-    private String restfulUrl;
-
-    public APIConnector(String restfulUrl) {
-        this.restfulUrl = restfulUrl;
+    public APIConnector() {
         initialize();
     }
 
@@ -52,8 +49,8 @@ public class APIConnector {
         return seItemContainer;
     }
 
-    public List<SeItem> getSeItems() throws UnirestException {
-        List<SeItem> seItems = getSeItemContainerByUrl(restfulUrl).getSeItems();
+    public List<SeItem> getSeItems(String url) throws UnirestException {
+        List<SeItem> seItems = getSeItemContainerByUrl(url).getSeItems();
         return seItems;
     }
 

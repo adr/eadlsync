@@ -16,8 +16,6 @@ out/
 *.iws
 .idea/
 *.ipr
-*.iml
-
 # Eclipse
 .settings/
 .classpath
