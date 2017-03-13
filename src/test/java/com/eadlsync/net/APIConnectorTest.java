@@ -2,7 +2,6 @@ package com.eadlsync.net;
 
 import com.eadlsync.net.restful.MockedAPI;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -13,13 +12,9 @@ import static org.junit.Assert.assertFalse;
 public class APIConnectorTest extends MockedAPI {
 
     @Test
-    public void testAPIConnectorgetSeItems() {
+    public void testAPIConnectorgetSeItemContainer() throws UnirestException {
         APIConnector apiConnector = new APIConnector();
-        try {
-            assertFalse(apiConnector.getSeItemContainerByUrl(TEST_SEITEMS_URL).getSeItems().isEmpty());
-        } catch (UnirestException e) {
-            Assert.fail(e.getMessage());
-        }
+        assertFalse(apiConnector.getSeItemContainerByUrl(TEST_SEITEMS_URL).getSeItems().isEmpty());
     }
 
 }

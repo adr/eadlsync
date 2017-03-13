@@ -13,21 +13,24 @@ import java.util.List;
  */
 public interface ICodeRepo {
 
+
     /**
-     * Synchronizes the eads of a code repository with the seitems of a serepo and returns a
-     * list of {@link SeItem}s which are in the code repository but not in the serepo.
+     * Synchronizes the eads of a code repository with the given seitems and returns a
+     * list of {@link SeItem}s which are in the code repository but not in the parameter list.
      *
+     * @param items the seitems to be synchronised with
      * @return a list of {@link SeItem}
      */
-    List<SeItem> getObsoleteEADs();
+    List<SeItem> getObsoleteEADs(List<SeItem> items);
 
     /**
      * Synchronizes the eads of a code repository with the seitems of a serepo and returns a
      * list of {@link SeItem}s which are in the serepo but not in the code repository.
      *
+     * @param items the seitems to be synchronised with*
      * @return a list of {@link SeItem}
      */
-    List<SeItem> getAdditionalEADs();
+    List<SeItem> getAdditionalEADs(List<SeItem> items);
 
     /**
      * This will generate an eadlsync report.

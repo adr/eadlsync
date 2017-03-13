@@ -19,12 +19,12 @@ public class OnlineCodeRepo implements ICodeRepo {
     }
 
     @Override
-    public List<SeItem> getObsoleteEADs() {
+    public List<SeItem> getObsoleteEADs(List<SeItem> items) {
         return null;
     }
 
     @Override
-    public List<SeItem> getAdditionalEADs() {
+    public List<SeItem> getAdditionalEADs(List<SeItem> items) {
         return null;
     }
 

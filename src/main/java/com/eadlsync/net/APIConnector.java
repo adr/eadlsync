@@ -1,6 +1,5 @@
 package com.eadlsync.net;
 
-import com.eadlsync.serepo.data.restinterface.seitem.SeItem;
 import com.eadlsync.serepo.data.restinterface.seitem.SeItemContainer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mashape.unirest.http.HttpResponse;
@@ -9,7 +8,6 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by Tobias on 31.01.2017.
@@ -47,11 +45,6 @@ public class APIConnector {
         HttpResponse<SeItemContainer> seItemContainerResponse = Unirest.get(url).asObject(SeItemContainer.class);
         SeItemContainer seItemContainer = seItemContainerResponse.getBody();
         return seItemContainer;
-    }
-
-    public List<SeItem> getSeItems(String url) throws UnirestException {
-        List<SeItem> seItems = getSeItemContainerByUrl(url).getSeItems();
-        return seItems;
     }
 
 
