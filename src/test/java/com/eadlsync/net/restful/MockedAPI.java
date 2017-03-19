@@ -4,7 +4,9 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.Before;
 import org.junit.Rule;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 
 /**
  * Created by Tobias on 04.02.2017.
@@ -19,6 +21,8 @@ public class MockedAPI {
     protected final static String TEST_REPO_COMMITS_URL = String.format("%s/commits", TEST_REPO_URL);
     protected final static String TEST_COMMIT_URL = String.format("%s/%s", TEST_REPO_COMMITS_URL, SEREPO_COMMIT_ID);
     protected final static String TEST_SEITEMS_URL = String.format("%s/seitems", TEST_COMMIT_URL);
+    protected final static String TEST_RELATIONS_URL = String.format("%s/Model/MySolution/GUI?relations", TEST_SEITEMS_URL);
+    protected final static String TEST_METADATA_URL = String.format("%s/Model/MySolution/GUI?metadata", TEST_SEITEMS_URL);
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(8080);
@@ -49,7 +53,16 @@ public class MockedAPI {
         responseFilePath = mockedServerPath.substring(1).replaceAll("/", "_") + ".json";
         wireMockRule.stubFor(get(urlEqualTo(mockedServerPath))
                 .willReturn(aResponse().withBodyFile(responseFilePath)));
-
+        mockedServerPath = String.format("/serepo/repos/%s/commits/%s/seitems/Model/MySolution/GUI?relations",
+                SEREPO_NAME, SEREPO_COMMIT_ID);
+        responseFilePath = "serepo_repos_TestRepo_commits_6366fa63316999b3ecfedaeb9751f50a3bbf4761_gui_relations.json";
+        wireMockRule.stubFor(get(urlEqualTo(mockedServerPath))
+                .willReturn(aResponse().withBodyFile(responseFilePath)));
+        mockedServerPath = String.format("/serepo/repos/%s/commits/%s/seitems/Model/MySolution/GUI?metadata",
+                SEREPO_NAME, SEREPO_COMMIT_ID);
+        responseFilePath = "serepo_repos_TestRepo_commits_6366fa63316999b3ecfedaeb9751f50a3bbf4761_gui_metadata.json";
+        wireMockRule.stubFor(get(urlEqualTo(mockedServerPath))
+                .willReturn(aResponse().withBodyFile(responseFilePath)));
     }
 
 
