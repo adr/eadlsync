@@ -1,16 +1,21 @@
 package com.eadlsync.net;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.eadlsync.net.restful.MockedAPI;
 import com.eadlsync.serepo.data.restinterface.common.Link;
-import com.eadlsync.serepo.data.restinterface.metadata.MetadataContainer;
+import com.eadlsync.serepo.data.restinterface.metadata.MetadataEntry;
+import com.eadlsync.serepo.data.restinterface.seitem.RelationEntry;
 import com.eadlsync.serepo.data.restinterface.seitem.SeItem;
 import com.eadlsync.serepo.data.restinterface.seitem.SeItemContainer;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.junit.Test;
 
-import java.util.List;
-
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by Tobias on 04.02.2017.
@@ -21,22 +26,39 @@ public class APIConnectorTest extends MockedAPI {
     public void testAPIConnectorgetSeItemContainer() throws UnirestException {
         SeItemContainer container = APIConnector.getSeItemContainerByUrl(TEST_SEITEMS_URL);
         List<SeItem> items = container.getSeItems();
-        items.forEach(item -> {
-            List<Link> links = item.getLinks();
-            System.out.println("SE-Item: " + item.getId());
-            links.forEach(link -> {
-                System.out.println("link: " + link.getRel());
-                if (link.getRel().endsWith("serepo_metadata")) {
-                    try {
-                        MetadataContainer mContainer = APIConnector.getMetadataContainerForSeItem(item);
-                    } catch (UnirestException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        });
         assertFalse(container.getSeItems().isEmpty());
 
+    }
+
+    @Test
+    public void testGetMetadataForSeItem() throws UnirestException {
+        SeItemContainer container = APIConnector.getSeItemContainerByUrl(TEST_SEITEMS_URL);
+        SeItem guiItem = container.getSeItems().stream().filter(item -> item.getName().equals("GUI")).
+                collect(Collectors.toList()).get(0);
+        MetadataEntry metadata = APIConnector.getMetadataEntry(guiItem);
+        assertNotNull(metadata);
+        assertFalse(metadata.getMap().isEmpty());
+        // TODO: check for specific map keys
+    }
+
+    @Test
+    public void testGetRelationsForSeItem() throws UnirestException {
+        SeItemContainer container = APIConnector.getSeItemContainerByUrl(TEST_SEITEMS_URL);
+        SeItem guiItem = container.getSeItems().stream().filter(item -> item.getName().equals("GUI")).
+                collect(Collectors.toList()).get(0);
+        RelationEntry relation = APIConnector.getRelationEntry(guiItem);
+        assertNotNull(relation);
+    }
+
+    @Test
+    public void testRelationsPresent() throws UnirestException {
+        SeItemContainer container = APIConnector.getSeItemContainerByUrl(TEST_SEITEMS_URL);
+        SeItem guiItem = container.getSeItems().stream().filter(item -> item.getName().equals("GUI")).
+                collect(Collectors.toList()).get(0);
+        RelationEntry relation = APIConnector.getRelationEntry(guiItem);
+        List<String> relations = relation.getLinks().stream().map(Link::getTitle).collect(Collectors.toList());
+        System.out.println(relation.getId());
+        assertEquals(relations, Arrays.asList("Addressed By", "Raises"));
     }
 
 }

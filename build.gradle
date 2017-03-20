@@ -18,17 +18,16 @@ sourceSets {
 }
 
 dependencies {
-    compile  'org.apache.logging.log4j:log4j-api:2.8.1'
-    compile  'org.apache.logging.log4j:log4j-core:2.8.1'
-    compile  'com.mashape.unirest:unirest-java:1.4.9'
+    compile 'ch.qos.logback:logback-classic:1.0.13'
+    compile 'com.mashape.unirest:unirest-java:1.4.9'
 
     // dependencies for se-repo data
-    compile  'org.jboss.resteasy:resteasy-atom-provider:3.1.0.Final'
-    compile  'org.jboss.resteasy:resteasy-jackson2-provider:3.1.0.Final'
+    compile 'org.jboss.resteasy:resteasy-atom-provider:3.1.0.Final'
+    compile 'org.jboss.resteasy:resteasy-jackson2-provider:3.1.0.Final'
 
     // testing against web api
-    testCompile  'com.github.tomakehurst:wiremock:2.5.1'
-    testCompile  'junit:junit:4.12'
+    testCompile 'com.github.tomakehurst:wiremock:2.5.1'
+    testCompile 'junit:junit:4.12'
 }
 
 test {

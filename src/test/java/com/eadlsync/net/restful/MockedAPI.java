@@ -10,6 +10,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 
 /**
  * Created by Tobias on 04.02.2017.
+ * <p>
+ * Always testing against localhost on port 8080. If the se-repo restful api is running
+ * we need to specify the vm parameter {@code -DnoMock} which sets the wire mock rule to
+ * a different port than 8080 since the port is already in use.
  */
 public class MockedAPI {
 
@@ -21,48 +25,39 @@ public class MockedAPI {
     protected final static String TEST_REPO_COMMITS_URL = String.format("%s/commits", TEST_REPO_URL);
     protected final static String TEST_COMMIT_URL = String.format("%s/%s", TEST_REPO_COMMITS_URL, SEREPO_COMMIT_ID);
     protected final static String TEST_SEITEMS_URL = String.format("%s/seitems", TEST_COMMIT_URL);
-    protected final static String TEST_RELATIONS_URL = String.format("%s/Model/MySolution/GUI?relations", TEST_SEITEMS_URL);
-    protected final static String TEST_METADATA_URL = String.format("%s/Model/MySolution/GUI?metadata", TEST_SEITEMS_URL);
-
+    protected final static String TEST_RELATIONS_URL = String.format("%s/Model/MySolution/GUI?relations",
+            TEST_SEITEMS_URL);
+    protected final static String TEST_METADATA_URL = String.format("%s/Model/MySolution/GUI?metadata",
+            TEST_SEITEMS_URL);
+    private final static boolean noMock = System.getProperty("nomock") != null;
     @Rule
-    public WireMockRule wireMockRule = new WireMockRule(8080);
-
+    public WireMockRule wireMockRule = new WireMockRule(noMock ? 9000 : 8080);
 
     @Before
     public void setUp() {
-
-        // TODO: check if local runtime is running otherwise restful the api
-
         String mockedServerPath = "/serepo/repos";
         String responseFilePath = mockedServerPath.substring(1).replaceAll("/", "_") + ".json";
-        wireMockRule.stubFor(get(urlEqualTo(mockedServerPath))
-                .willReturn(aResponse().withBodyFile(responseFilePath)));
+        wireMockRule.stubFor(get(urlEqualTo(mockedServerPath)).willReturn(aResponse().withBodyFile(responseFilePath)));
         mockedServerPath = String.format("/serepo/repos/%s", SEREPO_NAME);
         responseFilePath = mockedServerPath.substring(1).replaceAll("/", "_") + ".json";
-        wireMockRule.stubFor(get(urlEqualTo(mockedServerPath))
-                .willReturn(aResponse().withBodyFile(responseFilePath)));
+        wireMockRule.stubFor(get(urlEqualTo(mockedServerPath)).willReturn(aResponse().withBodyFile(responseFilePath)));
         mockedServerPath = String.format("/serepo/repos/%s/commits", SEREPO_NAME);
         responseFilePath = mockedServerPath.substring(1).replaceAll("/", "_") + ".json";
-        wireMockRule.stubFor(get(urlEqualTo(mockedServerPath))
-                .willReturn(aResponse().withBodyFile(responseFilePath)));
+        wireMockRule.stubFor(get(urlEqualTo(mockedServerPath)).willReturn(aResponse().withBodyFile(responseFilePath)));
         mockedServerPath = String.format("/serepo/repos/%s/commits/%s", SEREPO_NAME, SEREPO_COMMIT_ID);
         responseFilePath = mockedServerPath.substring(1).replaceAll("/", "_") + ".json";
-        wireMockRule.stubFor(get(urlEqualTo(mockedServerPath))
-                .willReturn(aResponse().withBodyFile(responseFilePath)));
+        wireMockRule.stubFor(get(urlEqualTo(mockedServerPath)).willReturn(aResponse().withBodyFile(responseFilePath)));
         mockedServerPath = String.format("/serepo/repos/%s/commits/%s/seitems", SEREPO_NAME, SEREPO_COMMIT_ID);
         responseFilePath = mockedServerPath.substring(1).replaceAll("/", "_") + ".json";
-        wireMockRule.stubFor(get(urlEqualTo(mockedServerPath))
-                .willReturn(aResponse().withBodyFile(responseFilePath)));
+        wireMockRule.stubFor(get(urlEqualTo(mockedServerPath)).willReturn(aResponse().withBodyFile(responseFilePath)));
         mockedServerPath = String.format("/serepo/repos/%s/commits/%s/seitems/Model/MySolution/GUI?relations",
                 SEREPO_NAME, SEREPO_COMMIT_ID);
         responseFilePath = "serepo_repos_TestRepo_commits_6366fa63316999b3ecfedaeb9751f50a3bbf4761_gui_relations.json";
-        wireMockRule.stubFor(get(urlEqualTo(mockedServerPath))
-                .willReturn(aResponse().withBodyFile(responseFilePath)));
+        wireMockRule.stubFor(get(urlEqualTo(mockedServerPath)).willReturn(aResponse().withBodyFile(responseFilePath)));
         mockedServerPath = String.format("/serepo/repos/%s/commits/%s/seitems/Model/MySolution/GUI?metadata",
                 SEREPO_NAME, SEREPO_COMMIT_ID);
         responseFilePath = "serepo_repos_TestRepo_commits_6366fa63316999b3ecfedaeb9751f50a3bbf4761_gui_metadata.json";
-        wireMockRule.stubFor(get(urlEqualTo(mockedServerPath))
-                .willReturn(aResponse().withBodyFile(responseFilePath)));
+        wireMockRule.stubFor(get(urlEqualTo(mockedServerPath)).willReturn(aResponse().withBodyFile(responseFilePath)));
     }
 
 

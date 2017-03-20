@@ -26,4 +26,4 @@ bin/
 .DS_Store
 
 # Other
-*.xml
+#*.xml

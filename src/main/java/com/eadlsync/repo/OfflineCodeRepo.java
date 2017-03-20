@@ -1,14 +1,5 @@
 package com.eadlsync.repo;
 
-import com.eadlsync.core.EADLSyncReport;
-import com.eadlsync.eadl.annotations.DecisionMade;
-import com.eadlsync.eadl.annotations.YStatementJustification;
-import com.eadlsync.serepo.data.restinterface.seitem.SeItem;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.net.URI;
@@ -22,12 +13,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+
+import com.eadlsync.core.EADLSyncReport;
+import com.eadlsync.eadl.annotations.DecisionMade;
+import com.eadlsync.eadl.annotations.YStatementJustification;
+import com.eadlsync.serepo.data.restinterface.seitem.SeItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Created by tobias on 07/03/2017.
  */
 public class OfflineCodeRepo implements ICodeRepo {
 
-    private final Log LOG = LogFactory.getLog(ICodeRepo.class);
+    private final Logger LOG = LoggerFactory.getLogger(OfflineCodeRepo.class);
     private final Path repositoryPath;
     private final ListProperty<DecisionMade> decisions = new SimpleListProperty<>();
     private final ListProperty<YStatementJustification> yStatements = new SimpleListProperty<>();
@@ -73,7 +74,7 @@ public class OfflineCodeRepo implements ICodeRepo {
                 if (isValid(path)) {
                     String classPath = convertToClassPath(path);
                     try {
-                        LOG.info("Loading class: " + classPath);
+                        LOG.info("Loading class {} ", classPath);
                         Class clazz = finalUrlClassLoader.loadClass(classPath);
                         for (Annotation annotation : clazz.getAnnotationsByType(DecisionMade.class)) {
                             decisions.add((DecisionMade) annotation);
