@@ -1,8 +1,5 @@
 package com.eadlsync.net;
 
-import java.io.IOException;
-import java.util.stream.Collectors;
-
 import com.eadlsync.serepo.data.restinterface.common.Link;
 import com.eadlsync.serepo.data.restinterface.metadata.MetadataContainer;
 import com.eadlsync.serepo.data.restinterface.metadata.MetadataEntry;
@@ -15,6 +12,9 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+
+import java.io.IOException;
+import java.util.stream.Collectors;
 
 /**
  * Created by Tobias on 31.01.2017.
@@ -75,4 +75,5 @@ public class APIConnector {
     public static RelationEntry getRelationEntry(SeItem item) throws UnirestException {
         return getRelationContainerForSeItem(item).getEntry();
     }
+
 }
