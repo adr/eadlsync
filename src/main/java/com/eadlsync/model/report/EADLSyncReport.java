@@ -1,4 +1,4 @@
-package com.eadlsync.core;
+package com.eadlsync.model.report;
 
 import java.util.HashMap;
 import java.util.Map;

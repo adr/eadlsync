@@ -1,13 +1,13 @@
 package com.eadlsync.core;
 
+import java.net.MalformedURLException;
+
+import com.eadlsync.model.repo.OfflineCodeRepo;
 import com.eadlsync.net.APIConnector;
 import com.eadlsync.net.restful.MockedAPI;
-import com.eadlsync.repo.OfflineCodeRepo;
 import com.eadlsync.serepo.data.restinterface.seitem.SeItemContainer;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.junit.Test;
-
-import java.net.MalformedURLException;
 
 import static org.junit.Assert.assertFalse;
 
@@ -21,7 +21,7 @@ public class OfflineCodeRepoTest extends MockedAPI {
         SeItemContainer container = APIConnector.getSeItemContainerByUrl(TEST_SEITEMS_URL);
         OfflineCodeRepo repo = new OfflineCodeRepo("/Users/tobias/git/eadlsync/src/main/java", container.getSeItems());
 
-        assertFalse(repo.getObsoleteEADs(container.getSeItems()).isEmpty());
+        assertFalse(repo.findObsoleteEADs(container.getSeItems()).isEmpty());
 
     }
 

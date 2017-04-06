@@ -1,11 +1,11 @@
-package com.eadlsync.repo;
-
-import com.eadlsync.core.EADLSyncReport;
-import com.eadlsync.serepo.data.restinterface.seitem.SeItem;
+package com.eadlsync.model.repo;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+
+import com.eadlsync.eadl.annotations.YStatementJustification;
+import com.eadlsync.model.report.EADLSyncReport;
 
 /**
  * Created by tobias on 07/03/2017.
@@ -19,12 +19,17 @@ public class OnlineCodeRepo implements ICodeRepo {
     }
 
     @Override
-    public List<SeItem> getObsoleteEADs(List<SeItem> items) {
+    public List<YStatementJustification> findObsoleteEADs() {
         return null;
     }
 
     @Override
-    public List<SeItem> getAdditionalEADs(List<SeItem> items) {
+    public List<YStatementJustification> findAdditionalEADs() {
+        return null;
+    }
+
+    @Override
+    public List<YStatementJustification> findDifferentEADs() {
         return null;
     }
 
