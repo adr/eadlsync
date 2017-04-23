@@ -2,6 +2,7 @@ package com.eadlsync.model.repo;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.FileVisitOption;
@@ -23,22 +24,32 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by tobias on 07/03/2017.
  */
-public class OfflineCodeRepo implements ICodeRepo {
+public class CodeRepo implements ICodeRepo {
 
-    private final Logger LOG = LoggerFactory.getLogger(OfflineCodeRepo.class);
-    private final Path repositoryPath;
+    private final static CodeRepo instance = new CodeRepo();
+    private final Logger LOG = LoggerFactory.getLogger(CodeRepo.class);
+    private Path repositoryPath;
     private ListProperty<YStatementJustification> yStatements = new SimpleListProperty<>();
-    private List<YStatementJustification> seRepoYStatements = new ArrayList<>();
+    private ListProperty<YStatementJustification> seRepoYStatements = new SimpleListProperty<>();
 
-    public OfflineCodeRepo(String path, List<YStatementJustification> seRepoYStatements) {
-        this.repositoryPath = Paths.get(path);
-        this.seRepoYStatements = seRepoYStatements;
-        init();
+    public static CodeRepo getInstance() {
+        return instance;
+    }
+
+    public void initializeFromPath(String path) {
+        getInstance().repositoryPath = Paths.get(path);
+        //        getInstance().seRepoYStatements.addAll(seRepoYStatements);
+        getInstance().init();
+    }
+
+    public void initializeFromUrl(String url) throws MalformedURLException {
+        // TODO: clone online code repo and invoke fromPath method
     }
 
 
     @Override
     public List<YStatementJustification> findObsoleteEADs() {
+        // TODO: create listeners on the lists and update list on change events
         List<YStatementJustification> obsoleteItems = new ArrayList<>();
         for (YStatementJustification yStatementJustification : yStatements) {
             boolean isNotAvailable = seRepoYStatements.stream().filter(y -> y.id().equals(yStatementJustification.id
@@ -52,6 +63,7 @@ public class OfflineCodeRepo implements ICodeRepo {
 
     @Override
     public List<YStatementJustification> findAdditionalEADs() {
+        // TODO: create listeners on the lists and update list on change events
         List<YStatementJustification> additionalItems = new ArrayList<>();
         for (YStatementJustification yStatementJustification : seRepoYStatements) {
             boolean isNotAvailable = yStatements.stream().filter(y -> y.id().equals(yStatementJustification.id()))
@@ -65,6 +77,7 @@ public class OfflineCodeRepo implements ICodeRepo {
 
     @Override
     public List<YStatementJustification> findDifferentEADs() {
+        // TODO: create listeners on the lists and update list on change events
         List<YStatementJustification> differentItems = new ArrayList<>();
         // TODO:
         return differentItems;
@@ -105,6 +118,11 @@ public class OfflineCodeRepo implements ICodeRepo {
 
     private String convertToClassPath(Path path) {
         return repositoryPath.relativize(path).toString().replace(".java", "").replaceAll("/", ".");
+    }
+
+    public void setSeRepoYStatements(List<YStatementJustification> seRepoYStatements) {
+        this.seRepoYStatements.clear();
+        this.seRepoYStatements.addAll(seRepoYStatements);
     }
 
 }
