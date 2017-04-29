@@ -2,10 +2,13 @@ package com.eadlsync.cli;
 
 import java.util.Arrays;
 
+import com.eadlsync.EADLSyncMain;
+import com.eadlsync.sync.IEADLSynchronizer;
+
 /**
  * Created by Tobias on 23.04.2017.
  */
-public class ReportMenu extends CLIMenu {
+public class ReportMenu extends ACLIMenu {
 
     private static final ReportMenu instance = new ReportMenu();
 
@@ -22,15 +25,16 @@ public class ReportMenu extends CLIMenu {
 
     @Override
     public void evaluate(String option) {
+        IEADLSynchronizer synchronizer = EADLSyncMain.getSynchronizer();
         switch (option) {
             case "0":
                 MainMenu.getInstance().show();
                 break;
             case "1":
-
+                System.out.println(synchronizer.getEadlSyncReport());
                 break;
             case "2":
-
+                // TODO: export as pdf
                 break;
             case "00":
                 System.out.println("exiting...");

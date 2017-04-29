@@ -9,120 +9,96 @@ import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.eadlsync.eadl.annotations.YStatementJustification;
-import com.eadlsync.model.report.EADLSyncReport;
+import com.eadlsync.eadl.annotations.YStatementJustificationWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Created by tobias on 07/03/2017.
  */
-public class CodeRepo implements ICodeRepo {
+public class CodeRepo extends ARepo {
 
-    private final static CodeRepo instance = new CodeRepo();
     private final Logger LOG = LoggerFactory.getLogger(CodeRepo.class);
-    private Path repositoryPath;
-    private ListProperty<YStatementJustification> yStatements = new SimpleListProperty<>();
-    private ListProperty<YStatementJustification> seRepoYStatements = new SimpleListProperty<>();
+    private final Path repositoryPath;
+    private Map<String, String> classPaths = new HashMap<>();
 
-    public static CodeRepo getInstance() {
-        return instance;
+    public CodeRepo(String path) throws IOException {
+        this.repositoryPath = Paths.get(path);
+        loadEadsFromDisk();
     }
 
-    public void initializeFromPath(String path) {
-        getInstance().repositoryPath = Paths.get(path);
-        //        getInstance().seRepoYStatements.addAll(seRepoYStatements);
-        getInstance().init();
-    }
-
-    public void initializeFromUrl(String url) throws MalformedURLException {
-        // TODO: clone online code repo and invoke fromPath method
-    }
-
-
-    @Override
-    public List<YStatementJustification> findObsoleteEADs() {
-        // TODO: create listeners on the lists and update list on change events
-        List<YStatementJustification> obsoleteItems = new ArrayList<>();
-        for (YStatementJustification yStatementJustification : yStatements) {
-            boolean isNotAvailable = seRepoYStatements.stream().filter(y -> y.id().equals(yStatementJustification.id
-                    ())).collect(Collectors.toList()).isEmpty();
-            if (isNotAvailable) {
-                obsoleteItems.add(yStatementJustification);
-            }
-        }
-        return obsoleteItems;
-    }
-
-    @Override
-    public List<YStatementJustification> findAdditionalEADs() {
-        // TODO: create listeners on the lists and update list on change events
-        List<YStatementJustification> additionalItems = new ArrayList<>();
-        for (YStatementJustification yStatementJustification : seRepoYStatements) {
-            boolean isNotAvailable = yStatements.stream().filter(y -> y.id().equals(yStatementJustification.id()))
-                    .collect(Collectors.toList()).isEmpty();
-            if (isNotAvailable) {
-                additionalItems.add(yStatementJustification);
-            }
-        }
-        return additionalItems;
-    }
-
-    @Override
-    public List<YStatementJustification> findDifferentEADs() {
-        // TODO: create listeners on the lists and update list on change events
-        List<YStatementJustification> differentItems = new ArrayList<>();
-        // TODO:
-        return differentItems;
-    }
-
-    @Override
-    public EADLSyncReport getEADSyncReport() {
-        return null;
-    }
-
-    private void init() {
-        URLClassLoader urlClassLoader;
-        try {
-            urlClassLoader = new URLClassLoader(new URL[]{repositoryPath.toUri().toURL()});
-            URLClassLoader finalUrlClassLoader = urlClassLoader;
-            Files.walk(repositoryPath, FileVisitOption.FOLLOW_LINKS).forEach(path -> {
-                if (isValid(path)) {
-                    String classPath = convertToClassPath(path);
-                    try {
-                        LOG.info("Loading class {} ", classPath);
-                        Class clazz = finalUrlClassLoader.loadClass(classPath);
-                        for (Annotation annotation : clazz.getAnnotationsByType(YStatementJustification.class)) {
-                            yStatements.add((YStatementJustification) annotation);
-                        }
-                    } catch (ClassNotFoundException e) {
-                        LOG.error("Class could not be instantiated", e);
+    private void loadEadsFromDisk() throws IOException {
+        yStatements.clear();
+        classPaths.clear();
+        URLClassLoader finalUrlClassLoader = getUrlClassLoader();
+        Files.walk(repositoryPath, FileVisitOption.FOLLOW_LINKS).forEach(path -> {
+            if (isPathToJavaFile(path)) {
+                String classPath = convertToClassPath(path);
+                try {
+                    Class clazz = finalUrlClassLoader.loadClass(classPath);
+                    for (Annotation annotation : clazz.getAnnotationsByType(YStatementJustification
+                            .class)) {
+                        YStatementJustification yStatementJustification = (YStatementJustification)
+                                annotation;
+                        yStatements.add(new YStatementJustificationWrapper(yStatementJustification));
+                        classPaths.put(yStatementJustification.id(), classPath);
                     }
+                } catch (ClassNotFoundException e) {
+                    LOG.error("Could not instantiate class.", e);
                 }
-            });
-        } catch (IOException e) {
-            LOG.error("Could not read file", e);
+            }
+        });
+    }
+
+    private void writeEadsToDisk() throws MalformedURLException, ClassNotFoundException {
+        for (YStatementJustificationWrapper yStatementJustificationWrapper : yStatements) {
+            writeEadToClass(yStatementJustificationWrapper.getId());
         }
     }
 
-    private boolean isValid(Path path) {
+    private void writeEadToClass(String id) throws MalformedURLException, ClassNotFoundException {
+        URLClassLoader finalUrlClassLoader = getUrlClassLoader();
+        String classPath = classPaths.get(id);
+        Class clazz = finalUrlClassLoader.loadClass(classPath);
+        // TODO: write annotation to class
+    }
+
+    private URLClassLoader getUrlClassLoader() throws MalformedURLException {
+        URLClassLoader urlClassLoader;
+        urlClassLoader = new URLClassLoader(new URL[]{repositoryPath.toUri().toURL()});
+        return urlClassLoader;
+    }
+
+    private boolean isPathToJavaFile(Path path) {
         return path.toString().endsWith(".java") && !Files.isDirectory(path);
     }
 
     private String convertToClassPath(Path path) {
-        return repositoryPath.relativize(path).toString().replace(".java", "").replaceAll("/", ".");
+        return repositoryPath.relativize(path).toString().replace(".java", "").
+                // replace file separator on unix systems
+                        replaceAll("/", ".").
+                // replace file separator on windows systems
+                        replaceAll("\\\\", ".");
     }
 
-    public void setSeRepoYStatements(List<YStatementJustification> seRepoYStatements) {
-        this.seRepoYStatements.clear();
-        this.seRepoYStatements.addAll(seRepoYStatements);
+    /**
+     * For a offline code repo this will write the changed decisions to the disk.
+     * It can be called right after any field of an embedded architectural decision is updated.
+     *
+     * @throws Exception
+     */
+    @Override
+    public void commit() throws Exception {
+        // TODO: only write changed eads and not all
+        writeEadsToDisk();
     }
 
+    @Override
+    public void reloadEADs() throws IOException {
+        loadEadsFromDisk();
+    }
 }

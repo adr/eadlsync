@@ -1,13 +1,13 @@
 package com.eadlsync.net;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.eadlsync.eadl.annotations.DecisionMade;
-import com.eadlsync.eadl.annotations.YStatementJustification;
-import com.eadlsync.eadl.annotations.YStatementJustificationBuilder;
+import com.eadlsync.eadl.annotations.YStatementJustificationWrapper;
+import com.eadlsync.eadl.annotations.YStatementJustificationWrapperBuilder;
 import com.eadlsync.serepo.data.restinterface.common.Link;
 import com.eadlsync.serepo.data.restinterface.metadata.MetadataContainer;
 import com.eadlsync.serepo.data.restinterface.metadata.MetadataEntry;
@@ -25,14 +25,16 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 /**
+ * Provides utility methods to communicate with the se-repo restful api
+ * <p>
  * Created by Tobias on 31.01.2017.
  */
 public class APIConnector {
 
     static {
         Unirest.setObjectMapper(new ObjectMapper() {
-            private com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper = new com.fasterxml.jackson
-                    .databind.ObjectMapper();
+            private com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper = new com
+                    .fasterxml.jackson.databind.ObjectMapper();
 
             public <T> T readValue(String value, Class<T> valueType) {
                 try {
@@ -53,13 +55,15 @@ public class APIConnector {
     }
 
     public static SeItemContainer getSeItemContainerByUrl(String url) throws UnirestException {
-        HttpResponse<SeItemContainer> seItemContainerResponse = Unirest.get(url).asObject(SeItemContainer.class);
+        HttpResponse<SeItemContainer> seItemContainerResponse = Unirest.get(url).asObject
+                (SeItemContainer.class);
         SeItemContainer seItemContainer = seItemContainerResponse.getBody();
         return seItemContainer;
     }
 
-    public static MetadataContainer getMetadataContainerForSeItem(SeItem item) throws UnirestException {
-        Link metadataLink = item.getLinks().stream().filter(link -> link.getRel().endsWith("serepo_metadata")).
+    private static MetadataContainer getMetadataContainerForSeItem(SeItem item) throws UnirestException {
+        Link metadataLink = item.getLinks().stream().filter(link -> link.getRel().endsWith
+                ("serepo_metadata")).
                 collect(Collectors.toList()).get(0);
         HttpResponse<MetadataContainer> seItemContainerResponse = Unirest.get(metadataLink.getHref()).
                 asObject(MetadataContainer.class);
@@ -71,8 +75,9 @@ public class APIConnector {
         return getMetadataContainerForSeItem(item).getMetadata();
     }
 
-    public static RelationContainer getRelationContainerForSeItem(SeItem item) throws UnirestException {
-        Link relationsLink = item.getLinks().stream().filter(link -> link.getRel().endsWith("serepo_relations")).
+    private static RelationContainer getRelationContainerForSeItem(SeItem item) throws UnirestException {
+        Link relationsLink = item.getLinks().stream().filter(link -> link.getRel().endsWith
+                ("serepo_relations")).
                 collect(Collectors.toList()).get(0);
         HttpResponse<RelationContainer> seItemContainerResponse = Unirest.get(relationsLink.getHref()).
                 asObject(RelationContainer.class);
@@ -84,12 +89,8 @@ public class APIConnector {
         return getRelationContainerForSeItem(item).getEntry();
     }
 
-    public static List<DecisionMade> getDecicionsMade() {
-        // TODO: implement later as decision made is not implemented by the ad mentor plugin just yet
-        return null;
-    }
-
-    public static List<YStatementJustification> getYStatementJustifications(String url) throws UnirestException {
+    public static List<YStatementJustificationWrapper> getYStatementJustifications(String url) throws
+            UnirestException {
         SeItemContainer container = getSeItemContainerByUrl(url);
 
         // find all se-items that are problem occurrences
@@ -103,33 +104,33 @@ public class APIConnector {
             }
         }
 
-        List<YStatementJustification> yStatementJustifications = new ArrayList<>();
+        List<YStatementJustificationWrapper> yStatementJustifications = new ArrayList<>();
 
         // iterate over the problem occurrences
         for (SeItem problemItem : problemItems) {
             RelationEntry relation = getRelationEntry(problemItem);
-            List<Link> relationLinks = relation.getLinks().stream().filter(link -> "addressed by".equals(link
-                    .getTitle().toLowerCase())).collect(Collectors.toList());
+            List<Link> relationLinks = relation.getLinks().stream().filter(link -> "addressed by"
+                    .equals(link.getTitle().toLowerCase())).collect(Collectors.toList());
 
             // find the chosen option item for the current problem occurrence
             SeItem chosenOptionItem = null;
             for (Link link : relationLinks) {
-                List<SeItem> relationSeItems = container.getSeItems().stream().filter(seItem -> seItem.getId().equals
-                        (link.getHref())).collect(Collectors.toList());
+                List<SeItem> relationSeItems = container.getSeItems().stream().filter(seItem -> seItem
+                        .getId().equals(link.getHref())).collect(Collectors.toList());
                 for (SeItem relationSeItem : relationSeItems) {
                     MetadataEntry entry = getMetadataEntry(relationSeItem);
                     Object o = entry.getMap().get("Option State");
                     String state = (o == null) ? "" : o.toString();
                     if ("chosen".equals(state.toLowerCase())) {
-                        chosenOptionItem = container.getSeItems().stream().filter(seItem -> seItem.getId().equals
-                                (link.getHref())).collect(Collectors.toList()).get(0);
+                        chosenOptionItem = container.getSeItems().stream().filter(seItem -> seItem
+                                .getId().equals(link.getHref())).collect(Collectors.toList()).get(0);
                     }
                 }
             }
 
             // create a new YStatementJustification object
-            YStatementJustification yStatementJustification = createYStatementJustification(problemItem,
-                    chosenOptionItem);
+            YStatementJustificationWrapper yStatementJustification = createYStatementJustification
+                    (problemItem, chosenOptionItem);
             yStatementJustifications.add(yStatementJustification);
 
         }
@@ -137,31 +138,42 @@ public class APIConnector {
         return yStatementJustifications;
     }
 
-    private static YStatementJustification createYStatementJustification(SeItem problemItem, SeItem chosenOptionItem) {
+    private static YStatementJustificationWrapper createYStatementJustification(SeItem problemItem,
+                                                                                SeItem chosenOptionItem) {
+        Element problemBody = getSeItemContent(problemItem);
         String id = problemItem.getId().toString();
-        String context = parseForContent("in the context of", getSeItemContent(problemItem));
-        String facing = parseForContent("facing", getSeItemContent(problemItem));
-        String chosen = parseForContent("we decided for", getSeItemContent(chosenOptionItem));
-        String neglected = parseForContent("and neglected", getSeItemContent(chosenOptionItem));
-        String achieving = parseForContent("to achieve", getSeItemContent(chosenOptionItem));
-        String accepting = parseForContent("accepting that", getSeItemContent(chosenOptionItem));
-        return new YStatementJustificationBuilder(id).context(context).facing(facing).chosen(chosen).neglected
-                (neglected).achieving(achieving).accepting(accepting).build();
+        String context = parseForContent("in the context of", problemBody);
+        String facing = parseForContent("facing", problemBody);
+
+        if (chosenOptionItem != null) {
+            Element optionBody = getSeItemContent(chosenOptionItem);
+            String chosen = parseForContent("we decided for", optionBody);
+            String neglected = parseForContent("and neglected", optionBody);
+            String achieving = parseForContent("to achieve", optionBody);
+            String accepting = parseForContent("accepting that", optionBody);
+            return new YStatementJustificationWrapperBuilder(id).context(context).facing(facing)
+                    .chosen(chosen).neglected(neglected).achieving(achieving).accepting(accepting)
+                    .build();
+        } else {
+            return new YStatementJustificationWrapperBuilder(id).context(context).facing(facing).build();
+        }
     }
 
     private static String parseForContent(String key, Element seItemBody) {
         String content = "";
-        seItemBody.getAllElements().stream().filter(element -> key.equals(element.val())).forEach(element -> {
+        seItemBody.getAllElements().stream().filter(element -> key.equals(element.val())).forEach
+                (element -> {
             // TODO: implement parsing the html boy for the content of the key
         });
         return content;
     }
 
-    private static Element getSeItemContent(SeItem problemItem) {
-        Document doc = null;
+    private static Element getSeItemContent(SeItem item) {
+        Document doc;
         Element body = null;
         try {
-            doc = Jsoup.connect(problemItem.getId().toString()).get();
+            String decodedURL = URLDecoder.decode(item.getId().toString(), "UTF-8");
+            doc = Jsoup.connect(decodedURL).get();
             body = doc.body();
         } catch (IOException e) {
             e.printStackTrace();

@@ -36,4 +36,10 @@ public class CLIMenuItem {
     public List<String> getArguments() {
         return arguments;
     }
+
+    @Override
+    public String toString() {
+        return getNumber() + getArguments().stream().reduce("", (a, arg) -> a + " -" + arg + "=<" +
+                arg + ">") + " - " + "" + getName();
+    }
 }

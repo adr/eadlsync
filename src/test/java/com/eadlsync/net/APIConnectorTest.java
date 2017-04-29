@@ -38,7 +38,6 @@ public class APIConnectorTest extends MockedAPI {
         MetadataEntry metadata = APIConnector.getMetadataEntry(guiItem);
         assertNotNull(metadata);
         assertFalse(metadata.getMap().isEmpty());
-        // TODO: check for specific map keys
     }
 
     @Test

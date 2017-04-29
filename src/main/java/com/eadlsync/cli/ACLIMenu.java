@@ -14,25 +14,36 @@ import javafx.beans.property.StringProperty;
 /**
  * Created by Tobias on 23.04.2017.
  */
-public abstract class CLIMenu {
+public abstract class ACLIMenu {
 
-    private final Scanner scanner = new Scanner(System.in);
     protected final BooleanProperty running = new SimpleBooleanProperty(false);
     protected final StringProperty option = new SimpleStringProperty();
     protected final String name;
+    private final Scanner scanner = new Scanner(System.in);
     protected List<CLIMenuItem> menuItems = Collections.emptyList();
 
-    protected CLIMenu(String name) {
+    protected ACLIMenu(String name) {
         this.name = name;
+    }
+
+    // TODO: really use this method to clear screen???
+    public static void clearScreen() {
+        try {
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void show() {
         while (running.get()) {
             System.out.println("EADLSync - " + this.name);
             System.out.println("********");
-            menuItems.stream().map(item -> item.getNumber() + item.getArguments().stream().reduce("", (a, arg) -> a +
-                    " -" + arg + "=<" + arg + ">") + " - " + item.getName()).forEach(System.out::println);
+            menuItems.forEach(System.out::println);
             option.setValue(scanner.nextLine());
+            clearScreen();
             evaluate(option.get());
         }
     }
@@ -46,16 +57,4 @@ public abstract class CLIMenu {
     }
 
     protected abstract void evaluate(String s);
-
-
-    // TODO: really use this method to clear screen???
-    public static void clearScreen() {
-        try {
-            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

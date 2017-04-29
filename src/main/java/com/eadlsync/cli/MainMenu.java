@@ -2,10 +2,12 @@ package com.eadlsync.cli;
 
 import java.util.Arrays;
 
+import com.eadlsync.sync.EADLSyncInfo;
+
 /**
  * Created by Tobias on 23.04.2017.
  */
-public class MainMenu extends CLIMenu {
+public class MainMenu extends ACLIMenu {
 
     private static final MainMenu instance = new MainMenu();
 
@@ -31,7 +33,7 @@ public class MainMenu extends CLIMenu {
                 SyncMenu.getInstance().show();
                 break;
             case "3":
-                // TODO: show info
+                System.out.println(EADLSyncInfo.getInstance());
                 break;
             case "00":
                 System.out.println("exiting...");

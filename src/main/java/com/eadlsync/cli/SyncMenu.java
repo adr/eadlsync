@@ -2,10 +2,13 @@ package com.eadlsync.cli;
 
 import java.util.Arrays;
 
+import com.eadlsync.EADLSyncMain;
+import com.eadlsync.sync.IEADLSynchronizer;
+
 /**
  * Created by Tobias on 23.04.2017.
  */
-public class SyncMenu extends CLIMenu {
+public class SyncMenu extends ACLIMenu {
 
     private static final SyncMenu instance = new SyncMenu();
 
@@ -24,21 +27,25 @@ public class SyncMenu extends CLIMenu {
 
     @Override
     protected void evaluate(String option) {
+        IEADLSynchronizer synchronizer = EADLSyncMain.getSynchronizer();
+        String id = "";
         switch (option) {
             case "0":
                 MainMenu.getInstance().show();
                 break;
             case "1":
-
+                System.out.println(synchronizer.additionalYStatementsProperty());
                 break;
             case "2":
-
+                System.out.println(synchronizer.obsoleteYStatementsProperty());
                 break;
             case "3":
-
+                // TODO: use cli parser for argument
+                // TODO: rework update of entry
                 break;
             case "4":
-
+                // TODO: use cli parser for argument
+                // TODO: rework update of entry
                 break;
             case "00":
                 System.out.println("exiting...");
