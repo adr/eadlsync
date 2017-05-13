@@ -2,7 +2,7 @@ package com.eadlsync.model.repo;
 
 import javafx.beans.property.ListProperty;
 
-import com.eadlsync.eadl.annotations.YStatementJustificationWrapper;
+import com.eadlsync.model.decision.YStatementJustificationWrapper;
 
 /**
  * Created by tobias on 07/03/2017.
@@ -67,6 +67,14 @@ public interface IRepo {
      * @param id
      */
     void updateMoreInformation(String moreInformation, String id);
+
+    /**
+     * Sets all the fields of the decision with the given id to the values of the given decision.
+     *
+     * @param decision as YStatementJustificationWrapper
+     * @param id
+     */
+    void updateDecision(YStatementJustificationWrapper decision, String id);
 
     /**
      * Commits the changes of the decisions to the repository

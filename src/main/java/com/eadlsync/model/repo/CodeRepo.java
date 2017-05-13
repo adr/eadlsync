@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.eadlsync.eadl.annotations.YStatementJustification;
-import com.eadlsync.eadl.annotations.YStatementJustificationWrapper;
+import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

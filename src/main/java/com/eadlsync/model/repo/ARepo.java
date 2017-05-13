@@ -6,7 +6,7 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 
-import com.eadlsync.eadl.annotations.YStatementJustificationWrapper;
+import com.eadlsync.model.decision.YStatementJustificationWrapper;
 
 /**
  * Created by Tobias on 29.04.2017.
@@ -56,6 +56,12 @@ public abstract class ARepo implements IRepo {
     public void updateMoreInformation(String moreInformation, String id) {
         yStatements.stream().filter(yStatement -> id.equals(yStatement.getId())).collect(Collectors
                 .toList()).forEach(yStatement -> yStatement.setMoreInformation(moreInformation));
+    }
+
+    @Override
+    public void updateDecision(YStatementJustificationWrapper decision, String id) {
+        yStatements.stream().filter(yStatement -> id.equals(yStatement.getId())).collect(Collectors
+                .toList()).forEach(yStatement -> yStatement = decision);
     }
 
     @Override
