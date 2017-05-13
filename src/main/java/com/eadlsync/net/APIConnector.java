@@ -4,10 +4,11 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.eadlsync.eadl.annotations.YStatementJustificationWrapper;
-import com.eadlsync.eadl.annotations.YStatementJustificationWrapperBuilder;
+import com.eadlsync.model.decision.YStatementJustificationWrapper;
+import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
 import com.eadlsync.serepo.data.restinterface.common.Link;
 import com.eadlsync.serepo.data.restinterface.metadata.MetadataContainer;
 import com.eadlsync.serepo.data.restinterface.metadata.MetadataEntry;
@@ -100,7 +101,13 @@ public class APIConnector {
             Object o = metadata.getMap().get("stereotype");
             String stereotype = (o == null) ? "" : o.toString();
             if (stereotype.toLowerCase().equals("problem occurrence")) {
-                problemItems.add(item);
+                o = metadata.getMap().get("taggedValues");
+                boolean solved = "Solved".equals(((Map<String, String>) o).get("Problem State"));
+                if (solved) {
+                    // only add problems which are solved, this means if a neglected option raises
+                    // another problem we do not want that problem to appear in our decisions
+                    problemItems.add(item);
+                }
             }
         }
 
@@ -161,6 +168,7 @@ public class APIConnector {
 
     private static String parseForContent(String key, Element seItemBody) {
         String content = "";
+
         seItemBody.getAllElements().stream().filter(element -> key.equals(element.val())).forEach
                 (element -> {
             // TODO: implement parsing the html boy for the content of the key
