@@ -94,10 +94,10 @@ public class YStatementJustificationComparisionObject {
     private String getAchievingComparisionString() {
         String comp;
         if (isAchievingEqual()) {
-            comp = "context='" + codeDecision.getContext() + "'";
+            comp = "achieving='" + codeDecision.getAchieving() + "'";
         } else {
-            comp = "**code-context='" + codeDecision.getContext() + "'";
-            comp += "**se-context  ='" + seDecision.getContext() + "'";
+            comp = "**code-achieving='" + codeDecision.getAchieving() + "'";
+            comp += "**se-achieving  ='" + seDecision.getAchieving() + "'";
         }
         return comp;
     }
