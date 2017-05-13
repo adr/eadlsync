@@ -8,8 +8,8 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 
-import com.eadlsync.eadl.annotations.YStatementJustificationComparisionObject;
-import com.eadlsync.eadl.annotations.YStatementJustificationWrapper;
+import com.eadlsync.model.decision.YStatementJustificationComparisionObject;
+import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.repo.CodeRepo;
 import com.eadlsync.model.repo.IRepo;
 import com.eadlsync.model.repo.SeRepo;
@@ -66,41 +66,41 @@ public class EADLSynchronizer implements IEADLSynchronizer {
     }
 
     private void updateAdditionalEads() {
-        additionalYStatements.clear();
+        this.additionalYStatements.clear();
         for (YStatementJustificationWrapper yStatementJustification : codeRepo
                 .yStatementJustificationsProperty()) {
             boolean isNotAvailable = seRepo.yStatementJustificationsProperty().stream().filter(y -> y
                     .getId().equals(yStatementJustification.getId())).collect(Collectors.toList())
                     .isEmpty();
             if (isNotAvailable) {
-                additionalYStatements.add(yStatementJustification);
+                this.additionalYStatements.add(yStatementJustification);
             }
         }
     }
 
     private void updateObsoleteEads() {
-        obsoleteYStatements.clear();
+        this.obsoleteYStatements.clear();
         for (YStatementJustificationWrapper yStatementJustification : seRepo
                 .yStatementJustificationsProperty()) {
             boolean isNotAvailable = codeRepo.yStatementJustificationsProperty().stream().filter(y ->
                     y.getId().equals(yStatementJustification.getId())).collect(Collectors.toList())
                     .isEmpty();
             if (isNotAvailable) {
-                obsoleteYStatements.add(yStatementJustification);
+                this.obsoleteYStatements.add(yStatementJustification);
             }
         }
     }
 
     private void updateDifferentEads() {
-        differentYStatements.clear();
+        this.differentYStatements.clear();
         for (YStatementJustificationWrapper yStatement : codeRepo.yStatementJustificationsProperty()) {
-            List<YStatementJustificationWrapper> differentYStatements = seRepo
+            List<YStatementJustificationWrapper> seSameYStatements = seRepo
                     .yStatementJustificationsProperty().stream().filter(y -> y.getId().equals
                             (yStatement.getId())).collect(Collectors.toList());
-            if (!differentYStatements.isEmpty()) {
+            if (!seSameYStatements.isEmpty()) {
                 YStatementJustificationComparisionObject decisionCompareObject = new
-                        YStatementJustificationComparisionObject(yStatement, differentYStatements.get(0));
-                if (!decisionCompareObject.isEqual()) {
+                        YStatementJustificationComparisionObject(yStatement, seSameYStatements.get(0));
+                if (decisionCompareObject.hasSameObjectWithDifferentFields()) {
                     this.differentYStatements.add(decisionCompareObject);
                 }
             }

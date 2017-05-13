@@ -2,8 +2,8 @@ package com.eadlsync.sync;
 
 import javafx.beans.property.ListProperty;
 
-import com.eadlsync.eadl.annotations.YStatementJustificationComparisionObject;
-import com.eadlsync.eadl.annotations.YStatementJustificationWrapper;
+import com.eadlsync.model.decision.YStatementJustificationComparisionObject;
+import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.report.EADLSyncReport;
 
 /**

@@ -4,8 +4,8 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 
-import com.eadlsync.eadl.annotations.YStatementJustificationComparisionObject;
-import com.eadlsync.eadl.annotations.YStatementJustificationWrapper;
+import com.eadlsync.model.decision.YStatementJustificationComparisionObject;
+import com.eadlsync.model.decision.YStatementJustificationWrapper;
 
 /**
  * Created by tobias on 07/03/2017.
@@ -44,6 +44,26 @@ public class EADLSyncReport {
 
     public void bindDifferentYStatements(ListProperty listProperty) {
         differentYStatements.bind(listProperty);
+    }
+
+    public ListProperty<YStatementJustificationWrapper> codeRepoYStatementsProperty() {
+        return this.codeRepoYStatements;
+    }
+
+    public ListProperty<YStatementJustificationWrapper> seRepoYStatementsProperty() {
+        return this.seRepoYStatements;
+    }
+
+    public ListProperty<YStatementJustificationWrapper> additionalYStatementsProperty() {
+        return this.additionalYStatements;
+    }
+
+    public ListProperty<YStatementJustificationWrapper> obsoleteRepoYStatementsProperty() {
+        return this.obsoleteYStatements;
+    }
+
+    public ListProperty<YStatementJustificationComparisionObject> differentYStatementsProperty() {
+        return this.differentYStatements;
     }
 
     @Override

@@ -1,21 +1,32 @@
 package com.eadlsync.model.decision;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Tobias on 13.05.2017.
  */
 public class YStatementJustificationComparisionObject {
 
+    private static final String HEAD = "<<<<<<< HEAD:code repo<to be replaced with path>";
+    private static final String TAIL = ">>>>>>> conflicts:se-repo<to be replaced with url>";
+    private static final String SEPARATOR = "=======";
     private YStatementJustificationWrapper codeDecision;
     private YStatementJustificationWrapper seDecision;
+    private List<String> lastWrittenFields = new ArrayList<>();
+    private boolean[] differences;
 
     public YStatementJustificationComparisionObject(YStatementJustificationWrapper codeDecision,
                                                     YStatementJustificationWrapper seDecision) {
         this.codeDecision = codeDecision;
         this.seDecision = seDecision;
+        this.differences = new boolean[]{!isContextEqual(), !isFacingEqual(), !isChosenEqual(),
+                !isNeglectedEqual(), !isAchievingEqual(), !isAcceptingEqual(), !isMoreInformationEqual
+                ()};
     }
 
-    public boolean isEqual() {
-        return codeDecision != null && codeDecision.equals(seDecision);
+    public boolean hasSameObjectWithDifferentFields() {
+        return !codeDecision.equals(seDecision);
     }
 
     private boolean isContextEqual() {
@@ -47,13 +58,55 @@ public class YStatementJustificationComparisionObject {
                 .getMoreInformation());
     }
 
+    private String addSeparatorAndDifferencesIfNeeded(int index, String differentField) {
+        if (!isPreviousDifferent(index)) {
+            lastWrittenFields.clear();
+        }
+        if (isNextDifferent(index)) {
+            lastWrittenFields.add(differentField);
+            return "";
+        } else {
+            lastWrittenFields.add(differentField);
+            String sepAndDiff;
+            sepAndDiff = "\n" + SEPARATOR;
+            for (String field : lastWrittenFields) {
+                sepAndDiff += "\n" + field;
+            }
+            return sepAndDiff;
+        }
+    }
+
+    private String addHeadIfNeeded(int index) {
+        return isPreviousDifferent(index) ? "" : HEAD + "\n";
+    }
+
+    private String addTailIfNeeded(int index) {
+        return isNextDifferent(index) ? "" : "\n" + TAIL;
+    }
+
+    private boolean isPreviousDifferent(int index) {
+        if (index - 1 < 0) {
+            return false;
+        }
+        return differences[index - 1];
+    }
+
+    private boolean isNextDifferent(int index) {
+        if (index + 1 >= differences.length) {
+            return false;
+        }
+        return differences[index + 1];
+    }
+
     private String getContextComparisionString() {
         String comp;
         if (isContextEqual()) {
             comp = "context='" + codeDecision.getContext() + "'";
         } else {
-            comp = "**code-context='" + codeDecision.getContext() + "'";
-            comp += "**se-context  ='" + seDecision.getContext() + "'";
+            comp = addHeadIfNeeded(0);
+            comp += "context='" + codeDecision.getContext() + "'";
+            comp += addSeparatorAndDifferencesIfNeeded(0, "context='" + seDecision.getContext() + "'");
+            comp += addTailIfNeeded(0);
         }
         return comp;
     }
@@ -63,8 +116,10 @@ public class YStatementJustificationComparisionObject {
         if (isFacingEqual()) {
             comp = "facing='" + codeDecision.getFacing() + "'";
         } else {
-            comp = "**code-facing='" + codeDecision.getFacing() + "'";
-            comp += "**se-facing  ='" + seDecision.getFacing() + "'";
+            comp = addHeadIfNeeded(1);
+            comp += "facing='" + codeDecision.getFacing() + "'";
+            comp += addSeparatorAndDifferencesIfNeeded(1, "facing='" + seDecision.getFacing() + "'");
+            comp += addTailIfNeeded(1);
         }
         return comp;
     }
@@ -74,8 +129,10 @@ public class YStatementJustificationComparisionObject {
         if (isChosenEqual()) {
             comp = "chosen='" + codeDecision.getChosen() + "'";
         } else {
-            comp = "**code-chosen='" + codeDecision.getChosen() + "'";
-            comp += "**se-chosen  ='" + seDecision.getChosen() + "'";
+            comp = addHeadIfNeeded(2);
+            comp += "chosen='" + codeDecision.getChosen() + "'";
+            comp += addSeparatorAndDifferencesIfNeeded(2, "chosen='" + seDecision.getChosen() + "'");
+            comp += addTailIfNeeded(2);
         }
         return comp;
     }
@@ -85,8 +142,11 @@ public class YStatementJustificationComparisionObject {
         if (isNeglectedEqual()) {
             comp = "neglected='" + codeDecision.getNeglected() + "'";
         } else {
-            comp = "**code-neglected='" + codeDecision.getNeglected() + "'";
-            comp += "**se-neglected  ='" + seDecision.getNeglected() + "'";
+            comp = addHeadIfNeeded(3);
+            comp += "neglected='" + codeDecision.getNeglected() + "'";
+            comp += addSeparatorAndDifferencesIfNeeded(3, "neglected='" + seDecision.getNeglected() +
+                    "'");
+            comp += addTailIfNeeded(3);
         }
         return comp;
     }
@@ -96,8 +156,11 @@ public class YStatementJustificationComparisionObject {
         if (isAchievingEqual()) {
             comp = "achieving='" + codeDecision.getAchieving() + "'";
         } else {
-            comp = "**code-achieving='" + codeDecision.getAchieving() + "'";
-            comp += "**se-achieving  ='" + seDecision.getAchieving() + "'";
+            comp = addHeadIfNeeded(4);
+            comp += "achieving='" + codeDecision.getAchieving() + "'";
+            comp += addSeparatorAndDifferencesIfNeeded(4, "achieving='" + seDecision.getAchieving() +
+                    "'");
+            comp += addTailIfNeeded(4);
         }
         return comp;
     }
@@ -107,8 +170,11 @@ public class YStatementJustificationComparisionObject {
         if (isAcceptingEqual()) {
             comp = "accepting='" + codeDecision.getAccepting() + "'";
         } else {
-            comp = "**code-accepting='" + codeDecision.getAccepting() + "'";
-            comp += "**se-accepting  ='" + seDecision.getAccepting() + "'";
+            comp = addHeadIfNeeded(5);
+            comp += "accepting='" + codeDecision.getAccepting() + "'";
+            comp += addSeparatorAndDifferencesIfNeeded(5, "accepting='" + seDecision.getAccepting() +
+                    "'");
+            comp += addTailIfNeeded(5);
         }
         return comp;
     }
@@ -118,24 +184,27 @@ public class YStatementJustificationComparisionObject {
         if (isMoreInformationEqual()) {
             comp = "moreInformation='" + codeDecision.getMoreInformation() + "'";
         } else {
-            comp = "**code-moreInformation='" + codeDecision.getMoreInformation() + "'";
-            comp += "**se-moreInformation  ='" + seDecision.getMoreInformation() + "'";
+            comp = addHeadIfNeeded(6);
+            comp += "moreInformation='" + codeDecision.getMoreInformation() + "'";
+            comp += addSeparatorAndDifferencesIfNeeded(6, "moreInformation='" + seDecision
+                    .getMoreInformation() + "'");
+            comp += addTailIfNeeded(6);
         }
         return comp;
     }
 
     @Override
     public String toString() {
-        String compare = "Compare View{";
-        compare += "\n\tid='" + codeDecision.getId() + "'";
-        compare += "\n\t" + getContextComparisionString();
-        compare += "\n\t" + getFacingComparisionString();
-        compare += "\n\t" + getChosenComparisionString();
-        compare += "\n\t" + getNeglectedComparisionString();
-        compare += "\n\t" + getAchievingComparisionString();
-        compare += "\n\t" + getAcceptingComparisionString();
-        compare += "\n\t" + getMoreInformationComparisionString();
-        compare += "}\n";
+        String compare = "Compare View{\n";
+        compare += "\tid='" + codeDecision.getId() + "'\n";
+        compare += "\t" + getContextComparisionString().replaceAll("\n", "\n\t") + "\n";
+        compare += "\t" + getFacingComparisionString().replaceAll("\n", "\n\t") + "\n";
+        compare += "\t" + getChosenComparisionString().replaceAll("\n", "\n\t") + "\n";
+        compare += "\t" + getNeglectedComparisionString().replaceAll("\n", "\n\t") + "\n";
+        compare += "\t" + getAchievingComparisionString().replaceAll("\n", "\n\t") + "\n";
+        compare += "\t" + getAcceptingComparisionString().replaceAll("\n", "\n\t") + "\n";
+        compare += "\t" + getMoreInformationComparisionString().replaceAll("\n", "\n\t") + "\n";
+        compare += "}";
         return compare;
     }
 }
