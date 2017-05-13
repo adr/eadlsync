@@ -2,6 +2,7 @@ package com.eadlsync.sync;
 
 import javafx.beans.property.ListProperty;
 
+import com.eadlsync.eadl.annotations.YStatementJustificationComparisionObject;
 import com.eadlsync.eadl.annotations.YStatementJustificationWrapper;
 import com.eadlsync.model.report.EADLSyncReport;
 
@@ -30,12 +31,13 @@ public interface IEADLSynchronizer {
 
     /**
      * Synchronizes the eads of a code repository with ystatements of a se-repo and returns a
-     * list of {@link YStatementJustificationWrapper} which are in the code repository but not in the
-     * serepo.
+     * list of {@link YStatementJustificationComparisionObject} which holds two
+     * {@link YStatementJustificationWrapper} Objects which are present in both repos but have
+     * different fields.
      *
-     * @return a list of {@link YStatementJustificationWrapper}
+     * @return a list of {@link YStatementJustificationComparisionObject}
      */
-    public ListProperty<YStatementJustificationWrapper> differentYStatementsProperty();
+    public ListProperty<YStatementJustificationComparisionObject> differentYStatementsProperty();
 
     /**
      * This will generate an eadlsync report.

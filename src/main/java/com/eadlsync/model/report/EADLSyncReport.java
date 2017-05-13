@@ -4,6 +4,7 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 
+import com.eadlsync.eadl.annotations.YStatementJustificationComparisionObject;
 import com.eadlsync.eadl.annotations.YStatementJustificationWrapper;
 
 /**
@@ -15,7 +16,7 @@ public class EADLSyncReport {
     private final ListProperty<YStatementJustificationWrapper> seRepoYStatements;
     private final ListProperty<YStatementJustificationWrapper> additionalYStatements;
     private final ListProperty<YStatementJustificationWrapper> obsoleteYStatements;
-    private final ListProperty<YStatementJustificationWrapper> differentYStatements;
+    private final ListProperty<YStatementJustificationComparisionObject> differentYStatements;
 
     public EADLSyncReport() {
         codeRepoYStatements = new SimpleListProperty<>(FXCollections.observableArrayList());
@@ -47,11 +48,13 @@ public class EADLSyncReport {
 
     @Override
     public String toString() {
-        String content = String.format("Code Repo Y Statements: %s\n" + "Se-Repo Y Statements: %s\n" +
-                "Y Statements in Code Repo but not in Se-Repo: %s\n" + "Y Statements in Se-Repo but "
-                + "not in Code Repo: %s\n" + "Y Statements that have different fields in the Se-Repo " +
-                "than " + "in the Code Rpo: %s\n", codeRepoYStatements.get(), seRepoYStatements.get(),
-                additionalYStatements.get(), obsoleteYStatements.get(), differentYStatements.get());
+        String content = String.format("##########Code Repo Y Statements: %s\n\n" + "##########Se-Repo" +
+                " Y " + "Statements: %s\n\n" + "##########Y Statements in Code Repo but not in " +
+                "Se-Repo: " + "%s\n\n" + "##########Y Statements in Se-Repo but " + "not in Code Repo:" +
+                " " + "%s\n\n" + "##########Y Statements that have different fields in the Se-Repo " +
+                "than" + " " + "in the Code Rpo: %s\n", codeRepoYStatements.get(), seRepoYStatements
+                .get(), additionalYStatements.get(), obsoleteYStatements.get(), differentYStatements
+                .get());
         return content;
     }
 

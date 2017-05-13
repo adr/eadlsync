@@ -8,7 +8,7 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 
-import com.eadlsync.eadl.annotations.YStatementJustificationComparator;
+import com.eadlsync.eadl.annotations.YStatementJustificationComparisionObject;
 import com.eadlsync.eadl.annotations.YStatementJustificationWrapper;
 import com.eadlsync.model.repo.CodeRepo;
 import com.eadlsync.model.repo.IRepo;
@@ -26,7 +26,7 @@ public class EADLSynchronizer implements IEADLSynchronizer {
     private final Logger LOG = LoggerFactory.getLogger(EADLSynchronizer.class);
     private final ListProperty<YStatementJustificationWrapper> additionalYStatements;
     private final ListProperty<YStatementJustificationWrapper> obsoleteYStatements;
-    private final ListProperty<YStatementJustificationWrapper> differentYStatements;
+    private final ListProperty<YStatementJustificationComparisionObject> differentYStatements;
     private EADLSyncReport report = new EADLSyncReport();
     private IRepo codeRepo;
     private IRepo seRepo;
@@ -93,15 +93,15 @@ public class EADLSynchronizer implements IEADLSynchronizer {
 
     private void updateDifferentEads() {
         differentYStatements.clear();
-        YStatementJustificationComparator comparator = new YStatementJustificationComparator();
         for (YStatementJustificationWrapper yStatement : codeRepo.yStatementJustificationsProperty()) {
             List<YStatementJustificationWrapper> differentYStatements = seRepo
                     .yStatementJustificationsProperty().stream().filter(y -> y.getId().equals
                             (yStatement.getId())).collect(Collectors.toList());
             if (!differentYStatements.isEmpty()) {
-                YStatementJustificationWrapper differentYStatement = differentYStatements.get(0);
-                if (comparator.equal(yStatement, differentYStatement)) {
-                    this.differentYStatements.add(yStatement);
+                YStatementJustificationComparisionObject decisionCompareObject = new
+                        YStatementJustificationComparisionObject(yStatement, differentYStatements.get(0));
+                if (!decisionCompareObject.isEqual()) {
+                    this.differentYStatements.add(decisionCompareObject);
                 }
             }
         }
@@ -118,7 +118,7 @@ public class EADLSynchronizer implements IEADLSynchronizer {
     }
 
     @Override
-    public ListProperty<YStatementJustificationWrapper> differentYStatementsProperty() {
+    public ListProperty<YStatementJustificationComparisionObject> differentYStatementsProperty() {
         return this.differentYStatements;
     }
 

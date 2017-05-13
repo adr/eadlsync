@@ -1,6 +1,10 @@
 package com.eadlsync.eadl.annotations;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 // TODO decide where to put the Y statement template text - defaults? IO helper? ...?
 // see IEEE SOftware/InfoQ article and SATURN 2012 presentation for introduction of Y statements (as well as AppArch lecture at HSR FHO)
@@ -8,7 +12,7 @@ import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-@Inherited
+//@Inherited
 @Documented
 public @interface YStatementJustification {
 
