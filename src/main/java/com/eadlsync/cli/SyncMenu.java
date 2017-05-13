@@ -4,20 +4,23 @@ import java.util.Arrays;
 
 import com.eadlsync.EADLSyncMain;
 import com.eadlsync.sync.IEADLSynchronizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Tobias on 23.04.2017.
  */
 public class SyncMenu extends ACLIMenu {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SyncMenu.class);
     private static final SyncMenu instance = new SyncMenu();
 
     private SyncMenu() {
         super("Sync Menu");
-        setMenuItems(Arrays.asList(new CLIMenuItem("1", "print additional eads"), new CLIMenuItem("2", "print " +
-                "obsolete eads"), new CLIMenuItem("3", "update ead in code repo", Arrays.asList("id")), new
-                CLIMenuItem("4", "update ead in se-repo", Arrays.asList("id")), new CLIMenuItem("0", "back"), new
-                CLIMenuItem("00", "exit")));
+        setMenuItems(Arrays.asList(new CLIMenuItem("11", "Reinitialize Sync"), new CLIMenuItem("1",
+                "print different eads"), new CLIMenuItem("2", "update ead in code repo", Arrays.asList
+                ("id")), new CLIMenuItem("3", "update ead in " + "se-repo", Arrays.asList("id")), new
+                CLIMenuItem("0", "back"), new CLIMenuItem("00", "exit")));
         bindLoop(option.isNotEqualTo("0").or(option.isNotEqualTo("00")));
     }
 
@@ -28,22 +31,31 @@ public class SyncMenu extends ACLIMenu {
     @Override
     protected void evaluate(String option) {
         IEADLSynchronizer synchronizer = EADLSyncMain.getSynchronizer();
-        String id = "";
         switch (option) {
             case "0":
                 MainMenu.getInstance().show();
                 break;
+            case "11":
+                try {
+                    synchronizer.reinitialize();
+                } catch (Exception e) {
+                    LOG.error("Error while reinitializing the sync class", e);
+                }
+                break;
             case "1":
-                System.out.println(synchronizer.additionalYStatementsProperty());
+                System.out.println(synchronizer.differentYStatementsProperty());
                 break;
             case "2":
-                System.out.println(synchronizer.obsoleteYStatementsProperty());
-                break;
-            case "3":
+                synchronizer.updateYStatementInCodeRepo(synchronizer.getEadlSyncReport()
+                        .codeRepoYStatementsProperty().get(0).getId());
+                System.out.println("updated code repo decision");
                 // TODO: use cli parser for argument
                 // TODO: rework update of entry
                 break;
-            case "4":
+            case "3":
+                synchronizer.updateYStatementInSeRepo(synchronizer.getEadlSyncReport()
+                        .seRepoYStatementsProperty().get(0).getId());
+                System.out.println("updated se-repo decision");
                 // TODO: use cli parser for argument
                 // TODO: rework update of entry
                 break;

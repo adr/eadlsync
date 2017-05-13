@@ -69,12 +69,11 @@ public interface IRepo {
     void updateMoreInformation(String moreInformation, String id);
 
     /**
-     * Sets all the fields of the decision with the given id to the values of the given decision.
+     * Updates the decision with the same id as the given decision.
      *
      * @param decision as YStatementJustificationWrapper
-     * @param id
      */
-    void updateDecision(YStatementJustificationWrapper decision, String id);
+    void updateDecision(YStatementJustificationWrapper decision);
 
     /**
      * Commits the changes of the decisions to the repository

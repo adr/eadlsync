@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 
 import com.eadlsync.model.decision.YStatementJustificationComparisionObject;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
@@ -45,9 +46,9 @@ public class EADLSynchronizer implements IEADLSynchronizer {
         } catch (UnirestException e) {
             LOG.error("Error while reading se-items from se-repo.", e);
         }
-        updateAdditionalEads();
-        updateObsoleteEads();
-        updateDifferentEads();
+        initAdditionalEads();
+        initObsoleteEads();
+        initDifferentEads();
         setListeners();
         bindReportToYStatements();
     }
@@ -61,14 +62,28 @@ public class EADLSynchronizer implements IEADLSynchronizer {
     }
 
     private void setListeners() {
-        //        codeRepo.yStatementJustificationsProperty().addListener((ListChangeListener)(c -> {}));
-        // TODO: set listener which only need to check the changed items
+        // TODO: listener which only need to check the changed items
+        codeRepo.yStatementJustificationsProperty().addListener(
+                (ListChangeListener<YStatementJustificationWrapper>) c -> {
+            initAdditionalEads();
+            initObsoleteEads();
+            initDifferentEads();
+        });
+        seRepo.yStatementJustificationsProperty().addListener(
+                (ListChangeListener<YStatementJustificationWrapper>) c -> {
+            initAdditionalEads();
+            initObsoleteEads();
+            initDifferentEads();
+        });
     }
 
-    private void updateAdditionalEads() {
+    private void initAdditionalEads() {
         this.additionalYStatements.clear();
-        for (YStatementJustificationWrapper yStatementJustification : codeRepo
-                .yStatementJustificationsProperty()) {
+        updateAdditionalEads(codeRepo.yStatementJustificationsProperty());
+    }
+
+    private void updateAdditionalEads(List<YStatementJustificationWrapper> baseDecisions) {
+        for (YStatementJustificationWrapper yStatementJustification : baseDecisions) {
             boolean isNotAvailable = seRepo.yStatementJustificationsProperty().stream().filter(y -> y
                     .getId().equals(yStatementJustification.getId())).collect(Collectors.toList())
                     .isEmpty();
@@ -78,10 +93,13 @@ public class EADLSynchronizer implements IEADLSynchronizer {
         }
     }
 
-    private void updateObsoleteEads() {
+    private void initObsoleteEads() {
         this.obsoleteYStatements.clear();
-        for (YStatementJustificationWrapper yStatementJustification : seRepo
-                .yStatementJustificationsProperty()) {
+        updateObsoleteEads(seRepo.yStatementJustificationsProperty());
+    }
+
+    private void updateObsoleteEads(List<YStatementJustificationWrapper> baseDecisions) {
+        for (YStatementJustificationWrapper yStatementJustification : baseDecisions) {
             boolean isNotAvailable = codeRepo.yStatementJustificationsProperty().stream().filter(y ->
                     y.getId().equals(yStatementJustification.getId())).collect(Collectors.toList())
                     .isEmpty();
@@ -91,9 +109,13 @@ public class EADLSynchronizer implements IEADLSynchronizer {
         }
     }
 
-    private void updateDifferentEads() {
+    private void initDifferentEads() {
         this.differentYStatements.clear();
-        for (YStatementJustificationWrapper yStatement : codeRepo.yStatementJustificationsProperty()) {
+        updateDifferentEads(codeRepo.yStatementJustificationsProperty());
+    }
+
+    public void updateDifferentEads(List<YStatementJustificationWrapper> baseDecisions) {
+        for (YStatementJustificationWrapper yStatement : baseDecisions) {
             List<YStatementJustificationWrapper> seSameYStatements = seRepo
                     .yStatementJustificationsProperty().stream().filter(y -> y.getId().equals
                             (yStatement.getId())).collect(Collectors.toList());
@@ -123,8 +145,32 @@ public class EADLSynchronizer implements IEADLSynchronizer {
     }
 
     @Override
+    public void updateYStatementInCodeRepo(String id) {
+        List<YStatementJustificationWrapper> wrappers = seRepo.yStatementJustificationsProperty()
+                .stream().filter(y -> id.equals(y.getId())).collect(Collectors.toList());
+        if (!wrappers.isEmpty()) {
+            codeRepo.updateDecision(wrappers.get(0));
+        }
+    }
+
+    @Override
+    public void updateYStatementInSeRepo(String id) {
+        List<YStatementJustificationWrapper> wrappers = codeRepo.yStatementJustificationsProperty()
+                .stream().filter(y -> id.equals(y.getId())).collect(Collectors.toList());
+        if (!wrappers.isEmpty()) {
+            seRepo.updateDecision(wrappers.get(0));
+        }
+    }
+
+    @Override
     public EADLSyncReport getEadlSyncReport() {
         return this.report;
+    }
+
+    @Override
+    public void reinitialize() throws Exception {
+        this.codeRepo.reloadEADs();
+        this.seRepo.reloadEADs();
     }
 
 }

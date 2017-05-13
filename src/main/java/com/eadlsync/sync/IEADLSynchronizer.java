@@ -40,10 +40,34 @@ public interface IEADLSynchronizer {
     public ListProperty<YStatementJustificationComparisionObject> differentYStatementsProperty();
 
     /**
+     * Updates the decision with the given id in the code repo.
+     * The decision with the given id has to be in the list of differentYStatementsProperty
+     *
+     * @param id as String
+     */
+    public void updateYStatementInCodeRepo(String id);
+
+    /**
+     * Updates the decision with the given id in the se-repo.
+     * The decision with the given id has to be in the list of differentYStatementsProperty
+     *
+     * @param id as String
+     */
+    public void updateYStatementInSeRepo(String id);
+
+    /**
      * This will generate an eadlsync report.
      *
      * @return a {@link EADLSyncReport}
      */
     public EADLSyncReport getEadlSyncReport();
 
+
+    /**
+     * Reinitialize the code repository and the se-repo. This essentially reloads the eadl for the
+     * code repo and the se-items for the se-repo.
+     *
+     * @throws Exception
+     */
+    void reinitialize() throws Exception;
 }

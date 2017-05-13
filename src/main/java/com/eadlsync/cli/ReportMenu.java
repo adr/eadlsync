@@ -3,19 +3,27 @@ package com.eadlsync.cli;
 import java.util.Arrays;
 
 import com.eadlsync.EADLSyncMain;
-import com.eadlsync.sync.IEADLSynchronizer;
+import com.eadlsync.model.report.EADLSyncReport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Tobias on 23.04.2017.
  */
 public class ReportMenu extends ACLIMenu {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ReportMenu.class);
     private static final ReportMenu instance = new ReportMenu();
 
     private ReportMenu() {
         super("Report Menu");
-        setMenuItems(Arrays.asList(new CLIMenuItem("1", "print report"), new CLIMenuItem("2", "export report to pdf")
-                , new CLIMenuItem("0", "back"), new CLIMenuItem("00", "exit")));
+        setMenuItems(Arrays.asList(new CLIMenuItem("11", "Reinitialize Sync"), new CLIMenuItem("1",
+                "print y-statements of code repository"), new CLIMenuItem("2", "print y-statements of " +
+                "" + "se-repo"), new CLIMenuItem("3", "print " + "additional y-statements of the " +
+                "se-repo"), new CLIMenuItem("4", "print " + "obsolete " + "y-statements of the code " +
+                "repository"), new CLIMenuItem("5", "print different" + "y-statements"), new
+                CLIMenuItem("6", "print " + "complete report"), new CLIMenuItem("0", "back"), new
+                CLIMenuItem("00", "exit")));
         bindLoop(option.isNotEqualTo("0").or(option.isNotEqualTo("00")));
     }
 
@@ -25,16 +33,35 @@ public class ReportMenu extends ACLIMenu {
 
     @Override
     public void evaluate(String option) {
-        IEADLSynchronizer synchronizer = EADLSyncMain.getSynchronizer();
+        EADLSyncReport report = EADLSyncMain.getSynchronizer().getEadlSyncReport();
         switch (option) {
             case "0":
                 MainMenu.getInstance().show();
                 break;
+            case "11":
+                try {
+                    EADLSyncMain.getSynchronizer().reinitialize();
+                } catch (Exception e) {
+                    LOG.error("Error while reinitializing the sync class", e);
+                }
+                break;
             case "1":
-                System.out.println(synchronizer.getEadlSyncReport());
+                System.out.println(report.codeRepoYStatementsProperty().get());
                 break;
             case "2":
-                // TODO: export as pdf
+                System.out.println(report.seRepoYStatementsProperty().get());
+                break;
+            case "3":
+                System.out.println(report.additionalYStatementsProperty().get());
+                break;
+            case "4":
+                System.out.println(report.obsoleteRepoYStatementsProperty().get());
+                break;
+            case "5":
+                System.out.println(report.differentYStatementsProperty().get());
+                break;
+            case "6":
+                System.out.println(report);
                 break;
             case "00":
                 System.out.println("exiting...");

@@ -2,7 +2,7 @@ package com.eadlsync.model.repo;
 
 import javafx.beans.property.ListProperty;
 
-import com.eadlsync.eadl.annotations.YStatementJustificationWrapper;
+import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.net.APIConnector;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -32,7 +32,10 @@ public class SeRepo extends ARepo {
      */
     @Override
     public void commit() throws Exception {
-
+//        SeItem seItem = new SeItem();
+//        User user = new User("eADL-Sync", "eadl@sync.com");
+//        seItem.setAuthor(user);
+//
     }
 
     @Override
