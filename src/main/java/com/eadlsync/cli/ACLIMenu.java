@@ -17,11 +17,11 @@ import com.eadlsync.eadl.annotations.YStatementJustification;
  * Created by Tobias on 23.04.2017.
  */
 @YStatementJustification(
-        id = "http://localhost:8080/serepo/repos/eADL-Sync/commits/00edd0cc4b03d50519841f4370754e5ceb5f5f22/seitems/S_GUI/java/com/eadlsync/cli/User%20Interface",
+        id = "http://localhost:8080/serepo/repos/eADL-Sync/commits/83d2acc56c1a8d7385a86bf955c47c7e9a999abc/seitems/S_GUI/java/com/eadlsync/cli/User%20Interface",
         context = "How should the synchronization tool be used",
         facing = "Used by software engineers",
-        chosen = "http://localhost:8080/serepo/repos/eADL-Sync/commits/00edd0cc4b03d50519841f4370754e5ceb5f5f22/seitems/S_GUI/java/com/eadlsync/cli/Console%20Interface",
-        neglected = "http://localhost:8080/serepo/repos/eADL-Sync/commits/00edd0cc4b03d50519841f4370754e5ceb5f5f22/seitems/S_GUI/java/com/eadlsync/cli/GUI, http://localhost:8080/serepo/repos/eADL-Sync/commits/00edd0cc4b03d50519841f4370754e5ceb5f5f22/seitems/S_GUI/java/com/eadlsync/cli/IntelliJ%20Add-In",
+        chosen = "http://localhost:8080/serepo/repos/eADL-Sync/commits/83d2acc56c1a8d7385a86bf955c47c7e9a999abc/seitems/S_GUI/java/com/eadlsync/cli/Console%20Interface",
+        neglected = "http://localhost:8080/serepo/repos/eADL-Sync/commits/83d2acc56c1a8d7385a86bf955c47c7e9a999abc/seitems/S_GUI/java/com/eadlsync/cli/GUI, http://localhost:8080/serepo/repos/eADL-Sync/commits/00edd0cc4b03d50519841f4370754e5ceb5f5f22/seitems/S_GUI/java/com/eadlsync/cli/IntelliJ%20Add-In",
         achieving = "Not much implementation effort",
         accepting = "Bad usabillity"
 )
