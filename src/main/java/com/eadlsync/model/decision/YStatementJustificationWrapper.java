@@ -1,4 +1,6 @@
-package com.eadlsync.eadl.annotations;
+package com.eadlsync.model.decision;
+
+import com.eadlsync.eadl.annotations.YStatementJustification;
 
 public class YStatementJustificationWrapper {
 

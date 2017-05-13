@@ -1,4 +1,4 @@
-package com.eadlsync.eadl.annotations;
+package com.eadlsync.model.decision;
 
 /**
  * Created by Tobias on 03.04.2017.
