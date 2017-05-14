@@ -43,14 +43,19 @@ public class EADLSyncMain {
         }
 
         String codeRepoPathOrUrl = cmd.getOptionValue("codePath");
-        String seRepoPath = cmd.getOptionValue("serepoUrl");
+        String seRepoBasePath = cmd.getOptionValue("serepoUrl");
+        String seRepoProjectName = cmd.getOptionValue("projectName");
+        String seRepoCommitId = cmd.getOptionValue("commitId");
 
         // code repo path needs to specify the root of the sources folder of the java project
         // eg for this project it is -c "/Users/tobias/git/eadlsync/src/main/java"
-        LOG.info("Code Repo: {}", codeRepoPathOrUrl);
-        LOG.info("Se-Repo: {}", seRepoPath);
+        LOG.info("Code repo: {}", codeRepoPathOrUrl);
+        LOG.info("Se-repo base url: {}", seRepoBasePath);
+        LOG.info("Se-repo project name: {}", seRepoProjectName);
+        LOG.info("Se-repo commit id: {}", seRepoCommitId);
 
-        synchronizer = new EADLSynchronizer(codeRepoPathOrUrl, seRepoPath);
+        synchronizer = new EADLSynchronizer(codeRepoPathOrUrl, seRepoBasePath, seRepoProjectName,
+                seRepoCommitId);
         MainMenu.getInstance().show();
 
 
@@ -66,6 +71,14 @@ public class EADLSyncMain {
         Option seRepoPathOption = new Option("s", "serepoUrl", true, "Path to the se-repo");
         codeRepoPathOption.setRequired(true);
         options.addOption(seRepoPathOption);
+
+        Option seRepoNameOption = new Option("p", "projectName", true, "Project name in the se-repo");
+        codeRepoPathOption.setRequired(true);
+        options.addOption(seRepoNameOption);
+
+        Option seRepoCommitOption = new Option("i", "commitId", true, "Commit id");
+        codeRepoPathOption.setRequired(true);
+        options.addOption(seRepoCommitOption);
 
         return options;
     }

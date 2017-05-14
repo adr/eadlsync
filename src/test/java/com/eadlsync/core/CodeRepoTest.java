@@ -26,7 +26,7 @@ public class CodeRepoTest extends MockedAPI {
 
     @Test
     public void testSeRepo() throws MalformedURLException, UnirestException {
-        IRepo repo = new SeRepo(TEST_SEITEMS_URL);
+        IRepo repo = new SeRepo(SEREPO_URL, SEREPO_NAME, SEREPO_COMMIT_ID);
         assertFalse(repo.yStatementJustificationsProperty().isEmpty());
     }
 

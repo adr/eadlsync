@@ -32,7 +32,8 @@ public class EADLSynchronizer implements IEADLSynchronizer {
     private IRepo codeRepo;
     private IRepo seRepo;
 
-    public EADLSynchronizer(String codeRepoPath, String seRepoUrl) {
+    public EADLSynchronizer(String codeRepoPath, String repositoryBaseUrl, String
+            repositoryProjectName, String repositoryCommitId) {
         additionalYStatements = new SimpleListProperty<>(FXCollections.observableArrayList());
         obsoleteYStatements = new SimpleListProperty<>(FXCollections.observableArrayList());
         differentYStatements = new SimpleListProperty<>(FXCollections.observableArrayList());
@@ -42,7 +43,7 @@ public class EADLSynchronizer implements IEADLSynchronizer {
             LOG.error("Error while reading embedded architectural decisions from disk.", e);
         }
         try {
-            seRepo = new SeRepo(seRepoUrl);
+            seRepo = new SeRepo(repositoryBaseUrl, repositoryProjectName, repositoryCommitId);
         } catch (UnirestException e) {
             LOG.error("Error while reading se-items from se-repo.", e);
         }

@@ -11,10 +11,18 @@ import com.mashape.unirest.http.exceptions.UnirestException;
  */
 public class SeRepo extends ARepo {
 
+    private final String repositoryBaseUrl;
+    private final String repositoryProjectName;
+    private final String repositoryCommitId;
     private final String repositoryUrl;
 
-    public SeRepo(String url) throws UnirestException {
-        this.repositoryUrl = url;
+    public SeRepo(String repositoryBaseUrl, String repositoryProjectName, String repositoryCommitId)
+            throws UnirestException {
+        this.repositoryBaseUrl = repositoryBaseUrl;
+        this.repositoryProjectName = repositoryProjectName;
+        this.repositoryCommitId = repositoryCommitId;
+        this.repositoryUrl = String.format("%s/repos/%s/commits/%s/seitems", this.repositoryBaseUrl,
+                this.repositoryProjectName, this.repositoryCommitId);
         loadEadsFromSeRepo();
     }
 
@@ -32,10 +40,10 @@ public class SeRepo extends ARepo {
      */
     @Override
     public void commit() throws Exception {
-//        SeItem seItem = new SeItem();
-//        User user = new User("eADL-Sync", "eadl@sync.com");
-//        seItem.setAuthor(user);
-//
+        //        SeItem seItem = new SeItem();
+        //        User user = new User("eADL-Sync", "eadl@sync.com");
+        //        seItem.setAuthor(user);
+        //
     }
 
     @Override
