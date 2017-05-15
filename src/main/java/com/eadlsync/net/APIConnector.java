@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
+import com.eadlsync.serepo.data.restinterface.commit.CommitContainer;
 import com.eadlsync.serepo.data.restinterface.common.Link;
 import com.eadlsync.serepo.data.restinterface.metadata.MetadataContainer;
 import com.eadlsync.serepo.data.restinterface.metadata.MetadataEntry;
@@ -53,6 +54,13 @@ public class APIConnector {
                 }
             }
         });
+    }
+
+    public static CommitContainer getCommitContainerByUrl(String url) throws UnirestException {
+        HttpResponse<CommitContainer> seItemContainerResponse = Unirest.get(url).asObject
+                (CommitContainer.class);
+        CommitContainer commitContainer = seItemContainerResponse.getBody();
+        return commitContainer;
     }
 
     public static SeItemContainer getSeItemContainerByUrl(String url) throws UnirestException {
