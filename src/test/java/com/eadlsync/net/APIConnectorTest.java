@@ -10,6 +10,7 @@ import com.eadlsync.serepo.data.restinterface.metadata.MetadataEntry;
 import com.eadlsync.serepo.data.restinterface.seitem.RelationEntry;
 import com.eadlsync.serepo.data.restinterface.seitem.SeItem;
 import com.eadlsync.serepo.data.restinterface.seitem.SeItemContainer;
+import com.eadlsync.util.net.APIConnector;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.junit.Test;
 

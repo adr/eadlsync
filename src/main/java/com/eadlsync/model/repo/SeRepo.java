@@ -3,7 +3,7 @@ package com.eadlsync.model.repo;
 import javafx.beans.property.ListProperty;
 
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
-import com.eadlsync.net.APIConnector;
+import com.eadlsync.util.net.APIConnector;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 /**
@@ -36,10 +36,11 @@ public class SeRepo extends ARepo {
      * restful api of the se-repo. It should be manually called and not right after any field of an
      * embedded architectural decision is updated.
      *
+     * @param message for the commit
      * @throws Exception
      */
     @Override
-    public void commit() throws Exception {
+    public void commit(String message) throws Exception {
         //        SeItem seItem = new SeItem();
         //        User user = new User("eADL-Sync", "eadl@sync.com");
         //        seItem.setAuthor(user);

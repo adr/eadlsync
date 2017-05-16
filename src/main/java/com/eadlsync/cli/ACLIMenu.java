@@ -38,7 +38,7 @@ public abstract class ACLIMenu {
     }
 
     // TODO: really use this method to clear screen???
-    public static void clearScreen() {
+    public void clearScreen() {
         try {
             new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
         } catch (InterruptedException e) {

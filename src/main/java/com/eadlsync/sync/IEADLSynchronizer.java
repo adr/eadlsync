@@ -55,6 +55,15 @@ public interface IEADLSynchronizer {
      */
     public void updateYStatementInSeRepo(String id);
 
+
+    /**
+     * This will write the ystatements to the files in the code repository and creates a commit for
+     * the changed ystatements of the se-repo.
+     *
+     * @param message for the commit
+     */
+    public void commit(String message) throws Exception;
+
     /**
      * This will generate an eadlsync report.
      *

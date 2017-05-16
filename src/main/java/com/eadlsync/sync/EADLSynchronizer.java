@@ -164,6 +164,12 @@ public class EADLSynchronizer implements IEADLSynchronizer {
     }
 
     @Override
+    public void commit(String message) throws Exception {
+        codeRepo.commit(message);
+        seRepo.commit(message);
+    }
+
+    @Override
     public EADLSyncReport getEadlSyncReport() {
         return this.report;
     }

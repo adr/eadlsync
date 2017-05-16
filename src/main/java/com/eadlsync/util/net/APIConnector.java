@@ -1,4 +1,4 @@
-package com.eadlsync.net;
+package com.eadlsync.util.net;
 
 import java.io.IOException;
 import java.net.URLDecoder;

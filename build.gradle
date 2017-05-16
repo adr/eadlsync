@@ -22,6 +22,8 @@ dependencies {
     compile 'com.mashape.unirest:unirest-java:1.4.9'
     compile 'org.jsoup:jsoup:1.10.2'
     compile 'commons-cli:commons-cli:1.4'
+    compile 'org.jboss.forge.roaster:roaster-api:2.20.0.Final'
+    compile 'org.jboss.forge.roaster:roaster-jdt:2.20.0.Final'
 
     // dependencies for se-repo data
     compile 'org.jboss.resteasy:resteasy-atom-provider:3.1.2.Final'

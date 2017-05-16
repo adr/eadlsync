@@ -10,10 +10,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.eadlsync.eadl.annotations.YStatementJustification;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
+import com.eadlsync.util.OS;
+import com.eadlsync.util.io.JavaDecisionParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,17 +58,20 @@ public class CodeRepo extends ARepo {
         });
     }
 
-    private void writeEadsToDisk() throws MalformedURLException, ClassNotFoundException {
+    private void writeEadsToDisk() throws IOException {
         for (YStatementJustificationWrapper yStatementJustificationWrapper : yStatements) {
             writeEadToClass(yStatementJustificationWrapper.getId());
         }
     }
 
-    private void writeEadToClass(String id) throws MalformedURLException, ClassNotFoundException {
-        URLClassLoader finalUrlClassLoader = getUrlClassLoader();
+    private void writeEadToClass(String id) throws IOException {
+        List<YStatementJustificationWrapper> decisions = yStatements.stream().filter(y -> id.equals(y
+                .getId())).collect(Collectors.toList());
+        if (decisions.isEmpty()) {
+            return;
+        }
         String classPath = classPaths.get(id);
-        Class clazz = finalUrlClassLoader.loadClass(classPath);
-        // TODO: write annotation to class
+        JavaDecisionParser.writeModifiedYStatementToFile(decisions.get(0), convertToRealPath(classPath));
     }
 
     private URLClassLoader getUrlClassLoader() throws MalformedURLException {
@@ -79,20 +86,26 @@ public class CodeRepo extends ARepo {
 
     private String convertToClassPath(Path path) {
         return repositoryPath.relativize(path).toString().replace(".java", "").
-                // replace file separator on unix systems
-                        replaceAll("/", ".").
-                // replace file separator on windows systems
-                        replaceAll("\\\\", ".");
+                replaceAll(OS.FS, ".");
+    }
+
+    private Path convertToRealPath(String classPath) {
+        classPath = classPath.replaceAll(".", OS.FS);
+        classPath += ".java";
+        return repositoryPath.resolve(classPath);
+
     }
 
     /**
      * For a offline code repo this will write the changed decisions to the disk.
      * It can be called right after any field of an embedded architectural decision is updated.
+     * The commit message is ignored for offline repositories.
      *
+     * @param message for the commit
      * @throws Exception
      */
     @Override
-    public void commit() throws Exception {
+    public void commit(String message) throws Exception {
         // TODO: only write changed eads and not all
         writeEadsToDisk();
     }

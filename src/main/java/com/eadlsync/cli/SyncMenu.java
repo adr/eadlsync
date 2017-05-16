@@ -20,7 +20,8 @@ public class SyncMenu extends ACLIMenu {
         setMenuItems(Arrays.asList(new CLIMenuItem("11", "Reinitialize Sync"), new CLIMenuItem("1",
                 "print different eads"), new CLIMenuItem("2", "update ead in code repo", Arrays.asList
                 ("id")), new CLIMenuItem("3", "update ead in " + "se-repo", Arrays.asList("id")), new
-                CLIMenuItem("0", "back"), new CLIMenuItem("00", "exit")));
+                CLIMenuItem("4", "Commit changes to code and se-repo"), new CLIMenuItem("0", "back"),
+                new CLIMenuItem("00", "exit")));
         bindLoop(option.isNotEqualTo("0").or(option.isNotEqualTo("00")));
     }
 
@@ -58,6 +59,14 @@ public class SyncMenu extends ACLIMenu {
                 System.out.println("updated se-repo decision");
                 // TODO: use cli parser for argument
                 // TODO: rework update of entry
+                break;
+            case "4":
+                try {
+                    // TODO: ask user for commit message
+                    synchronizer.commit("committed by eadlsync");
+                } catch (Exception e) {
+                    LOG.error("Error while committing changes", e);
+                }
                 break;
             case "00":
                 System.out.println("exiting...");
