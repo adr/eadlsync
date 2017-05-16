@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import com.eadlsync.eadl.annotations.YStatementJustification;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
+import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
 import com.eadlsync.util.OS;
 import com.eadlsync.util.io.JavaDecisionParser;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ public class CodeRepo extends ARepo {
                             .class)) {
                         YStatementJustification yStatementJustification = (YStatementJustification)
                                 annotation;
-                        yStatements.add(new YStatementJustificationWrapper(yStatementJustification));
+                        yStatements.add(new YStatementJustificationWrapperBuilder(yStatementJustification).build());
                         classPaths.put(yStatementJustification.id(), classPath);
                     }
                 } catch (ClassNotFoundException e) {

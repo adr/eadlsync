@@ -1,7 +1,5 @@
 package com.eadlsync.model.decision;
 
-import com.eadlsync.eadl.annotations.YStatementJustification;
-
 public class YStatementJustificationWrapper {
 
     private String id = "";
@@ -14,17 +12,6 @@ public class YStatementJustificationWrapper {
     private String achieving = "";
     private String accepting = "";
     private String moreInformation = "";
-
-    public YStatementJustificationWrapper(YStatementJustification annotation) {
-        setId(annotation.id());
-        setContext(annotation.context());
-        setAccepting(annotation.accepting());
-        setFacing(annotation.facing());
-        setChosen(annotation.chosen());
-        setNeglected(annotation.neglected());
-        setAchieving(annotation.achieving());
-        setMoreInformation(annotation.moreInformation());
-    }
 
     protected YStatementJustificationWrapper() {
 

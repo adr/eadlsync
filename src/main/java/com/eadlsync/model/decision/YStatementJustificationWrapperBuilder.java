@@ -1,5 +1,7 @@
 package com.eadlsync.model.decision;
 
+import com.eadlsync.eadl.annotations.YStatementJustification;
+
 /**
  * Created by Tobias on 03.04.2017.
  */
@@ -16,6 +18,17 @@ public class YStatementJustificationWrapperBuilder {
 
     public YStatementJustificationWrapperBuilder(String id) {
         this.id = id;
+    }
+
+    public YStatementJustificationWrapperBuilder (YStatementJustification annotation) {
+        this.id = annotation.id();
+        this.context = annotation.context();
+        this.facing = annotation.facing();
+        this.chosen = annotation.chosen();
+        this.neglected = annotation.neglected();
+        this.achieving = annotation.achieving();
+        this.accepting = annotation.accepting();
+        this.moreInformation = annotation.moreInformation();
     }
 
     public YStatementJustificationWrapperBuilder context(String context) {
