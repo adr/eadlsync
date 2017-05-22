@@ -96,10 +96,13 @@ public class CodeRepo extends ARepo {
     }
 
     private Path convertToRealPath(String classPath) {
-        classPath = classPath.replaceAll(".", OS.FS);
+        if (OS.IS_WINDOWS) {
+            classPath = classPath.replaceAll(".", "\\\\");
+        } else {
+            classPath = classPath.replaceAll(".", OS.FS);
+        }
         classPath += ".java";
         return repositoryPath.resolve(classPath);
-
     }
 
     /**
