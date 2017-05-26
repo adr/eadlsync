@@ -30,7 +30,7 @@ public abstract class ACLIMenu {
     protected final BooleanProperty running = new SimpleBooleanProperty(false);
     protected final StringProperty option = new SimpleStringProperty();
     protected final String name;
-    private final Scanner scanner = new Scanner(System.in);
+    protected final Scanner scanner = new Scanner(System.in);
     protected List<CLIMenuItem> menuItems = Collections.emptyList();
 
     protected ACLIMenu(String name) {

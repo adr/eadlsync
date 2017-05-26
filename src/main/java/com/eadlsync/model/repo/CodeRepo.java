@@ -96,11 +96,7 @@ public class CodeRepo extends ARepo {
     }
 
     private Path convertToRealPath(String classPath) {
-        if (OS.IS_WINDOWS) {
-            classPath = classPath.replaceAll(".", "\\\\");
-        } else {
-            classPath = classPath.replaceAll(".", OS.FS);
-        }
+        classPath = classPath.replaceAll("\\.", "/");
         classPath += ".java";
         return repositoryPath.resolve(classPath);
     }
@@ -108,15 +104,16 @@ public class CodeRepo extends ARepo {
     /**
      * For a offline code repo this will write the changed decisions to the disk.
      * It can be called right after any field of an embedded architectural decision is updated.
-     * The commit message is ignored for offline repositories.
+     * The commitToBaseRepo message is ignored for offline repositories.
      *
-     * @param message for the commit
+     * @param message for the commitToBaseRepo
      * @throws Exception
      */
     @Override
-    public void commit(String message) throws Exception {
+    public String commit(String message) throws Exception {
         // TODO: only write changed eads and not all
         writeEadsToDisk();
+        return "N/A";
     }
 
     @Override

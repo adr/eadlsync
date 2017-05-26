@@ -57,12 +57,18 @@ public interface IEADLSynchronizer {
 
 
     /**
-     * This will write the ystatements to the files in the code repository and creates a commit for
-     * the changed ystatements of the se-repo.
+     * This will write the ystatements to the files in the code repository.
      *
      * @param message for the commit
      */
-    public void commit(String message) throws Exception;
+    public String commitToBaseRepo(String message) throws Exception;
+
+    /**
+     * This will commit the ystatements to the se-repo.
+     *
+     * @param message for the commit
+     */
+    public String commitToRemoteRepo(String message) throws Exception;
 
     /**
      * This will generate an eadlsync report.
@@ -70,7 +76,6 @@ public interface IEADLSynchronizer {
      * @return a {@link EADLSyncReport}
      */
     public EADLSyncReport getEadlSyncReport();
-
 
     /**
      * Reinitialize the code repository and the se-repo. This essentially reloads the eadl for the

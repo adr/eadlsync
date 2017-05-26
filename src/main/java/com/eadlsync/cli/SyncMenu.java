@@ -20,8 +20,8 @@ public class SyncMenu extends ACLIMenu {
         setMenuItems(Arrays.asList(new CLIMenuItem("11", "Reinitialize Sync"), new CLIMenuItem("1",
                 "print different eads"), new CLIMenuItem("2", "update ead in code repo", Arrays.asList
                 ("id")), new CLIMenuItem("3", "update ead in " + "se-repo", Arrays.asList("id")), new
-                CLIMenuItem("4", "Commit changes to code and se-repo"), new CLIMenuItem("0", "back"),
-                new CLIMenuItem("00", "exit")));
+                CLIMenuItem("4", "Commit changes to code repo"), new CLIMenuItem("5", "Commit changes " +
+                "to se-repo"), new CLIMenuItem("0", "back"), new CLIMenuItem("00", "exit")));
         bindLoop(option.isNotEqualTo("0").or(option.isNotEqualTo("00")));
     }
 
@@ -62,10 +62,20 @@ public class SyncMenu extends ACLIMenu {
                 break;
             case "4":
                 try {
-                    // TODO: ask user for commit message
-                    synchronizer.commit("committed by eadlsync");
+                    synchronizer.commitToBaseRepo("N/A");
+                    System.out.println("Y-statements successfully written");
                 } catch (Exception e) {
-                    LOG.error("Error while committing changes", e);
+                    LOG.error("Error while committing changes to the code repo", e);
+                }
+                break;
+            case "5":
+                try {
+                    System.out.println("Please enter a commit message");
+                    String message = scanner.nextLine();
+                    String id = synchronizer.commitToRemoteRepo(message);
+                    System.out.println("Y-statements successfully committed - " + id);
+                } catch (Exception e) {
+                    LOG.error("Error while committing changes to the se-repo", e);
                 }
                 break;
             case "00":

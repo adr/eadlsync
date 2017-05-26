@@ -76,12 +76,13 @@ public interface IRepo {
     void updateDecision(YStatementJustificationWrapper decision);
 
     /**
-     * Commits the changes of the decisions to the repository with the given commit message.
+     * Commits the changes of the decisions to the repository with the given commitToBaseRepo message.
      *
-     * @param message for the commit
+     * @param message for the commitToBaseRepo
+     * @return the commit id
      * @throws Exception
      */
-    void commit(String message) throws Exception;
+    String commit(String message) throws Exception;
 
     /**
      * Reloads the embedded ads for this repository.
