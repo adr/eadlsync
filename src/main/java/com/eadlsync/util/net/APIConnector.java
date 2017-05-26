@@ -1,30 +1,53 @@
 package com.eadlsync.util.net;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import javafx.collections.ObservableList;
 
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
 import com.eadlsync.serepo.data.restinterface.commit.CommitContainer;
+import com.eadlsync.serepo.data.restinterface.commit.CommitMode;
+import com.eadlsync.serepo.data.restinterface.commit.CreateCommit;
 import com.eadlsync.serepo.data.restinterface.common.Link;
+import com.eadlsync.serepo.data.restinterface.common.User;
 import com.eadlsync.serepo.data.restinterface.metadata.MetadataContainer;
 import com.eadlsync.serepo.data.restinterface.metadata.MetadataEntry;
 import com.eadlsync.serepo.data.restinterface.seitem.RelationContainer;
 import com.eadlsync.serepo.data.restinterface.seitem.RelationEntry;
 import com.eadlsync.serepo.data.restinterface.seitem.SeItem;
 import com.eadlsync.serepo.data.restinterface.seitem.SeItemContainer;
+import com.eadlsync.serepo.data.restinterface.seitem.SeItemWithContent;
+import com.eadlsync.util.SeItemContentFields;
+import com.eadlsync.util.net.MetadataFactory.OptionState;
+import com.eadlsync.util.net.MetadataFactory.ProblemState;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.net.UrlEscapers;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+
+import static com.eadlsync.util.net.SeRepoRelationType.SEREPO_METADATA;
+import static com.eadlsync.util.net.SeRepoRelationType.SEREPO_RELATIONS;
 
 /**
  * Provides utility methods to communicate with the se-repo restful api
@@ -71,9 +94,8 @@ public class APIConnector {
     }
 
     private static MetadataContainer getMetadataContainerForSeItem(SeItem item) throws UnirestException {
-        Link metadataLink = item.getLinks().stream().filter(link -> link.getRel().endsWith
-                ("serepo_metadata")).
-                collect(Collectors.toList()).get(0);
+        Link metadataLink = item.getLinks().stream().filter(link -> SEREPO_METADATA.getRelation().
+                equals(link.getRel())).collect(Collectors.toList()).get(0);
         HttpResponse<MetadataContainer> seItemContainerResponse = Unirest.get(metadataLink.getHref()).
                 asObject(MetadataContainer.class);
         MetadataContainer metadataContainer = seItemContainerResponse.getBody();
@@ -85,9 +107,8 @@ public class APIConnector {
     }
 
     private static RelationContainer getRelationContainerForSeItem(SeItem item) throws UnirestException {
-        Link relationsLink = item.getLinks().stream().filter(link -> link.getRel().endsWith
-                ("serepo_relations")).
-                collect(Collectors.toList()).get(0);
+        Link relationsLink = item.getLinks().stream().filter(link -> SEREPO_RELATIONS.getRelation().
+                equals(link.getRel())).collect(Collectors.toList()).get(0);
         HttpResponse<RelationContainer> seItemContainerResponse = Unirest.get(relationsLink.getHref()).
                 asObject(RelationContainer.class);
         RelationContainer relationsContainer = seItemContainerResponse.getBody();
@@ -197,4 +218,157 @@ public class APIConnector {
         return body;
     }
 
+    public static String commitYStatement(ObservableList<YStatementJustificationWrapper> yStatementJustificationWrappers, String repositoryUrl, String repositoryBaseUrl, String repositoryProjectName, String message) throws UnirestException, UnsupportedEncodingException {
+        Set<SeItemWithContent> allSeItems = new HashSet<>();
+
+        for (YStatementJustificationWrapper wrapper : yStatementJustificationWrappers) {
+            List<SeItemWithContent> addressedByItems = new ArrayList<>();
+
+            // add the chosen option to the set
+            SeItemWithContent chosenItem = createSeOptionItem(wrapper.getChosen(), wrapper.getAchieving(), wrapper.getAccepting(),
+                    OptionState.CHOSEN);
+            addressedByItems.add(chosenItem);
+            allSeItems.add(chosenItem);
+
+            // add neglected options to the set
+            String[] neglectedOptions = wrapper.getNeglected().split(",");
+            for (String id : neglectedOptions) {
+                SeItemWithContent neglectedItem = createSeOptionItem(id, "", "", OptionState.NEGLECTED);
+                allSeItems.add(neglectedItem);
+                addressedByItems.add(neglectedItem);
+            }
+
+            // create problem item
+            SeItemWithContent problem = createSeProblemItem(wrapper.getId(), wrapper
+                    .getContext(), wrapper.getFacing(), ProblemState.SOLVED);
+
+            // set the relations for the problem item
+            for (SeItemWithContent seItem : addressedByItems) {
+                String encodedName = UrlEscapers.urlFragmentEscaper().escape(seItem.getName());
+                problem.getRelations().add(RelationFactory.addressedBy(encodedName));
+            }
+
+            // add the problem to the set
+            allSeItems.add(problem);
+        }
+
+        CreateCommit createCommit = createCommit(message, CommitMode.ADD_UPDATE_DELETE);
+        MultipartFormDataOutput multipartFormDataOutput = createMultipart(createCommit, new ArrayList<>(allSeItems));
+        return commit(multipartFormDataOutput, repositoryBaseUrl, repositoryProjectName);
+    }
+
+    /**
+     * Creates an extended SE-Item Java Object which can hold content. This object is only used for simple programming purpose.
+     *
+     * @return
+     */
+    private static SeItemWithContent createSeOptionItem(String id, String achieve, String accepting, OptionState state) throws UnirestException, UnsupportedEncodingException {
+        SeItemWithContent createSeItem = new SeItemWithContent();
+        String name = getNameFromId(id);
+        createSeItem.setName(name);
+        String folder = getFolderFromId(id);
+        createSeItem.setFolder(folder);
+        createSeItem.getMetadata().putAll(MetadataFactory.getOptionMap(state));
+
+        String markdown = "";
+        if (state == OptionState.CHOSEN) {
+            markdown = String.format("#%s\n%s\n\n#%s\n%s", SeItemContentFields.ACHIEVING, achieve, SeItemContentFields.ACCEPTING, accepting);
+        }
+        createSeItem.setContent(markdown.getBytes());
+        createSeItem.setMimeType("text/markdown");
+        return createSeItem;
+    }
+
+    private static String getNameFromId(String id) throws UnsupportedEncodingException {
+        return URLDecoder.decode(id, "UTF-8").substring(id.lastIndexOf("/") + 1);
+    }
+
+    private static String getFolderFromId(String id) {
+        return id.substring(id.lastIndexOf("/seitems") + 9, id.lastIndexOf("/") + 1);
+    }
+
+    /**
+     * Creates an extended SE-Item Java Object which can hold content. This object is only used for simple programming purpose.
+     *
+     * @return
+     */
+    private static SeItemWithContent createSeProblemItem(String id, String context, String facing, ProblemState state) throws UnirestException, UnsupportedEncodingException {
+        SeItemWithContent createSeItem = new SeItemWithContent();
+        String name = getNameFromId(id);
+        createSeItem.setName(name);
+        String folder = getFolderFromId(id);
+        createSeItem.setFolder(folder);
+        createSeItem.getMetadata().putAll(MetadataFactory.getProblemMap(state));
+
+        String markdown = "";
+        if (state == ProblemState.SOLVED) {
+            markdown = String.format("#%s\n%s\n\n#%s\n%s", SeItemContentFields.CONTEXT, context, SeItemContentFields.FACING, facing);
+        }
+        createSeItem.setContent(markdown.getBytes());
+        createSeItem.setMimeType("text/markdown");
+        return createSeItem;
+    }
+
+    /**
+     * Commits the SE-Items (within the Multipart) to the given repository on SE-Repo.
+     *
+     * @param multipart
+     * @return
+     */
+    private static String commit(MultipartFormDataOutput multipart, String repositoryBaseUrl, String repositoryProjectName) {
+        WebTarget api = ClientBuilder.newClient()
+                .target(repositoryBaseUrl)
+                .path("/repos/" + repositoryProjectName + "/commits");
+
+        Response response = api.request(MediaType.TEXT_PLAIN_TYPE)
+                .post(Entity.entity(multipart, MediaType.MULTIPART_FORM_DATA_TYPE));
+
+        String commitId;
+        if (response.hasEntity()) {
+            commitId = response.readEntity(String.class);
+        } else {
+            commitId = "";
+        }
+        response.close();
+        return commitId;
+
+    }
+
+    /**
+     * Creates a Multipart which will be needed for the SE-Repo API call to commit SE-Items.
+     *
+     * @param commit
+     * @param seItemsWithContent
+     * @return
+     */
+    private static MultipartFormDataOutput createMultipart(CreateCommit commit, List<SeItemWithContent> seItemsWithContent) {
+        MultipartFormDataOutput multipart = new MultipartFormDataOutput();
+
+        multipart.addFormData("commit", commit, MediaType.APPLICATION_JSON_TYPE);
+        int partCounter = 0;
+        // We create for each SE-Item a "multipart-pair" with JSON data (metadata_) and "binary" data (content_)
+        for (SeItemWithContent seItem : seItemsWithContent) {
+            multipart.addFormData("metadata_" + partCounter, seItem, MediaType.APPLICATION_JSON_TYPE);
+            multipart.addFormData("content_" + partCounter, seItem.getContent(), MediaType.valueOf(seItem.getMimeType()), seItem.getName());
+            partCounter++;
+        }
+
+        return multipart;
+    }
+
+    /**
+     * Creates a Commit object representing a commitToBaseRepo which can be sent to the SE-Repo API.
+     *
+     * @param message
+     * @param mode
+     * @return
+     */
+    private static CreateCommit createCommit(String message, CommitMode mode) {
+        CreateCommit commit = new CreateCommit();
+        commit.setMessage(message);
+        commit.setMode(mode);
+        User user = new User("eADL-Synchronizer", "eadl@sync.com");
+        commit.setUser(user);
+        return commit;
+    }
 }

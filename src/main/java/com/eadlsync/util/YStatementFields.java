@@ -3,7 +3,7 @@ package com.eadlsync.util;
 /**
  * Created by Tobias on 16.05.2017.
  */
-public class YStatement {
+public class YStatementFields {
 
     public static final String ID = "id";
     public static final String CONTEXT = "context";

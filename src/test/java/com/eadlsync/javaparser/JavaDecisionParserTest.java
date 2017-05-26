@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
 import com.eadlsync.util.OS;
-import com.eadlsync.util.YStatement;
+import com.eadlsync.util.YStatementFields;
 import com.eadlsync.util.io.JavaDecisionParser;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -55,7 +55,7 @@ public class JavaDecisionParserTest {
         Assert.assertTrue(content.contains(sampleDecision.getContext()));
         Assert.assertTrue(content.contains(sampleDecision.getChosen()));
 
-        Assert.assertFalse(content.contains(YStatement.FACING));
+        Assert.assertFalse(content.contains(YStatementFields.FACING));
     }
 
     private void writeToFile(String content, Path path) throws IOException {
