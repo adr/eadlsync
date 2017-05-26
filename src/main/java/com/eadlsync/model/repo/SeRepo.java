@@ -36,7 +36,7 @@ public class SeRepo extends ARepo {
     }
 
     /**
-     * For a se-repo this will create a commitToBaseRepo for the changed decisions and try to commitToBaseRepo it to the
+     * For a se-repo this will create a commit for the changed decisions and try to commit it to the
      * restful api of the se-repo. It should be manually called and not right after any field of an
      * embedded architectural decision is updated.
      *
