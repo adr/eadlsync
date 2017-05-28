@@ -34,7 +34,7 @@ import com.eadlsync.serepo.data.restinterface.seitem.RelationEntry;
 import com.eadlsync.serepo.data.restinterface.seitem.SeItem;
 import com.eadlsync.serepo.data.restinterface.seitem.SeItemContainer;
 import com.eadlsync.serepo.data.restinterface.seitem.SeItemWithContent;
-import com.eadlsync.util.SeItemContentFields;
+import com.eadlsync.util.YStatementConstants;
 import com.eadlsync.util.net.MetadataFactory.OptionState;
 import com.eadlsync.util.net.MetadataFactory.ProblemState;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -50,6 +50,7 @@ import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.eadlsync.util.YStatementConstants.DELIMITER;
 import static com.eadlsync.util.net.MetadataFactory.GeneralMetadata.STEREOTYPE;
 import static com.eadlsync.util.net.MetadataFactory.GeneralMetadata.TAGGED_VALUES;
 import static com.eadlsync.util.net.MetadataFactory.OptionState.CHOSEN;
@@ -196,15 +197,15 @@ public class APIConnector {
                                                                                 List<String> neglected) {
         Element problemBody = getSeItemContentBody(problemItem);
         String id = problemItem.getId().toString();
-        String context = parseForContent(SeItemContentFields.CONTEXT, problemBody);
-        String facing = parseForContent(SeItemContentFields.FACING, problemBody);
+        String context = parseForContent(YStatementConstants.SEITEM_CONTEXT, problemBody);
+        String facing = parseForContent(YStatementConstants.SEITEM_FACING, problemBody);
 
         if (chosenOptionItem != null) {
             Element optionBody = getSeItemContentBody(chosenOptionItem);
             String chosen = chosenOptionItem.getId().toString();
-            String neglectedIds = neglected.stream().collect(Collectors.joining(","));
-            String achieving = parseForContent(SeItemContentFields.ACHIEVING, optionBody);
-            String accepting = parseForContent(SeItemContentFields.ACCEPTING, optionBody);
+            String neglectedIds = neglected.stream().collect(Collectors.joining(DELIMITER));
+            String achieving = parseForContent(YStatementConstants.SEITEM_ACHIEVING, optionBody);
+            String accepting = parseForContent(YStatementConstants.SEITEM_ACCEPTING, optionBody);
             return new YStatementJustificationWrapperBuilder(id).context(context).facing(facing)
                     .chosen(chosen).neglected(neglectedIds).achieving(achieving).accepting(accepting)
                     .build();
@@ -280,7 +281,7 @@ public class APIConnector {
             allSeItems.add(chosenItem);
 
             // add neglected options to the set
-            String[] neglectedOptions = wrapper.getNeglected().split(",");
+            String[] neglectedOptions = wrapper.getNeglected().split(DELIMITER);
             for (String id : neglectedOptions) {
                 SeItemWithContent neglectedItem = createSeOptionItem(id, "", "", OptionState.NEGLECTED);
                 allSeItems.add(neglectedItem);
@@ -321,7 +322,7 @@ public class APIConnector {
 
         String markdown = "";
         if (state == CHOSEN) {
-            markdown = String.format("#%s\n%s\n\n#%s\n%s", SeItemContentFields.ACHIEVING, achieve, SeItemContentFields.ACCEPTING, accepting);
+            markdown = String.format("#%s\n%s\n\n#%s\n%s", YStatementConstants.SEITEM_ACHIEVING, achieve, YStatementConstants.SEITEM_ACCEPTING, accepting);
         }
         createSeItem.setContent(markdown.getBytes());
         createSeItem.setMimeType("text/markdown");
@@ -351,7 +352,7 @@ public class APIConnector {
 
         String markdown = "";
         if (state == SOLVED) {
-            markdown = String.format("#%s\n%s\n\n#%s\n%s", SeItemContentFields.CONTEXT, context, SeItemContentFields.FACING, facing);
+            markdown = String.format("#%s\n%s\n\n#%s\n%s", YStatementConstants.SEITEM_CONTEXT, context, YStatementConstants.SEITEM_FACING, facing);
         }
         createSeItem.setContent(markdown.getBytes());
         createSeItem.setMimeType("text/markdown");

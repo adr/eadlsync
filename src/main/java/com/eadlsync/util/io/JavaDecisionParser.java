@@ -7,7 +7,7 @@ import java.nio.file.Path;
 
 import com.eadlsync.eadl.annotations.YStatementJustification;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
-import com.eadlsync.util.YStatementFields;
+import com.eadlsync.util.YStatementConstants;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -26,7 +26,7 @@ public class JavaDecisionParser {
             path) throws IOException {
         final JavaClassSource javaClass = (JavaClassSource) Roaster.parse(Files.newInputStream(path));
         AnnotationSource annotation = javaClass.getAnnotation(YStatementJustification.class);
-        if (annotation.getStringValue(YStatementFields.ID).equals(yStatement.getId())) {
+        if (annotation.getStringValue(YStatementConstants.ID).equals(yStatement.getId())) {
             // TODO: check if annotation sourec has same fields and values as yStatement
             // YStatementComparator.equals(annotation, yStatement);
             javaClass.removeAnnotation(annotation);
@@ -38,20 +38,20 @@ public class JavaDecisionParser {
     private static void addYStatement(YStatementJustificationWrapper yStatement, JavaClassSource
             javaClass) {
         AnnotationSource newAnnotation = javaClass.addAnnotation(YStatementJustification.class);
-        newAnnotation.setStringValue(YStatementFields.ID, yStatement.getId());
+        newAnnotation.setStringValue(YStatementConstants.ID, yStatement.getId());
         if (!yStatement.getContext().isEmpty())
-            newAnnotation.setStringValue(YStatementFields.CONTEXT, yStatement.getContext());
+            newAnnotation.setStringValue(YStatementConstants.CONTEXT, yStatement.getContext());
         if (!yStatement.getFacing().isEmpty())
-            newAnnotation.setStringValue(YStatementFields.FACING, yStatement.getFacing());
+            newAnnotation.setStringValue(YStatementConstants.FACING, yStatement.getFacing());
         if (!yStatement.getChosen().isEmpty())
-            newAnnotation.setStringValue(YStatementFields.CHOSEN, yStatement.getChosen());
+            newAnnotation.setStringValue(YStatementConstants.CHOSEN, yStatement.getChosen());
         if (!yStatement.getNeglected().isEmpty())
-            newAnnotation.setStringValue(YStatementFields.NEGLECTED, yStatement.getNeglected());
+            newAnnotation.setStringValue(YStatementConstants.NEGLECTED, yStatement.getNeglected());
         if (!yStatement.getAchieving().isEmpty())
-            newAnnotation.setStringValue(YStatementFields.ACHIEVING, yStatement.getAchieving());
+            newAnnotation.setStringValue(YStatementConstants.ACHIEVING, yStatement.getAchieving());
         if (!yStatement.getAccepting().isEmpty())
-            newAnnotation.setStringValue(YStatementFields.ACCEPTING, yStatement.getAccepting());
+            newAnnotation.setStringValue(YStatementConstants.ACCEPTING, yStatement.getAccepting());
         //        if (!yStatement.getMoreInformation().isEmpty())
-        //            newAnnotation.setStringValue(YStatementFields.MORE_INFORMATION);
+        //            newAnnotation.setStringValue(YStatementConstants.MORE_INFORMATION);
     }
 }

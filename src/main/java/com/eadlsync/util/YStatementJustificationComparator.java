@@ -7,12 +7,12 @@ import java.util.stream.Stream;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import org.apache.commons.collections4.CollectionUtils;
 
+import static com.eadlsync.util.YStatementConstants.DELIMITER;
+
 /**
  * Created by Tobias on 28.05.2017.
  */
 public class YStatementJustificationComparator {
-
-    private static final String delimiter = ",";
 
     public static boolean isContextEqual(YStatementJustificationWrapper codeDecision, YStatementJustificationWrapper seDecision) {
         return isContextEqual(codeDecision.getContext(), seDecision.getContext());
@@ -50,7 +50,7 @@ public class YStatementJustificationComparator {
     }
 
     private static List<String> trimmedArrayOfString(String input) {
-        return Stream.of(input.split(delimiter)).sorted().map(String::trim).collect(Collectors.toList());
+        return Stream.of(input.split(DELIMITER)).sorted().map(String::trim).collect(Collectors.toList());
     }
 
     public static boolean isAchievingEqual(YStatementJustificationWrapper codeDecision, YStatementJustificationWrapper seDecision) {
