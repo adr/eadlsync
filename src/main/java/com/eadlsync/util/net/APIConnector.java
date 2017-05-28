@@ -142,10 +142,10 @@ public class APIConnector {
         List<SeItem> problemItems = new ArrayList<>();
         for (SeItem item : container.getSeItems()) {
             MetadataEntry metadata = getMetadataEntry(item);
-            Object o = metadata.getMap().get(STEREOTYPE.getName());
-            if (PROBLEM_OCCURRENCE.getName().equals(o)) {
-                o = metadata.getMap().get(TAGGED_VALUES.getName());
-                boolean solved = SOLVED.getName().equals(((Map<String, String>) o).get(PROBLEM_STATE.getName()));
+            Object state = metadata.getMap().get(STEREOTYPE.getName());
+            if (PROBLEM_OCCURRENCE.getName().equals(state)) {
+                state = metadata.getMap().get(TAGGED_VALUES.getName());
+                boolean solved = SOLVED.getName().equals(((Map<String, String>) state).get(PROBLEM_STATE.getName()));
                 if (solved) {
                     // only add problems which are solved, this means if a neglected option raises
                     // another problem we do not want that problem to appear in our decisions
@@ -171,13 +171,12 @@ public class APIConnector {
 
                 MetadataEntry entry = getMetadataEntry(relationSeItem);
                 Map<String, String> taggedValues = (Map<String, String>) entry.getMap().get(TAGGED_VALUES.getName());
-                Object o = taggedValues.get(OPTION_STATE.getName());
-                String state = (o == null) ? "" : o.toString();
+                Object state = taggedValues.get(OPTION_STATE.getName());
                 if (CHOSEN.getName().equals(state)) {
                     chosenOptionItem = container.getSeItems().stream().filter(seItem -> seItem
                             .getId().toString().equals(link.getHref())).collect(Collectors.toList()).get(0);
                 } else {
-                    neglectedIds.add(relationSeItem.getId().toString());
+                    neglectedIds.add(getId(relationSeItem.getFolder(), relationSeItem.getName()));
                 }
 
             }
@@ -196,21 +195,22 @@ public class APIConnector {
                                                                                 SeItem chosenOptionItem,
                                                                                 List<String> neglected) {
         Element problemBody = getSeItemContentBody(problemItem);
-        String id = problemItem.getId().toString();
+        String id = getId(problemItem.getFolder(), problemItem.getName());
         String context = parseForContent(YStatementConstants.SEITEM_CONTEXT, problemBody);
         String facing = parseForContent(YStatementConstants.SEITEM_FACING, problemBody);
+        String neglectedIds = neglected.stream().collect(Collectors.joining(DELIMITER));
 
         if (chosenOptionItem != null) {
             Element optionBody = getSeItemContentBody(chosenOptionItem);
-            String chosen = chosenOptionItem.getId().toString();
-            String neglectedIds = neglected.stream().collect(Collectors.joining(DELIMITER));
+            String chosen = getId(chosenOptionItem.getFolder(), chosenOptionItem.getName());
             String achieving = parseForContent(YStatementConstants.SEITEM_ACHIEVING, optionBody);
             String accepting = parseForContent(YStatementConstants.SEITEM_ACCEPTING, optionBody);
             return new YStatementJustificationWrapperBuilder(id).context(context).facing(facing)
                     .chosen(chosen).neglected(neglectedIds).achieving(achieving).accepting(accepting)
                     .build();
         } else {
-            return new YStatementJustificationWrapperBuilder(id).context(context).facing(facing).build();
+            return new YStatementJustificationWrapperBuilder(id).context(context).facing(facing).
+                    neglected(neglectedIds).build();
         }
     }
 
@@ -263,7 +263,7 @@ public class APIConnector {
             doc = Jsoup.connect(decodedURL).get();
             body = doc.body();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.debug("Error parsing se-item '{}'", item);
         }
         return body;
     }
@@ -329,12 +329,20 @@ public class APIConnector {
         return createSeItem;
     }
 
+    private static String getId(String folder, String name) {
+        return folder + UrlEscapers.urlFragmentEscaper().escape(name);
+    }
+
     private static String getNameFromId(String id) throws UnsupportedEncodingException {
         return URLDecoder.decode(id, "UTF-8").substring(id.lastIndexOf("/") + 1);
     }
 
+//    private static String getFolderFromId(String id) {
+//        return id.substring(id.lastIndexOf("/seitems") + 9, id.lastIndexOf("/") + 1);
+//    }
+
     private static String getFolderFromId(String id) {
-        return id.substring(id.lastIndexOf("/seitems") + 9, id.lastIndexOf("/") + 1);
+        return id.substring(0, id.lastIndexOf("/") + 1);
     }
 
     /**

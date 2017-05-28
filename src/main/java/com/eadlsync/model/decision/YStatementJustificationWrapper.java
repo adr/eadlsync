@@ -3,9 +3,7 @@ package com.eadlsync.model.decision;
 public class YStatementJustificationWrapper {
 
     private String id = "";
-
     private String context = "";
-
     private String facing = "";
     private String chosen = "";
     private String neglected = "";
