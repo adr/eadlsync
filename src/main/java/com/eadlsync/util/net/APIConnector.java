@@ -50,6 +50,14 @@ import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.eadlsync.util.net.MetadataFactory.GeneralMetadata.STEREOTYPE;
+import static com.eadlsync.util.net.MetadataFactory.GeneralMetadata.TAGGED_VALUES;
+import static com.eadlsync.util.net.MetadataFactory.OptionState.CHOSEN;
+import static com.eadlsync.util.net.MetadataFactory.ProblemState.SOLVED;
+import static com.eadlsync.util.net.MetadataFactory.Stereotype.PROBLEM_OCCURRENCE;
+import static com.eadlsync.util.net.MetadataFactory.TaggedValues.OPTION_STATE;
+import static com.eadlsync.util.net.MetadataFactory.TaggedValues.PROBLEM_STATE;
+import static com.eadlsync.util.net.RelationFactory.ADMentorRelationType.ADDRESSED_BY;
 import static com.eadlsync.util.net.SeRepoRelationType.SEREPO_METADATA;
 import static com.eadlsync.util.net.SeRepoRelationType.SEREPO_RELATIONS;
 
@@ -133,11 +141,10 @@ public class APIConnector {
         List<SeItem> problemItems = new ArrayList<>();
         for (SeItem item : container.getSeItems()) {
             MetadataEntry metadata = getMetadataEntry(item);
-            Object o = metadata.getMap().get("stereotype");
-            String stereotype = (o == null) ? "" : o.toString();
-            if (stereotype.toLowerCase().equals("problem occurrence")) {
-                o = metadata.getMap().get("taggedValues");
-                boolean solved = "Solved".equals(((Map<String, String>) o).get("Problem State"));
+            Object o = metadata.getMap().get(STEREOTYPE.getName());
+            if (PROBLEM_OCCURRENCE.getName().equals(o)) {
+                o = metadata.getMap().get(TAGGED_VALUES.getName());
+                boolean solved = SOLVED.getName().equals(((Map<String, String>) o).get(PROBLEM_STATE.getName()));
                 if (solved) {
                     // only add problems which are solved, this means if a neglected option raises
                     // another problem we do not want that problem to appear in our decisions
@@ -151,8 +158,8 @@ public class APIConnector {
         // iterate over the problem occurrences
         for (SeItem problemItem : problemItems) {
             RelationEntry relation = getRelationEntry(problemItem);
-            List<Link> relationLinks = relation.getLinks().stream().filter(link -> "addressed by"
-                    .equals(link.getTitle().toLowerCase())).collect(Collectors.toList());
+            List<Link> relationLinks = relation.getLinks().stream().filter(link -> ADDRESSED_BY.getName()
+                    .equals(link.getTitle())).collect(Collectors.toList());
 
             // find the chosen option item for the current problem occurrence
             SeItem chosenOptionItem = null;
@@ -162,10 +169,10 @@ public class APIConnector {
                         toString().equals(link.getHref())).collect(Collectors.toList()).get(0);
 
                 MetadataEntry entry = getMetadataEntry(relationSeItem);
-                Map<String, String> taggedValues = (Map<String, String>) entry.getMap().get("taggedValues");
-                Object o = taggedValues.get("Option State");
+                Map<String, String> taggedValues = (Map<String, String>) entry.getMap().get(TAGGED_VALUES.getName());
+                Object o = taggedValues.get(OPTION_STATE.getName());
                 String state = (o == null) ? "" : o.toString();
-                if ("chosen".equals(state.toLowerCase())) {
+                if (CHOSEN.getName().equals(state)) {
                     chosenOptionItem = container.getSeItems().stream().filter(seItem -> seItem
                             .getId().toString().equals(link.getHref())).collect(Collectors.toList()).get(0);
                 } else {
@@ -268,7 +275,7 @@ public class APIConnector {
 
             // add the chosen option to the set
             SeItemWithContent chosenItem = createSeOptionItem(wrapper.getChosen(), wrapper.getAchieving(), wrapper.getAccepting(),
-                    OptionState.CHOSEN);
+                    CHOSEN);
             addressedByItems.add(chosenItem);
             allSeItems.add(chosenItem);
 
@@ -282,7 +289,7 @@ public class APIConnector {
 
             // create problem item
             SeItemWithContent problem = createSeProblemItem(wrapper.getId(), wrapper
-                    .getContext(), wrapper.getFacing(), ProblemState.SOLVED);
+                    .getContext(), wrapper.getFacing(), SOLVED);
 
             // set the relations for the problem item
             for (SeItemWithContent seItem : addressedByItems) {
@@ -313,7 +320,7 @@ public class APIConnector {
         createSeItem.getMetadata().putAll(MetadataFactory.getOptionMap(state));
 
         String markdown = "";
-        if (state == OptionState.CHOSEN) {
+        if (state == CHOSEN) {
             markdown = String.format("#%s\n%s\n\n#%s\n%s", SeItemContentFields.ACHIEVING, achieve, SeItemContentFields.ACCEPTING, accepting);
         }
         createSeItem.setContent(markdown.getBytes());
@@ -343,7 +350,7 @@ public class APIConnector {
         createSeItem.getMetadata().putAll(MetadataFactory.getProblemMap(state));
 
         String markdown = "";
-        if (state == ProblemState.SOLVED) {
+        if (state == SOLVED) {
             markdown = String.format("#%s\n%s\n\n#%s\n%s", SeItemContentFields.CONTEXT, context, SeItemContentFields.FACING, facing);
         }
         createSeItem.setContent(markdown.getBytes());
