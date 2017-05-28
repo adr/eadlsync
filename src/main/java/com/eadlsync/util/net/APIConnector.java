@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.client.ClientBuilder;
@@ -45,6 +47,8 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.eadlsync.util.net.SeRepoRelationType.SEREPO_METADATA;
 import static com.eadlsync.util.net.SeRepoRelationType.SEREPO_RELATIONS;
@@ -55,6 +59,8 @@ import static com.eadlsync.util.net.SeRepoRelationType.SEREPO_RELATIONS;
  * Created by Tobias on 31.01.2017.
  */
 public class APIConnector {
+
+    private final static Logger LOG = LoggerFactory.getLogger(APIConnector.class);
 
     static {
         Unirest.setObjectMapper(new ObjectMapper() {
@@ -150,23 +156,27 @@ public class APIConnector {
 
             // find the chosen option item for the current problem occurrence
             SeItem chosenOptionItem = null;
+            List<String> neglectedIds = new ArrayList<>();
             for (Link link : relationLinks) {
-                List<SeItem> relationSeItems = container.getSeItems().stream().filter(seItem -> seItem
-                        .getId().equals(link.getHref())).collect(Collectors.toList());
-                for (SeItem relationSeItem : relationSeItems) {
-                    MetadataEntry entry = getMetadataEntry(relationSeItem);
-                    Object o = entry.getMap().get("Option State");
-                    String state = (o == null) ? "" : o.toString();
-                    if ("chosen".equals(state.toLowerCase())) {
-                        chosenOptionItem = container.getSeItems().stream().filter(seItem -> seItem
-                                .getId().equals(link.getHref())).collect(Collectors.toList()).get(0);
-                    }
+                SeItem relationSeItem = container.getSeItems().stream().filter(seItem -> seItem.getId().
+                        toString().equals(link.getHref())).collect(Collectors.toList()).get(0);
+
+                MetadataEntry entry = getMetadataEntry(relationSeItem);
+                Map<String, String> taggedValues = (Map<String, String>) entry.getMap().get("taggedValues");
+                Object o = taggedValues.get("Option State");
+                String state = (o == null) ? "" : o.toString();
+                if ("chosen".equals(state.toLowerCase())) {
+                    chosenOptionItem = container.getSeItems().stream().filter(seItem -> seItem
+                            .getId().toString().equals(link.getHref())).collect(Collectors.toList()).get(0);
+                } else {
+                    neglectedIds.add(relationSeItem.getId().toString());
                 }
+
             }
 
             // create a new YStatementJustification object
             YStatementJustificationWrapper yStatementJustification = createYStatementJustification
-                    (problemItem, chosenOptionItem);
+                    (problemItem, chosenOptionItem, neglectedIds);
             yStatementJustifications.add(yStatementJustification);
 
         }
@@ -175,20 +185,21 @@ public class APIConnector {
     }
 
     private static YStatementJustificationWrapper createYStatementJustification(SeItem problemItem,
-                                                                                SeItem chosenOptionItem) {
-        Element problemBody = getSeItemContent(problemItem);
+                                                                                SeItem chosenOptionItem,
+                                                                                List<String> neglected) {
+        Element problemBody = getSeItemContentBody(problemItem);
         String id = problemItem.getId().toString();
-        String context = parseForContent("in the context of", problemBody);
-        String facing = parseForContent("facing", problemBody);
+        String context = parseForContent(SeItemContentFields.CONTEXT, problemBody);
+        String facing = parseForContent(SeItemContentFields.FACING, problemBody);
 
         if (chosenOptionItem != null) {
-            Element optionBody = getSeItemContent(chosenOptionItem);
-            String chosen = parseForContent("we decided for", optionBody);
-            String neglected = parseForContent("and neglected", optionBody);
-            String achieving = parseForContent("to achieve", optionBody);
-            String accepting = parseForContent("accepting that", optionBody);
+            Element optionBody = getSeItemContentBody(chosenOptionItem);
+            String chosen = chosenOptionItem.getId().toString();
+            String neglectedIds = neglected.stream().collect(Collectors.joining(","));
+            String achieving = parseForContent(SeItemContentFields.ACHIEVING, optionBody);
+            String accepting = parseForContent(SeItemContentFields.ACCEPTING, optionBody);
             return new YStatementJustificationWrapperBuilder(id).context(context).facing(facing)
-                    .chosen(chosen).neglected(neglected).achieving(achieving).accepting(accepting)
+                    .chosen(chosen).neglected(neglectedIds).achieving(achieving).accepting(accepting)
                     .build();
         } else {
             return new YStatementJustificationWrapperBuilder(id).context(context).facing(facing).build();
@@ -196,16 +207,47 @@ public class APIConnector {
     }
 
     private static String parseForContent(String key, Element seItemBody) {
-        String content = "";
+        String content = seItemBody.outerHtml();
 
-        seItemBody.getAllElements().stream().filter(element -> key.equals(element.val())).forEach
-                (element -> {
-            // TODO: implement parsing the html boy for the content of the key
-        });
+        // check if key is found and remove everything in front
+        int keyOccurrence = content.toLowerCase().indexOf(key);
+        if (keyOccurrence == -1) {
+            return "";
+        } else {
+            content = content.substring(keyOccurrence + key.length());
+        }
+
+        // check if line break is found and remove everything in front
+        // assumption: content is right after the key and on new line
+        int firstLineBreak = content.indexOf("<br>");
+        if (firstLineBreak == -1) {
+            return "";
+        } else {
+            content = content.substring(firstLineBreak + 4);
+        }
+        content = content.replaceAll("\r", "");
+        content = content.replaceAll("\n", "");
+
+        // only read until the next line break
+        Pattern patternLineBreak = Pattern.compile("(.+?)<br>.*");
+        Matcher matcherLineBreak = patternLineBreak.matcher(content);
+        // if no line break tag is found just read until the next html tag occurs
+        Pattern patternTag = Pattern.compile("(.+?)<.*>.*");
+        Matcher matcherTag = patternTag.matcher(content);
+
+        if (matcherLineBreak.find()) {
+            content = matcherLineBreak.group(1);
+        } else if (matcherTag.find()) {
+            content = matcherTag.group(1);
+        } else {
+            LOG.info("No end html tag for key '{}' in [{}] parsed from [{}]", key, content, seItemBody.outerHtml());
+        }
+
+        content = content.trim();
         return content;
     }
 
-    private static Element getSeItemContent(SeItem item) {
+    private static Element getSeItemContentBody(SeItem item) {
         Document doc;
         Element body = null;
         try {

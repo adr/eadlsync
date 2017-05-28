@@ -28,7 +28,7 @@ public class YStatementJustificationComparisionObject {
     }
 
     public boolean hasSameObjectWithDifferentFields() {
-        return !codeDecision.equals(seDecision);
+        return YStatementJustificationComparator.isSameButNotEqual(codeDecision, seDecision);
     }
 
     private boolean isContextEqual() {
