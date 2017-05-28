@@ -22,6 +22,7 @@ dependencies {
     compile 'com.mashape.unirest:unirest-java:1.4.9'
     compile 'org.jsoup:jsoup:1.10.2'
     compile 'commons-cli:commons-cli:1.4'
+    compile 'org.apache.commons:commons-collections4:4.1'
     compile 'org.jboss.forge.roaster:roaster-api:2.20.0.Final'
     compile 'org.jboss.forge.roaster:roaster-jdt:2.20.0.Final'
     compile 'com.google.guava:guava:22.0'

@@ -3,6 +3,8 @@ package com.eadlsync.model.decision;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.eadlsync.util.YStatementJustificationComparator;
+
 /**
  * Created by Tobias on 13.05.2017.
  */
@@ -30,32 +32,31 @@ public class YStatementJustificationComparisionObject {
     }
 
     private boolean isContextEqual() {
-        return codeDecision != null && codeDecision.getContext().equals(seDecision.getContext());
+        return YStatementJustificationComparator.isContextEqual(codeDecision, seDecision);
     }
 
     private boolean isFacingEqual() {
-        return codeDecision != null && codeDecision.getFacing().equals(seDecision.getFacing());
+        return YStatementJustificationComparator.isFacingEqual(codeDecision, seDecision);
     }
 
     private boolean isChosenEqual() {
-        return codeDecision != null && codeDecision.getChosen().equals(seDecision.getChosen());
+        return YStatementJustificationComparator.isChosenEqual(codeDecision, seDecision);
     }
 
     private boolean isNeglectedEqual() {
-        return codeDecision != null && codeDecision.getNeglected().equals(seDecision.getNeglected());
+        return YStatementJustificationComparator.isNeglectedEqual(codeDecision, seDecision);
     }
 
     private boolean isAchievingEqual() {
-        return codeDecision != null && codeDecision.getAchieving().equals(seDecision.getAchieving());
+        return YStatementJustificationComparator.isAchievingEqual(codeDecision, seDecision);
     }
 
     private boolean isAcceptingEqual() {
-        return codeDecision != null && codeDecision.getAccepting().equals(seDecision.getAccepting());
+        return YStatementJustificationComparator.isAcceptingEqual(codeDecision, seDecision);
     }
 
     private boolean isMoreInformationEqual() {
-        return codeDecision != null && codeDecision.getMoreInformation().equals(seDecision
-                .getMoreInformation());
+        return YStatementJustificationComparator.isMoreInformationEqual(codeDecision, seDecision);
     }
 
     private String addSeparatorAndDifferencesIfNeeded(int index, String differentField) {
