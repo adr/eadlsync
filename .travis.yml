@@ -15,7 +15,8 @@ before_install:
   - chmod +x gradlew
 
 script:
-  - ./gradlew clean
+  - git submodule init
+  - git submodule update
   - ./gradlew check
 
 after_success:

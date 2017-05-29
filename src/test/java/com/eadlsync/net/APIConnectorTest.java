@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.eadlsync.net.restful.MockedAPI;
-import com.eadlsync.serepo.data.restinterface.common.Link;
-import com.eadlsync.serepo.data.restinterface.metadata.MetadataEntry;
-import com.eadlsync.serepo.data.restinterface.seitem.RelationEntry;
-import com.eadlsync.serepo.data.restinterface.seitem.SeItem;
-import com.eadlsync.serepo.data.restinterface.seitem.SeItemContainer;
+import ch.hsr.isf.serepo.data.restinterface.common.Link;
+import ch.hsr.isf.serepo.data.restinterface.metadata.MetadataEntry;
+import ch.hsr.isf.serepo.data.restinterface.seitem.RelationEntry;
+import ch.hsr.isf.serepo.data.restinterface.seitem.SeItem;
+import ch.hsr.isf.serepo.data.restinterface.seitem.SeItemContainer;
 import com.eadlsync.util.net.APIConnector;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.junit.Test;

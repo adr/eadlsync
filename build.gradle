@@ -7,6 +7,7 @@ targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 sourceSets {
@@ -36,6 +37,8 @@ dependencies {
     // testing against web api
     testCompile 'com.github.tomakehurst:wiremock:2.6.0'
     testCompile 'junit:junit:4.12'
+    testCompile 'ch.hsr.isf.serepo:serepo-rest:1.0-SNAPSHOT'
+    testCompile 'ch.hsr.isf.serepo:serepo-data-restinterface:1.0-SNAPSHOT'
 }
 
 test {
@@ -53,3 +56,13 @@ jacocoTestReport {
 }
 
 check.dependsOn jacocoTestReport
+
+task compileSeRepo(type: Exec) {
+    workingDir "serepo"
+    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+        commandLine "cmd", "/c", "mvn", "install"
+    } else {
+        commandLine "mvn", "install"
+    }
+}
+compileJava.dependsOn compileSeRepo

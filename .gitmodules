@@ -1,0 +1,3 @@
+[submodule "serepo"]
+	path = serepo
+	url = https://github.com/andreas-buechler/serepo.git
