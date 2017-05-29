@@ -23,6 +23,11 @@ public class YStatementConstants {
     public static final String SEITEM_ACHIEVING = "to achieve";
     public static final String SEITEM_ACCEPTING = "accepting that";
 
+    public static final String SEREPO_URL_COMMITS = "%s/repos/%s/commits";
+    public static final String SEREPO_SEITEMS = "%s/repos/%s/commits/%s/seitems";
+    public static final String SEREPO_SEITEM_METADATA = "%s/repos/%s/commits/%s/seitems/%s?metadata";
+    public static final String SEREPO_SEITEM_RELATIONS = "%s/repos/%s/commits/%s/seitems/%s?1relations";
+
     public static final Pattern COMMIT_ID_PATTERN = Pattern.compile("[0-9a-f]{40}");
 
 }

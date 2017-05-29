@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.util.YStatementConstants;
 import com.eadlsync.util.net.APIConnector;
+import com.eadlsync.util.net.SeRepoUrlObject;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 /**
@@ -18,7 +19,6 @@ public class SeRepo extends ARepo {
 
     private final String repositoryBaseUrl;
     private final String repositoryProjectName;
-    private String repositoryUrl;
     private String repositoryCommitId;
     //    add ids of changed decisions to a list and only consider these y-statements when committing
     private final ListProperty<String> changedDecisions = new SimpleListProperty<>(FXCollections.observableArrayList());
@@ -27,14 +27,18 @@ public class SeRepo extends ARepo {
             throws UnirestException {
         this.repositoryBaseUrl = repositoryBaseUrl;
         this.repositoryProjectName = repositoryProjectName;
-        updateRepositoryCommitId(repositoryCommitId);
+        this.repositoryCommitId = repositoryCommitId;
 
         loadEadsFromSeRepo();
     }
 
     private void loadEadsFromSeRepo() throws UnirestException {
         yStatements.clear();
-        yStatements.addAll(APIConnector.getYStatementJustifications(this.repositoryUrl));
+        yStatements.addAll(APIConnector.withSeRepoUrl(getSeRepoUrl()).getYStatementJustifications());
+    }
+
+    private SeRepoUrlObject getSeRepoUrl() {
+        return new SeRepoUrlObject(repositoryBaseUrl, repositoryProjectName, repositoryCommitId);
     }
 
     /**
@@ -54,20 +58,13 @@ public class SeRepo extends ARepo {
         //  2. map y-statements to se-items and set the new fields
         //  3. commitToBaseRepo all se-items
         //  4. change commit id to new id and reload eads if successful
-        String id = APIConnector.commitYStatement(yStatements.get(), repositoryUrl, repositoryBaseUrl, repositoryProjectName, message);
-        System.out.println(id);
+        String id = APIConnector.withSeRepoUrl(getSeRepoUrl()).commitYStatement(yStatements.get(), message);
         Matcher commitIdMatcher = YStatementConstants.COMMIT_ID_PATTERN.matcher(id);
         if (commitIdMatcher.matches()) {
-            updateRepositoryCommitId(id);
+            this.repositoryCommitId = id;
             reloadEADs();
         }
         return id;
-    }
-
-    private void updateRepositoryCommitId(String id) {
-        this.repositoryCommitId = id;
-        this.repositoryUrl = String.format("%s/repos/%s/commits/%s/seitems", this.repositoryBaseUrl,
-                this.repositoryProjectName, this.repositoryCommitId);
     }
 
     @Override

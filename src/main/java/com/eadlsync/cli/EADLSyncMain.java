@@ -7,6 +7,7 @@ import com.eadlsync.serepo.data.restinterface.commit.Commit;
 import com.eadlsync.sync.EADLSynchronizer;
 import com.eadlsync.sync.IEADLSynchronizer;
 import com.eadlsync.util.net.APIConnector;
+import com.eadlsync.util.net.SeRepoUrlObject;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -17,8 +18,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.eadlsync.util.net.APIConnector.getCommitIdFromCommit;
 
 /**
  * Created by Tobias on 23.04.2017.
@@ -56,17 +55,18 @@ public class EADLSyncMain {
 
         if (seRepoCommitId == null) {
             try {
-                List<Commit> commits = APIConnector.getCommitsByUrl(seRepoBasePath + "/repos/" +
-                        seRepoProjectName + "/commits");
+                SeRepoUrlObject urlObject = new SeRepoUrlObject(seRepoBasePath, seRepoProjectName, seRepoCommitId);
+                APIConnector connector = APIConnector.withSeRepoUrl(urlObject);
+                List<Commit> commits = connector.getCommitsByUrl();
                 for (int i = commits.size() - 1; i >= 0; i--) {
                     Commit item = commits.get(i);
-                    System.out.println(String.format("%d - %s\n\t%s", i, getCommitIdFromCommit(item),
+                    System.out.println(String.format("%d - %s\n\t%s", i, connector.getCommitIdFromCommit(item),
                             item.getShortMessage()));
                 }
                 System.out.println("Please choose a commit by writing a number and pressing enter");
                 Scanner scanner = new Scanner(System.in);
                 int choice = scanner.nextInt();
-                seRepoCommitId = String.valueOf(getCommitIdFromCommit(commits.get(choice)));
+                seRepoCommitId = String.valueOf(connector.getCommitIdFromCommit(commits.get(choice)));
             } catch (UnirestException e) {
                 LOG.debug("Failed to retrieve commits, exiting...", e);
                 System.exit(0);

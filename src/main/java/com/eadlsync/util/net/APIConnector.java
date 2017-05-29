@@ -60,8 +60,6 @@ import static com.eadlsync.util.net.MetadataFactory.Stereotype.PROBLEM_OCCURRENC
 import static com.eadlsync.util.net.MetadataFactory.TaggedValues.OPTION_STATE;
 import static com.eadlsync.util.net.MetadataFactory.TaggedValues.PROBLEM_STATE;
 import static com.eadlsync.util.net.RelationFactory.ADMentorRelationType.ADDRESSED_BY;
-import static com.eadlsync.util.net.SeRepoRelationType.SEREPO_METADATA;
-import static com.eadlsync.util.net.SeRepoRelationType.SEREPO_RELATIONS;
 
 /**
  * Provides utility methods to communicate with the se-repo restful api
@@ -70,7 +68,16 @@ import static com.eadlsync.util.net.SeRepoRelationType.SEREPO_RELATIONS;
  */
 public class APIConnector {
 
-    private final static Logger LOG = LoggerFactory.getLogger(APIConnector.class);
+    private final Logger LOG = LoggerFactory.getLogger(APIConnector.class);
+    private final SeRepoUrlObject seRepoUrlObject;
+
+    private APIConnector (SeRepoUrlObject url) {
+        this.seRepoUrlObject = url;
+    }
+
+    public static APIConnector withSeRepoUrl(SeRepoUrlObject url) {
+        return new APIConnector(url);
+    }
 
     static {
         Unirest.setObjectMapper(new ObjectMapper() {
@@ -95,62 +102,64 @@ public class APIConnector {
         });
     }
 
-    public static CommitContainer getCommitContainerByUrl(String url) throws UnirestException {
-        HttpResponse<CommitContainer> seItemContainerResponse = Unirest.get(url).asObject
+    private CommitContainer getCommitContainerByUrl() throws UnirestException {
+        HttpResponse<CommitContainer> seItemContainerResponse = Unirest.get(seRepoUrlObject.SEREPO_URL_COMMITS).asObject
                 (CommitContainer.class);
         CommitContainer commitContainer = seItemContainerResponse.getBody();
         return commitContainer;
     }
 
-    public static List<Commit> getCommitsByUrl(String url) throws UnirestException {
-        return getCommitContainerByUrl(url).getCommits();
+    public List<Commit> getCommitsByUrl() throws UnirestException {
+        return getCommitContainerByUrl().getCommits();
     }
 
-    public static String getCommitIdFromCommit(Commit commit) {
+    public String getCommitIdFromCommit(Commit commit) {
         String id = commit.getId().toString();
         return id.substring(id.lastIndexOf("/") + 1);
     }
 
-    public static SeItemContainer getSeItemContainerByUrl(String url) throws UnirestException {
-        HttpResponse<SeItemContainer> seItemContainerResponse = Unirest.get(url).asObject
+    private SeItemContainer getSeItemContainerByUrl() throws UnirestException {
+        HttpResponse<SeItemContainer> seItemContainerResponse = Unirest.get(seRepoUrlObject.SEREPO_SEITEMS).asObject
                 (SeItemContainer.class);
         SeItemContainer seItemContainer = seItemContainerResponse.getBody();
         return seItemContainer;
     }
 
-    private static MetadataContainer getMetadataContainerForSeItem(SeItem item) throws UnirestException {
-        Link metadataLink = item.getLinks().stream().filter(link -> SEREPO_METADATA.getRelation().
-                equals(link.getRel())).collect(Collectors.toList()).get(0);
-        HttpResponse<MetadataContainer> seItemContainerResponse = Unirest.get(metadataLink.getHref()).
+    public List<SeItem> getSeItemsByUrl() throws UnirestException {
+        return getSeItemContainerByUrl().getSeItems();
+    }
+
+    private MetadataContainer getMetadataContainerForSeItem(SeItem item) throws UnirestException {
+        String id = getId(item.getFolder(), item.getName());
+        HttpResponse<MetadataContainer> seItemContainerResponse = Unirest.get(seRepoUrlObject.generateMetadataUrl(id)).
                 asObject(MetadataContainer.class);
         MetadataContainer metadataContainer = seItemContainerResponse.getBody();
         return metadataContainer;
     }
 
-    public static MetadataEntry getMetadataEntry(SeItem item) throws UnirestException {
+    public MetadataEntry getMetadataEntry(SeItem item) throws UnirestException {
         return getMetadataContainerForSeItem(item).getMetadata();
     }
 
-    private static RelationContainer getRelationContainerForSeItem(SeItem item) throws UnirestException {
-        Link relationsLink = item.getLinks().stream().filter(link -> SEREPO_RELATIONS.getRelation().
-                equals(link.getRel())).collect(Collectors.toList()).get(0);
-        HttpResponse<RelationContainer> seItemContainerResponse = Unirest.get(relationsLink.getHref()).
+    private RelationContainer getRelationContainerForSeItem(SeItem item) throws UnirestException {
+        String id = getId(item.getFolder(), item.getName());
+        HttpResponse<RelationContainer> seItemContainerResponse = Unirest.get(seRepoUrlObject.generateRelationsUrl(id)).
                 asObject(RelationContainer.class);
         RelationContainer relationsContainer = seItemContainerResponse.getBody();
         return relationsContainer;
     }
 
-    public static RelationEntry getRelationEntry(SeItem item) throws UnirestException {
+    public RelationEntry getRelationEntry(SeItem item) throws UnirestException {
         return getRelationContainerForSeItem(item).getEntry();
     }
 
-    public static List<YStatementJustificationWrapper> getYStatementJustifications(String url) throws
+    public List<YStatementJustificationWrapper> getYStatementJustifications() throws
             UnirestException {
-        SeItemContainer container = getSeItemContainerByUrl(url);
+        List<SeItem> seItems = getSeItemsByUrl();
 
         // find all se-items that are problem occurrences
         List<SeItem> problemItems = new ArrayList<>();
-        for (SeItem item : container.getSeItems()) {
+        for (SeItem item : seItems) {
             MetadataEntry metadata = getMetadataEntry(item);
             Object state = metadata.getMap().get(STEREOTYPE.getName());
             if (PROBLEM_OCCURRENCE.getName().equals(state)) {
@@ -176,14 +185,14 @@ public class APIConnector {
             SeItem chosenOptionItem = null;
             List<String> neglectedIds = new ArrayList<>();
             for (Link link : relationLinks) {
-                SeItem relationSeItem = container.getSeItems().stream().filter(seItem -> seItem.getId().
+                SeItem relationSeItem = seItems.stream().filter(seItem -> seItem.getId().
                         toString().equals(link.getHref())).collect(Collectors.toList()).get(0);
 
                 MetadataEntry entry = getMetadataEntry(relationSeItem);
                 Map<String, String> taggedValues = (Map<String, String>) entry.getMap().get(TAGGED_VALUES.getName());
                 Object state = taggedValues.get(OPTION_STATE.getName());
                 if (CHOSEN.getName().equals(state)) {
-                    chosenOptionItem = container.getSeItems().stream().filter(seItem -> seItem
+                    chosenOptionItem = seItems.stream().filter(seItem -> seItem
                             .getId().toString().equals(link.getHref())).collect(Collectors.toList()).get(0);
                 } else {
                     neglectedIds.add(getId(relationSeItem.getFolder(), relationSeItem.getName()));
@@ -201,7 +210,7 @@ public class APIConnector {
         return yStatementJustifications;
     }
 
-    private static YStatementJustificationWrapper createYStatementJustification(SeItem problemItem,
+    private YStatementJustificationWrapper createYStatementJustification(SeItem problemItem,
                                                                                 SeItem chosenOptionItem,
                                                                                 List<String> neglected) {
         Element problemBody = getSeItemContentBody(problemItem);
@@ -225,7 +234,7 @@ public class APIConnector {
         }
     }
 
-    private static String parseForContent(String key, Element seItemBody) {
+    private String parseForContent(String key, Element seItemBody) {
         String content = seItemBody.outerHtml();
 
         // check if key is found and remove everything in front
@@ -266,7 +275,7 @@ public class APIConnector {
         return content;
     }
 
-    private static Element getSeItemContentBody(SeItem item) {
+    private Element getSeItemContentBody(SeItem item) {
         Document doc;
         Element body = null;
         try {
@@ -279,7 +288,8 @@ public class APIConnector {
         return body;
     }
 
-    public static String commitYStatement(ObservableList<YStatementJustificationWrapper> yStatementJustificationWrappers, String repositoryUrl, String repositoryBaseUrl, String repositoryProjectName, String message) throws UnirestException, UnsupportedEncodingException {
+    public String commitYStatement(ObservableList<YStatementJustificationWrapper> yStatementJustificationWrappers,
+                                   String message) throws UnirestException, UnsupportedEncodingException {
         Set<SeItemWithContent> allSeItems = new HashSet<>();
 
         for (YStatementJustificationWrapper wrapper : yStatementJustificationWrappers) {
@@ -315,7 +325,7 @@ public class APIConnector {
 
         CreateCommit createCommit = createCommit(message, CommitMode.ADD_UPDATE_DELETE);
         MultipartFormDataOutput multipartFormDataOutput = createMultipart(createCommit, new ArrayList<>(allSeItems));
-        return commit(multipartFormDataOutput, repositoryBaseUrl, repositoryProjectName);
+        return commit(multipartFormDataOutput);
     }
 
     /**
@@ -323,7 +333,7 @@ public class APIConnector {
      *
      * @return
      */
-    private static SeItemWithContent createSeOptionItem(String id, String achieve, String accepting, OptionState state) throws UnirestException, UnsupportedEncodingException {
+    private SeItemWithContent createSeOptionItem(String id, String achieve, String accepting, OptionState state) throws UnirestException, UnsupportedEncodingException {
         SeItemWithContent createSeItem = new SeItemWithContent();
         String name = getNameFromId(id);
         createSeItem.setName(name);
@@ -340,19 +350,15 @@ public class APIConnector {
         return createSeItem;
     }
 
-    private static String getId(String folder, String name) {
+    private String getId(String folder, String name) {
         return folder.trim() + UrlEscapers.urlFragmentEscaper().escape(name.trim());
     }
 
-    private static String getNameFromId(String id) throws UnsupportedEncodingException {
+    private String getNameFromId(String id) throws UnsupportedEncodingException {
         return URLDecoder.decode(id, "UTF-8").substring(id.lastIndexOf("/") + 1).trim();
     }
 
-//    private static String getFolderFromId(String id) {
-//        return id.substring(id.lastIndexOf("/seitems") + 9, id.lastIndexOf("/") + 1);
-//    }
-
-    private static String getFolderFromId(String id) {
+    private String getFolderFromId(String id) {
         return id.trim().substring(0, id.lastIndexOf("/") + 1);
     }
 
@@ -361,7 +367,7 @@ public class APIConnector {
      *
      * @return
      */
-    private static SeItemWithContent createSeProblemItem(String id, String context, String facing, ProblemState state) throws UnirestException, UnsupportedEncodingException {
+    private SeItemWithContent createSeProblemItem(String id, String context, String facing, ProblemState state) throws UnirestException, UnsupportedEncodingException {
         SeItemWithContent createSeItem = new SeItemWithContent();
         String name = getNameFromId(id);
         createSeItem.setName(name);
@@ -384,10 +390,10 @@ public class APIConnector {
      * @param multipart
      * @return
      */
-    private static String commit(MultipartFormDataOutput multipart, String repositoryBaseUrl, String repositoryProjectName) {
+    private String commit(MultipartFormDataOutput multipart) {
         WebTarget api = ClientBuilder.newClient()
-                .target(repositoryBaseUrl)
-                .path("/repos/" + repositoryProjectName + "/commits");
+                .target(seRepoUrlObject.SEREPO_BASE_URL)
+                .path("/repos/" + seRepoUrlObject.SEREPO_PROJECT + "/commits");
 
         Response response = api.request(MediaType.TEXT_PLAIN_TYPE)
                 .post(Entity.entity(multipart, MediaType.MULTIPART_FORM_DATA_TYPE));
@@ -410,7 +416,7 @@ public class APIConnector {
      * @param seItemsWithContent
      * @return
      */
-    private static MultipartFormDataOutput createMultipart(CreateCommit commit, List<SeItemWithContent> seItemsWithContent) {
+    private MultipartFormDataOutput createMultipart(CreateCommit commit, List<SeItemWithContent> seItemsWithContent) {
         MultipartFormDataOutput multipart = new MultipartFormDataOutput();
 
         multipart.addFormData("commit", commit, MediaType.APPLICATION_JSON_TYPE);
@@ -432,7 +438,7 @@ public class APIConnector {
      * @param mode
      * @return
      */
-    private static CreateCommit createCommit(String message, CommitMode mode) {
+    private CreateCommit createCommit(String message, CommitMode mode) {
         CreateCommit commit = new CreateCommit();
         commit.setMessage(message);
         commit.setMode(mode);
