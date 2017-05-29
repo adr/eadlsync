@@ -77,6 +77,7 @@ public interface IRepo {
 
     /**
      * Commits the changes of the decisions to the repository with the given commitToBaseRepo message.
+     * For a remote repository this will reload the eads by using the new commit id.
      *
      * @param message for the commitToBaseRepo
      * @return the commit id

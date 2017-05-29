@@ -39,7 +39,8 @@ public class ReportMenu extends ACLIMenu {
                 break;
             case "11":
                 try {
-                    EADLSyncMain.getSynchronizer().reinitialize();
+                    EADLSyncMain.getSynchronizer().reinitializeCodeRepo();
+                    EADLSyncMain.getSynchronizer().reinitializeSeRepo();
                 } catch (Exception e) {
                     LOG.error("Error while reinitializing the sync class", e);
                 }

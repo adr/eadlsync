@@ -73,7 +73,7 @@ public class SyncMenu extends ACLIMenu {
                     System.out.println("Please enter a commit message");
                     String message = scanner.nextLine();
                     String id = synchronizer.commitToRemoteRepo(message);
-                    System.out.println("Y-statements successfully committed - " + id);
+                    System.out.println("Y-statements successfully committed, working with new commit - " + id);
                 } catch (Exception e) {
                     LOG.error("Error while committing changes to the se-repo", e);
                 }
