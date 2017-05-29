@@ -36,7 +36,7 @@ public class JavaDecisionParserTest {
     public TemporaryFolder folder = new TemporaryFolder();
 
     public JavaDecisionParserTest() {
-        sampleDecision = new YStatementJustificationWrapperBuilder("my_sample_id").
+        sampleDecision = new YStatementJustificationWrapperBuilder("my_sample_id", "remote_source").
                 context("my_modified_context").chosen("my_new_chosen").build();
     }
 
