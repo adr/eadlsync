@@ -209,17 +209,18 @@ public class APIConnector {
         String context = parseForContent(YStatementConstants.SEITEM_CONTEXT, problemBody);
         String facing = parseForContent(YStatementConstants.SEITEM_FACING, problemBody);
         String neglectedIds = neglected.stream().collect(Collectors.joining(DELIMITER));
+        String source = problemItem.getId().toString();
 
         if (chosenOptionItem != null) {
             Element optionBody = getSeItemContentBody(chosenOptionItem);
             String chosen = getId(chosenOptionItem.getFolder(), chosenOptionItem.getName());
             String achieving = parseForContent(YStatementConstants.SEITEM_ACHIEVING, optionBody);
             String accepting = parseForContent(YStatementConstants.SEITEM_ACCEPTING, optionBody);
-            return new YStatementJustificationWrapperBuilder(id).context(context).facing(facing)
+            return new YStatementJustificationWrapperBuilder(id, source).context(context).facing(facing)
                     .chosen(chosen).neglected(neglectedIds).achieving(achieving).accepting(accepting)
                     .build();
         } else {
-            return new YStatementJustificationWrapperBuilder(id).context(context).facing(facing).
+            return new YStatementJustificationWrapperBuilder(id, source).context(context).facing(facing).
                     neglected(neglectedIds).build();
         }
     }

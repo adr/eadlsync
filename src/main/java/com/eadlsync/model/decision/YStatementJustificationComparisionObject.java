@@ -10,8 +10,8 @@ import com.eadlsync.util.YStatementJustificationComparator;
  */
 public class YStatementJustificationComparisionObject {
 
-    private static final String HEAD = "<<<<<<< HEAD:code repo<to be replaced with path>";
-    private static final String TAIL = ">>>>>>> conflicts:se-repo<to be replaced with url>";
+    private static final String HEAD = "<<<<<<< HEAD:%s";
+    private static final String TAIL = ">>>>>>> conflicts:%s";
     private static final String SEPARATOR = "=======";
     private YStatementJustificationWrapper codeDecision;
     private YStatementJustificationWrapper seDecision;
@@ -78,11 +78,11 @@ public class YStatementJustificationComparisionObject {
     }
 
     private String addHeadIfNeeded(int index) {
-        return isPreviousDifferent(index) ? "" : HEAD + "\n";
+        return isPreviousDifferent(index) ? "" : String.format(HEAD, codeDecision.getSource()) + "\n";
     }
 
     private String addTailIfNeeded(int index) {
-        return isNextDifferent(index) ? "" : "\n" + TAIL;
+        return isNextDifferent(index) ? "" : "\n" + String.format(TAIL, seDecision.getSource());
     }
 
     private boolean isPreviousDifferent(int index) {

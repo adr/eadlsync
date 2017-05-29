@@ -49,7 +49,7 @@ public class CodeRepo extends ARepo {
                             .class)) {
                         YStatementJustification yStatementJustification = (YStatementJustification)
                                 annotation;
-                        yStatements.add(new YStatementJustificationWrapperBuilder(yStatementJustification).build());
+                        yStatements.add(new YStatementJustificationWrapperBuilder(yStatementJustification, path.toString()).build());
                         classPaths.put(yStatementJustification.id(), classPath);
                     }
                 } catch (ClassNotFoundException e) {

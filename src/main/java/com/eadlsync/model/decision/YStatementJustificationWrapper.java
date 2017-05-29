@@ -10,9 +10,10 @@ public class YStatementJustificationWrapper {
     private String achieving = "";
     private String accepting = "";
     private String moreInformation = "";
+    private final String source;
 
-    protected YStatementJustificationWrapper() {
-
+    protected YStatementJustificationWrapper(String source) {
+        this.source = source;
     }
 
     public String getId() {
@@ -77,6 +78,10 @@ public class YStatementJustificationWrapper {
 
     public void setMoreInformation(String moreInformation) {
         this.moreInformation = moreInformation;
+    }
+
+    public String getSource() {
+        return this.source;
     }
 
     @Override
