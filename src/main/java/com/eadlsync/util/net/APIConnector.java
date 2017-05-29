@@ -341,11 +341,11 @@ public class APIConnector {
     }
 
     private static String getId(String folder, String name) {
-        return folder + UrlEscapers.urlFragmentEscaper().escape(name);
+        return folder.trim() + UrlEscapers.urlFragmentEscaper().escape(name.trim());
     }
 
     private static String getNameFromId(String id) throws UnsupportedEncodingException {
-        return URLDecoder.decode(id, "UTF-8").substring(id.lastIndexOf("/") + 1);
+        return URLDecoder.decode(id, "UTF-8").substring(id.lastIndexOf("/") + 1).trim();
     }
 
 //    private static String getFolderFromId(String id) {
@@ -353,7 +353,7 @@ public class APIConnector {
 //    }
 
     private static String getFolderFromId(String id) {
-        return id.substring(0, id.lastIndexOf("/") + 1);
+        return id.trim().substring(0, id.lastIndexOf("/") + 1);
     }
 
     /**
