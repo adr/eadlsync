@@ -35,6 +35,7 @@ import com.eadlsync.serepo.data.restinterface.seitem.RelationEntry;
 import com.eadlsync.serepo.data.restinterface.seitem.SeItem;
 import com.eadlsync.serepo.data.restinterface.seitem.SeItemContainer;
 import com.eadlsync.serepo.data.restinterface.seitem.SeItemWithContent;
+import com.eadlsync.sync.EADLSyncInfo;
 import com.eadlsync.util.YStatementConstants;
 import com.eadlsync.util.net.MetadataFactory.OptionState;
 import com.eadlsync.util.net.MetadataFactory.ProblemState;
@@ -442,7 +443,7 @@ public class APIConnector {
         CreateCommit commit = new CreateCommit();
         commit.setMessage(message);
         commit.setMode(mode);
-        User user = new User("eADL-Synchronizer", "eadl@sync.com");
+        User user = new User(EADLSyncInfo.PROGRAM_NAME, EADLSyncInfo.PROGRAM_EMAIL);
         commit.setUser(user);
         return commit;
     }

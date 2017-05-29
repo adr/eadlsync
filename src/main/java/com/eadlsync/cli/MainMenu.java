@@ -44,7 +44,7 @@ public class MainMenu extends ACLIMenu {
                 SyncMenu.getInstance().show();
                 break;
             case "3":
-                System.out.println(EADLSyncInfo.getInstance());
+                System.out.println(EADLSyncInfo.getCompleteInfoString());
                 break;
 //            case "5":
 //                // TODO: change base url for se-repo
