@@ -78,10 +78,16 @@ public interface IEADLSynchronizer {
     public EADLSyncReport getEadlSyncReport();
 
     /**
-     * Reinitialize the code repository and the se-repo. This essentially reloads the eadl for the
-     * code repo and the se-items for the se-repo.
+     * Reinitialize the code repository. Discards any unwritten changes to the code repo and reloads eadls from the file system.
      *
      * @throws Exception
      */
-    void reinitialize() throws Exception;
+    void reinitializeCodeRepo() throws Exception;
+
+    /**
+     * Reinitialize the se-repo. Discards any unwritten changes to the se-repo and reloads eadls from the server.
+     *
+     * @throws Exception
+     */
+    void reinitializeSeRepo() throws Exception;
 }

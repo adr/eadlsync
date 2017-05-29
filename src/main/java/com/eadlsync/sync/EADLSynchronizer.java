@@ -179,8 +179,12 @@ public class EADLSynchronizer implements IEADLSynchronizer {
     }
 
     @Override
-    public void reinitialize() throws Exception {
+    public void reinitializeCodeRepo() throws Exception {
         this.codeRepo.reloadEADs();
+    }
+
+    @Override
+    public void reinitializeSeRepo() throws Exception {
         this.seRepo.reloadEADs();
     }
 

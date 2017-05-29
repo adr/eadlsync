@@ -37,7 +37,8 @@ public class SyncMenu extends ACLIMenu {
                 break;
             case "11":
                 try {
-                    synchronizer.reinitialize();
+                    synchronizer.reinitializeCodeRepo();
+                    synchronizer.reinitializeSeRepo();
                 } catch (Exception e) {
                     LOG.error("Error while reinitializing the sync class", e);
                 }
