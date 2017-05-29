@@ -22,6 +22,7 @@ import javafx.collections.ObservableList;
 
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
+import com.eadlsync.serepo.data.restinterface.commit.Commit;
 import com.eadlsync.serepo.data.restinterface.commit.CommitContainer;
 import com.eadlsync.serepo.data.restinterface.commit.CommitMode;
 import com.eadlsync.serepo.data.restinterface.commit.CreateCommit;
@@ -99,6 +100,15 @@ public class APIConnector {
                 (CommitContainer.class);
         CommitContainer commitContainer = seItemContainerResponse.getBody();
         return commitContainer;
+    }
+
+    public static List<Commit> getCommitsByUrl(String url) throws UnirestException {
+        return getCommitContainerByUrl(url).getCommits();
+    }
+
+    public static String getCommitIdFromCommit(Commit commit) {
+        String id = commit.getId().toString();
+        return id.substring(id.lastIndexOf("/") + 1);
     }
 
     public static SeItemContainer getSeItemContainerByUrl(String url) throws UnirestException {

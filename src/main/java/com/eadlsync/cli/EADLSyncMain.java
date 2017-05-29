@@ -1,8 +1,13 @@
-package com.eadlsync;
+package com.eadlsync.cli;
 
-import com.eadlsync.cli.MainMenu;
+import java.util.List;
+import java.util.Scanner;
+
+import com.eadlsync.serepo.data.restinterface.commit.Commit;
 import com.eadlsync.sync.EADLSynchronizer;
 import com.eadlsync.sync.IEADLSynchronizer;
+import com.eadlsync.util.net.APIConnector;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -12,6 +17,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static com.eadlsync.util.net.APIConnector.getCommitIdFromCommit;
 
 /**
  * Created by Tobias on 23.04.2017.
@@ -47,6 +54,25 @@ public class EADLSyncMain {
         String seRepoProjectName = cmd.getOptionValue("projectName");
         String seRepoCommitId = cmd.getOptionValue("commitId");
 
+        if (seRepoCommitId == null) {
+            try {
+                List<Commit> commits = APIConnector.getCommitsByUrl(seRepoBasePath + "/repos/" +
+                        seRepoProjectName + "/commits");
+                for (int i = commits.size() - 1; i >= 0; i--) {
+                    Commit item = commits.get(i);
+                    System.out.println(String.format("%d - %s\n\t%s", i, getCommitIdFromCommit(item),
+                            item.getShortMessage()));
+                }
+                System.out.println("Please choose a commit by writing a number and pressing enter");
+                Scanner scanner = new Scanner(System.in);
+                int choice = scanner.nextInt();
+                seRepoCommitId = String.valueOf(getCommitIdFromCommit(commits.get(choice)));
+            } catch (UnirestException e) {
+                LOG.debug("Failed to retrieve commits, exiting...", e);
+                System.exit(0);
+            }
+        }
+
         // code repo path needs to specify the root of the sources folder of the java project
         // eg for this project it is -c "/Users/tobias/git/eadlsync/src/main/java"
         LOG.info("Code repo: {}", codeRepoPathOrUrl);
@@ -69,15 +95,15 @@ public class EADLSyncMain {
         options.addOption(codeRepoPathOption);
 
         Option seRepoPathOption = new Option("s", "serepoUrl", true, "Path to the se-repo");
-        codeRepoPathOption.setRequired(true);
+        seRepoPathOption.setRequired(true);
         options.addOption(seRepoPathOption);
 
         Option seRepoNameOption = new Option("p", "projectName", true, "Project name in the se-repo");
-        codeRepoPathOption.setRequired(true);
+        seRepoNameOption.setRequired(true);
         options.addOption(seRepoNameOption);
 
         Option seRepoCommitOption = new Option("i", "commitId", true, "Commit id");
-        codeRepoPathOption.setRequired(true);
+        seRepoCommitOption.setRequired(false);
         options.addOption(seRepoCommitOption);
 
         return options;

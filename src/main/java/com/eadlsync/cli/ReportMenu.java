@@ -2,7 +2,6 @@ package com.eadlsync.cli;
 
 import java.util.Arrays;
 
-import com.eadlsync.EADLSyncMain;
 import com.eadlsync.model.report.EADLSyncReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
