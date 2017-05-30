@@ -20,21 +20,21 @@ import javax.ws.rs.core.Response;
 
 import javafx.collections.ObservableList;
 
+import ch.hsr.isf.serepo.data.restinterface.commit.Commit;
+import ch.hsr.isf.serepo.data.restinterface.commit.CommitContainer;
+import ch.hsr.isf.serepo.data.restinterface.commit.CommitMode;
+import ch.hsr.isf.serepo.data.restinterface.commit.CreateCommit;
+import ch.hsr.isf.serepo.data.restinterface.common.Link;
+import ch.hsr.isf.serepo.data.restinterface.common.User;
+import ch.hsr.isf.serepo.data.restinterface.metadata.MetadataContainer;
+import ch.hsr.isf.serepo.data.restinterface.metadata.MetadataEntry;
+import ch.hsr.isf.serepo.data.restinterface.seitem.RelationContainer;
+import ch.hsr.isf.serepo.data.restinterface.seitem.RelationEntry;
+import ch.hsr.isf.serepo.data.restinterface.seitem.SeItem;
+import ch.hsr.isf.serepo.data.restinterface.seitem.SeItemContainer;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
-import com.eadlsync.serepo.data.restinterface.commit.Commit;
-import com.eadlsync.serepo.data.restinterface.commit.CommitContainer;
-import com.eadlsync.serepo.data.restinterface.commit.CommitMode;
-import com.eadlsync.serepo.data.restinterface.commit.CreateCommit;
-import com.eadlsync.serepo.data.restinterface.common.Link;
-import com.eadlsync.serepo.data.restinterface.common.User;
-import com.eadlsync.serepo.data.restinterface.metadata.MetadataContainer;
-import com.eadlsync.serepo.data.restinterface.metadata.MetadataEntry;
-import com.eadlsync.serepo.data.restinterface.seitem.RelationContainer;
-import com.eadlsync.serepo.data.restinterface.seitem.RelationEntry;
-import com.eadlsync.serepo.data.restinterface.seitem.SeItem;
-import com.eadlsync.serepo.data.restinterface.seitem.SeItemContainer;
-import com.eadlsync.serepo.data.restinterface.seitem.SeItemWithContent;
+import com.eadlsync.model.serepo.data.SeItemWithContent;
 import com.eadlsync.util.YStatementConstants;
 import com.eadlsync.util.net.MetadataFactory.OptionState;
 import com.eadlsync.util.net.MetadataFactory.ProblemState;
@@ -111,7 +111,7 @@ public class APIConnector {
         return id.substring(id.lastIndexOf("/") + 1);
     }
 
-    public static SeItemContainer getSeItemContainerByUrl(String url) throws UnirestException {
+    public static ch.hsr.isf.serepo.data.restinterface.seitem.SeItemContainer getSeItemContainerByUrl(String url) throws UnirestException {
         HttpResponse<SeItemContainer> seItemContainerResponse = Unirest.get(url).asObject
                 (SeItemContainer.class);
         SeItemContainer seItemContainer = seItemContainerResponse.getBody();
