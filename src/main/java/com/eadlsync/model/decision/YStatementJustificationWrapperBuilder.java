@@ -71,14 +71,18 @@ public class YStatementJustificationWrapperBuilder {
 
     public YStatementJustificationWrapper build() {
         YStatementJustificationWrapper y = new YStatementJustificationWrapper(this.source);
-        y.setId(this.id);
-        y.setContext(this.context);
-        y.setAccepting(this.accepting);
-        y.setFacing(this.facing);
-        y.setChosen(this.chosen);
-        y.setNeglected(this.neglected);
-        y.setAchieving(this.achieving);
-        y.setMoreInformation(this.moreInformation);
+        y.setId(notNull(this.id));
+        y.setContext(notNull(this.context));
+        y.setAccepting(notNull(this.accepting));
+        y.setFacing(notNull(this.facing));
+        y.setChosen(notNull(this.chosen));
+        y.setNeglected(notNull(this.neglected));
+        y.setAchieving(notNull(this.achieving));
+        y.setMoreInformation(notNull(this.moreInformation));
         return y;
+    }
+
+    private String notNull(String value) {
+        return (value == null) ? "" : value;
     }
 }
