@@ -22,6 +22,7 @@ public class MockedAPITest extends MockedAPI {
 
     private Logger LOG = LoggerFactory.getLogger(MockedAPITest.class);
 
+    @Ignore
     @Test
     public void testSEReposResponse() throws UnirestException, IOException {
         String mockedServerPath = "/__files/serepo_repos.json";
@@ -30,6 +31,7 @@ public class MockedAPITest extends MockedAPI {
                 (SEREPO_REPOS_URL).asJson().getRawBody())));
     }
 
+    @Ignore
     @Test
     public void testSETestRepoResponse() throws UnirestException, IOException {
         String mockedServerPath = String.format("/__files/serepo_repos_%s.json", SEREPO_NAME);
@@ -38,6 +40,7 @@ public class MockedAPITest extends MockedAPI {
                 (TEST_REPO_URL).asJson().getRawBody())));
     }
 
+    @Ignore
     @Test
     public void testSETestRepoCommitsResponse() throws UnirestException, IOException {
         String mockedServerPath = String.format("/__files/serepo_repos_%s_commits.json", SEREPO_NAME);
@@ -46,6 +49,7 @@ public class MockedAPITest extends MockedAPI {
                 (TEST_REPO_COMMITS_URL).asJson().getRawBody())));
     }
 
+    @Ignore
     @Test
     public void testSETestCommitResponse() throws UnirestException, IOException {
         String mockedServerPath = String.format("/__files/serepo_repos_%s_commits_%s.json", SEREPO_NAME,
@@ -55,6 +59,7 @@ public class MockedAPITest extends MockedAPI {
                 (TEST_COMMIT_URL).asJson().getRawBody())));
     }
 
+    @Ignore
     @Test
     public void testSEItemsResponse() throws UnirestException, IOException {
         String mockedServerPath = String.format("/__files/serepo_repos_%s_commits_%s_seitems.json", SEREPO_NAME,
@@ -64,6 +69,7 @@ public class MockedAPITest extends MockedAPI {
                 (TEST_SEITEMS_URL).asJson().getRawBody())));
     }
 
+    @Ignore
     @Test
     public void testSeItemRelations() throws UnirestException, IOException {
         String mockedServerPath = String.format("/__files/serepo_repos_%s_commits_%s_gui_relations.json",
@@ -74,6 +80,7 @@ public class MockedAPITest extends MockedAPI {
                 (TEST_RELATIONS_URL).asJson().getRawBody())));
     }
 
+    @Ignore
     @Test
     public void testSeItemMetadata() throws UnirestException, IOException {
         String mockedServerPath = String.format("/__files/serepo_repos_%s_commits_%s_gui_metadata.json", SEREPO_NAME,
