@@ -62,8 +62,8 @@ task initSubmodules(type: Exec) {
         commandLine "cmd", "/c", "git", "submodule", "init"
         commandLine "cmd", "/c", "git", "submodule", "update"
     } else {
-        commandLine "git", "submodule"
-        commandLine "git", "update"
+        commandLine "git", "submodule", "init"
+        commandLine "git", "submodule", "update"
     }
 }
 
