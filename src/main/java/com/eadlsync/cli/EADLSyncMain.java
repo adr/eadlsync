@@ -3,7 +3,7 @@ package com.eadlsync.cli;
 import java.util.List;
 import java.util.Scanner;
 
-import com.eadlsync.serepo.data.restinterface.commit.Commit;
+import ch.hsr.isf.serepo.data.restinterface.commit.Commit;
 import com.eadlsync.sync.EADLSynchronizer;
 import com.eadlsync.sync.IEADLSynchronizer;
 import com.eadlsync.util.net.APIConnector;
