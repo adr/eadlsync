@@ -7,6 +7,7 @@ import java.nio.file.Path;
 
 import com.eadlsync.eadl.annotations.YStatementJustification;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
+import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
 import com.eadlsync.util.YStatementConstants;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
@@ -17,9 +18,21 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
  */
 public class JavaDecisionParser {
 
-    public static YStatementJustificationWrapper readModifiedYStatementFromFile(Path path) {
-        // TODO: evaluate if this is better option than using java class loader
-        return null;
+    public static YStatementJustificationWrapper readModifiedYStatementFromFile(Path path) throws
+            IOException {
+        // TODO: evaluate if roaster is better option for parsing java classes than the java class loader
+        final JavaClassSource javaClass = (JavaClassSource) Roaster.parse(Files.newInputStream(path));
+        AnnotationSource annotation = javaClass.getAnnotation(YStatementJustification.class);
+        String id = annotation.getStringValue(YStatementConstants.ID);
+        String context = annotation.getStringValue(YStatementConstants.CONTEXT);
+        String facing = annotation.getStringValue(YStatementConstants.FACING);
+        String chosen = annotation.getStringValue(YStatementConstants.CHOSEN);
+        String neglected = annotation.getStringValue(YStatementConstants.NEGLECTED);
+        String achieving = annotation.getStringValue(YStatementConstants.ACHIEVING);
+        String accepting = annotation.getStringValue(YStatementConstants.ACCEPTING);
+        return new YStatementJustificationWrapperBuilder(id, path.toString()).context(context).facing
+                (facing).chosen(chosen).neglected(neglected).achieving(achieving).accepting(accepting)
+                .build();
     }
 
     public static void writeModifiedYStatementToFile(YStatementJustificationWrapper yStatement, Path
@@ -27,16 +40,16 @@ public class JavaDecisionParser {
         final JavaClassSource javaClass = (JavaClassSource) Roaster.parse(Files.newInputStream(path));
         AnnotationSource annotation = javaClass.getAnnotation(YStatementJustification.class);
         if (annotation.getStringValue(YStatementConstants.ID).equals(yStatement.getId())) {
-            // TODO: check if annotation sourec has same fields and values as yStatement
-            // YStatementComparator.equals(annotation, yStatement);
+            // TODO: check if annotation soure has same fields and values as yStatement
+            //YStatementJustificationComparator.equals(annotation, yStatement);
             javaClass.removeAnnotation(annotation);
-            addYStatement(yStatement, javaClass);
+            addYStatementToClassSource(yStatement, javaClass);
             Files.write(path, javaClass.toString().getBytes(Charset.defaultCharset()));
         }
     }
 
-    private static void addYStatement(YStatementJustificationWrapper yStatement, JavaClassSource
-            javaClass) {
+    private static void addYStatementToClassSource(YStatementJustificationWrapper yStatement,
+                                                   JavaClassSource javaClass) {
         AnnotationSource newAnnotation = javaClass.addAnnotation(YStatementJustification.class);
         newAnnotation.setStringValue(YStatementConstants.ID, yStatement.getId());
         if (!yStatement.getContext().isEmpty())

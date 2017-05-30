@@ -13,9 +13,12 @@ import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
 import com.eadlsync.util.OS;
 import com.eadlsync.util.YStatementConstants;
+import com.eadlsync.util.YStatementJustificationComparator;
 import com.eadlsync.util.io.JavaDecisionParser;
 import org.junit.Assert;
-import org.junit.Rule;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
@@ -30,26 +33,45 @@ public class JavaDecisionParserTest {
             "@YStatementJustification( id=\"my_sample_id\", context=\"my_context\" )\n" +
             "public class SampleClass {\n" +
             "}";
-    private final YStatementJustificationWrapper sampleDecision;
+    private final YStatementJustificationWrapper initialDecision =
+            new YStatementJustificationWrapperBuilder("my_sample_id", "local_source").
+                    context("my_context").
+                    build();
+    private final YStatementJustificationWrapper sampleDecision =
+            new YStatementJustificationWrapperBuilder("my_sample_id", "remote_source").
+            context("my_modified_context").
+            chosen("my_new_chosen").
+            build();
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    private static File sampleFile;
+    private static Path sampleFilePath;
 
-    public JavaDecisionParserTest() {
-        sampleDecision = new YStatementJustificationWrapperBuilder("my_sample_id", "remote_source").
-                context("my_modified_context").chosen("my_new_chosen").build();
+    @ClassRule
+    public static TemporaryFolder folder = new TemporaryFolder();
+
+    @BeforeClass
+    public static void classSetUp() throws IOException {
+        sampleFile = folder.newFile();
+        sampleFilePath = sampleFile.toPath();
+    }
+
+    @Before
+    public void setUp() throws IOException {
+        writeToFile(sampleClassWithAnnotation, sampleFilePath);
+    }
+
+    @Test
+    public void testParseClass() throws IOException {
+        YStatementJustificationWrapper readDecision = JavaDecisionParser.readModifiedYStatementFromFile(sampleFilePath);
+
+        Assert.assertTrue(readDecision.toString(), YStatementJustificationComparator.isEqual(initialDecision, readDecision));
     }
 
     @Test
     public void testModifyAnnotation() throws IOException {
-        File srcFile = folder.newFile();
-        Path srcPath = srcFile.toPath();
+        JavaDecisionParser.writeModifiedYStatementToFile(sampleDecision, sampleFilePath);
 
-        writeToFile(sampleClassWithAnnotation, srcPath);
-
-        JavaDecisionParser.writeModifiedYStatementToFile(sampleDecision, srcPath);
-
-        String content = readFromFile(srcPath);
+        String content = readFromFile(sampleFilePath);
 
         Assert.assertTrue(content.contains(sampleDecision.getId()));
         Assert.assertTrue(content.contains(sampleDecision.getContext()));
