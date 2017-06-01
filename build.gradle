@@ -21,7 +21,7 @@ dependencies {
     compile 'ch.qos.logback:logback-classic:1.2.3'
     compile 'com.mashape.unirest:unirest-java:1.4.9'
     compile 'org.jsoup:jsoup:1.10.2'
-    compile 'commons-cli:commons-cli:1.4'
+    compile 'com.beust:jcommander:1.7'
     compile 'org.apache.commons:commons-collections4:4.1'
     compile 'org.jboss.forge.roaster:roaster-api:2.20.0.Final'
     compile 'org.jboss.forge.roaster:roaster-jdt:2.20.0.Final'
