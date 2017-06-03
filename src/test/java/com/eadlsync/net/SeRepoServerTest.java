@@ -13,25 +13,30 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * Created by Tobias on 03.06.2017.
  */
 public class SeRepoServerTest {
 
+    private static final int PORT = 8080;
+    private static final String LOCALHOST_SEREPO = String.format("http://localhost:%s/serepo/repos", PORT);
     private static SeRepoServer server;
 
     @BeforeClass
     public static void classSetUp() throws Exception {
-        server = SeRepoServer.create(8080);
+        server = SeRepoServer.create(PORT);
         server.start();
     }
 
     @Test
     public void testIsServerRunning() throws IOException {
-        InputStream input = new URL("http://localhost:8080/serepo/repos").openStream();
+        InputStream input = new URL(LOCALHOST_SEREPO).openStream();
         Reader reader = new InputStreamReader(input, "UTF-8");
         RepositoryContainer repos = new Gson().fromJson(reader, RepositoryContainer.class);
-        System.out.println(repos.getId());
+
+        assertEquals(LOCALHOST_SEREPO, repos.getId().toString());
     }
 
     @AfterClass
