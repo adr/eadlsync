@@ -63,6 +63,14 @@ jacocoTestReport {
 
 check.dependsOn jacocoTestReport
 
+task generateSource(dependsOn: ["initSubmodules"]) {
+    description 'Generates Java source files.'
+}
+
+task generateTestSource(dependsOn: ["generateSource", "compileSeRepo"]) {
+    description 'Generates Java source files for testing.'
+}
+
 task initSubmodules(type: Exec) {
     if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
         commandLine "cmd", "/c", "git", "submodule", "update", "--init", "--recursive"
@@ -79,6 +87,6 @@ task compileSeRepo(type: Exec) {
         commandLine "mvn", "install"
     }
 }
-compileJava.dependsOn initSubmodules
-compileTestJava.dependsOn compileSeRepo
+compileJava.dependsOn generateSource
+compileTestJava.dependsOn generateTestSource
 compileSeRepo.dependsOn initSubmodules
