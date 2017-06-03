@@ -40,7 +40,11 @@ dependencies {
     // testing against web api
     testCompile 'com.github.tomakehurst:wiremock:2.6.0'
     testCompile 'junit:junit:4.12'
-    testCompile 'ch.hsr.isf.serepo:serepo-rest:1.0-SNAPSHOT'
+    testCompile 'com.google.code.gson:gson:2.8.1'
+
+    testCompile files("serepo/serepo-rest/target/classes") {
+        builtBy "compileMavenProject"
+    }
 }
 
 test {
