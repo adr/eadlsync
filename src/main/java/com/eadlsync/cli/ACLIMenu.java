@@ -11,7 +11,8 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-import com.eadlsync.eadl.annotations.YStatementJustification;
+import radar.ad.annotations.YStatementJustification;
+
 
 /**
  * Created by Tobias on 23.04.2017.

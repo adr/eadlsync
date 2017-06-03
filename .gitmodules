@@ -1,3 +1,6 @@
 [submodule "serepo"]
 	path = serepo
 	url = git@github.com:andreas-buechler/serepo.git
+[submodule "embedded-adl"]
+	path = embedded-adl
+	url = git@github.com:koppor/embedded-adl.git

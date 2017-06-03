@@ -1,6 +1,6 @@
 package com.eadlsync.model.decision;
 
-import com.eadlsync.eadl.annotations.YStatementJustification;
+import radar.ad.annotations.YStatementJustification;
 
 /**
  * Created by Tobias on 03.04.2017.

@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.eadlsync.eadl.annotations.YStatementJustification;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
 import com.eadlsync.util.OS;
 import com.eadlsync.util.io.JavaDecisionParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import radar.ad.annotations.YStatementJustification;
 
 /**
  * Created by tobias on 07/03/2017.
