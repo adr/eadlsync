@@ -3,3 +3,9 @@
 [![Dependency Status](https://www.versioneye.com/user/projects/58908950a23e810048f68204/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/58908950a23e810048f68204)
 
 # eadlsync
+
+## Developing
+Execute `gradlew generateSource` in the project root directory before writing source code
+
+## Testing
+Execute `gradlew generateTestSource` in the project root directory before writing tests
