@@ -49,10 +49,6 @@ public class ConfigCommand extends EADLSyncCommand {
         createConfigFile();
     }
 
-    private boolean notBlank(String value) {
-        return value != null && !value.isEmpty();
-    }
-
     private void createConfigFile() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(EADL_CONFIG.toFile(), this.config);

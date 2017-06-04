@@ -30,4 +30,8 @@ public class EADLSyncCommand {
         this.config = mapper.readValue(EADL_CONFIG.toFile(), Config.class);
     }
 
+    protected boolean notBlank(String value) {
+        return value != null && !value.isEmpty();
+    }
+
 }
