@@ -18,7 +18,7 @@ public interface IEADLSynchronizer {
      *
      * @return a list of {@link YStatementJustificationWrapper}
      */
-    public ListProperty<YStatementJustificationWrapper> additionalYStatementsProperty();
+    ListProperty<YStatementJustificationWrapper> additionalYStatementsProperty();
 
     /**
      * Synchronizes the eads of a code repository with ystatements of a se-repo and returns a
@@ -27,7 +27,7 @@ public interface IEADLSynchronizer {
      *
      * @return a list of {@link YStatementJustificationWrapper}
      */
-    public ListProperty<YStatementJustificationWrapper> obsoleteYStatementsProperty();
+    ListProperty<YStatementJustificationWrapper> obsoleteYStatementsProperty();
 
     /**
      * Synchronizes the eads of a code repository with ystatements of a se-repo and returns a
@@ -37,7 +37,7 @@ public interface IEADLSynchronizer {
      *
      * @return a list of {@link YStatementJustificationComparisionObject}
      */
-    public ListProperty<YStatementJustificationComparisionObject> differentYStatementsProperty();
+    ListProperty<YStatementJustificationComparisionObject> differentYStatementsProperty();
 
     /**
      * Updates the decision with the given id in the code repo.
@@ -45,7 +45,7 @@ public interface IEADLSynchronizer {
      *
      * @param id as String
      */
-    public void updateYStatementInCodeRepo(String id);
+    void updateYStatementInCodeRepo(String id);
 
     /**
      * Updates the decision with the given id in the se-repo.
@@ -53,7 +53,7 @@ public interface IEADLSynchronizer {
      *
      * @param id as String
      */
-    public void updateYStatementInSeRepo(String id);
+    void updateYStatementInSeRepo(String id);
 
 
     /**
@@ -62,7 +62,7 @@ public interface IEADLSynchronizer {
      * @param message for the commit
      * @return the commit id
      */
-    public String commitToBaseRepo(String message) throws Exception;
+    String commitToBaseRepo(String message) throws Exception;
 
     /**
      * This will commit the ystatements of the se-repo. It also changes the working commit and
@@ -71,14 +71,14 @@ public interface IEADLSynchronizer {
      * @param message for the commit
      * @return the commit id
      */
-    public String commitToRemoteRepo(String message) throws Exception;
+    String commitToRemoteRepo(String message) throws Exception;
 
     /**
      * This will generate an eadlsync report.
      *
      * @return a {@link EADLSyncReport}
      */
-    public EADLSyncReport getEadlSyncReport();
+    EADLSyncReport getEadlSyncReport();
 
     /**
      * Reinitialize the code repository. Discards any unwritten changes to the code repo and reloads

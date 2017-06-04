@@ -1,12 +1,10 @@
 package com.eadlsync.cli.command;
 
+import java.io.IOException;
+
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 /**
  * Created by tobias on 01/06/2017.
@@ -19,6 +17,9 @@ public class ConfigCommand extends EADLSyncCommand {
 
     @Parameter(names = "--user.email")
     private String email;
+
+    @Parameter(names = "--core.root", description = "Set the root directory of the code base",  hidden = true)
+    private String root;
 
     @Parameter(names = "--core.url", description = "Set the base url for the se-repo, the url shall be in a format of '<host>/serepo'")
     private String baseUrl;
@@ -36,6 +37,8 @@ public class ConfigCommand extends EADLSyncCommand {
             config.getUser().setName(this.name);
         } else if (notBlank(email)) {
             config.getUser().setName(this.email);
+        } else if (notBlank(root)) {
+            config.getCore().setProjectRoot(this.root);
         } else if (notBlank(baseUrl)) {
             config.getCore().setBaseUrl(this.baseUrl);
         } else if (notBlank(project)) {

@@ -1,5 +1,9 @@
 package com.eadlsync.cli.command;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.eadlsync.model.config.Config;
@@ -8,10 +12,6 @@ import com.eadlsync.model.config.ConfigSync;
 import com.eadlsync.model.config.ConfigUser;
 import com.eadlsync.util.net.SeRepoUrlObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 /**
  * Created by tobias on 01/06/2017.
@@ -46,6 +46,7 @@ public class InitCommand extends EADLSyncCommand {
         SeRepoUrlObject seRepoUrlObject = SeRepoUrlObject.ofCommmitUrl(this.commitUrl);
 
         ConfigCore core = new ConfigCore();
+        core.setProjectRoot(PROJECT_ROOT.toString());
         core.setBaseUrl(seRepoUrlObject.SEREPO_BASE_URL);
         core.setProjectName(seRepoUrlObject.SEREPO_PROJECT);
 
