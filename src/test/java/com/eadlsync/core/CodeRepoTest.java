@@ -1,16 +1,13 @@
 package com.eadlsync.core;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 
 import com.eadlsync.model.repo.CodeRepo;
 import com.eadlsync.model.repo.IRepo;
-import com.eadlsync.model.repo.SeRepo;
 import com.eadlsync.net.restful.MockedAPI;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -22,12 +19,6 @@ public class CodeRepoTest extends MockedAPI {
     public void testCodeRepo() throws IOException, UnirestException {
         IRepo repo = new CodeRepo("/Users/tobias/git/eadlsync/src/main/java");
         assertTrue(repo.yStatementJustificationsProperty().isEmpty());
-    }
-
-    @Test
-    public void testSeRepo() throws MalformedURLException, UnirestException {
-        IRepo repo = new SeRepo(SEREPO_URL, SEREPO_NAME, SEREPO_COMMIT_ID);
-        assertFalse(repo.yStatementJustificationsProperty().isEmpty());
     }
 
 }
