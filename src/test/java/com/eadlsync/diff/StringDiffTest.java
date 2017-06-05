@@ -1,13 +1,39 @@
 package com.eadlsync.diff;
 
-import com.eadlsync.model.repo.StringDiff;
+import com.eadlsync.model.diff.StringDiff;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
  *
  */
-public class StringDiffTest extends DiffTest{
+public class StringDiffTest {
+
+    final String BASE_STRING = "this is a normal sentence";
+
+    final String ADD_START_DIFF = "a new start but still";
+    final String ADD_START_DIFF_STRING = ADD_START_DIFF + BASE_STRING;
+    final String ADD_END_DIFF = "with something new in the end";
+    final String ADD_END_DIFF_STRING = BASE_STRING + ADD_END_DIFF;
+    final String ADD_MID_DIFF = "extended";
+    final String ADD_MID_DIFF_STRING = "this is a norextendedmal sentence";
+    final String START_DIFF_STRING = "here is a normal sentence";
+    final String START_DIFF = "here";
+    final String END_DIFF_STRING = "this is a normal notebook";
+    final String END_DIFF = "notebook";
+    final String MID_DIFF_STRING = "this is a plural sentence";
+    final String MID_DIFF = "plur";
+
+    final String CONFLICT_START_DIFF_STRING_A = START_DIFF_STRING;
+    final String CONFLICT_START_DIFF_STRING_B = ADD_START_DIFF_STRING;
+    final String CONFLICT_MID_DIFF_STRING_A = MID_DIFF_STRING;
+    final String CONFLICT_MID_DIFF_STRING_B = ADD_MID_DIFF_STRING;
+    final String CONFLICT_END_DIFF_STRING_A = END_DIFF_STRING;
+    final String CONFLICT_END_DIFF_STRING_B = ADD_END_DIFF_STRING;
+
+    final String APPLY_NON_CONFLICT_MODIFICATIONS = "here is a normal notebook";
+    final String APPLY_NON_CONFLICT_DELETIONS = "this is a plural sentence";
+    final String APPLY_NON_CONFLICT_MIXED = "this is a normal sentencewith something new in the end";
 
     @Test
     public void testStartAddition() {

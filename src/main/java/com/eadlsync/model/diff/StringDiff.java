@@ -1,4 +1,4 @@
-package com.eadlsync.model.repo;
+package com.eadlsync.model.diff;
 
 /**
  *
@@ -21,30 +21,30 @@ public class StringDiff {
 
     public static StringDiff of(String fieldValue, String fieldNewValue) {
         int startPosition = getStartPosition(fieldValue, fieldNewValue);
-        int endPosition = getEndPosition(fieldValue, fieldNewValue);
+        int endPosition = startPosition;
+        if (startPosition != fieldValue.length()) {
+            endPosition = getEndPosition(fieldValue, fieldNewValue, startPosition);
+        }
         String diff;
 
-        if (endPosition == fieldValue.length()) {
+        if (startPosition == fieldValue.length()) {
             diff = fieldNewValue.substring(startPosition);
         } else if (endPosition == 0) {
             diff = fieldNewValue.substring(0, fieldNewValue.indexOf(fieldValue));
         } else {
-            diff = fieldNewValue.substring(startPosition, fieldNewValue.indexOf(fieldValue.substring(endPosition)));
+            diff = fieldNewValue.substring(startPosition, fieldNewValue.lastIndexOf(fieldValue.substring(endPosition)));
         }
         return new StringDiff(startPosition, endPosition, fieldValue, fieldNewValue, diff);
     }
 
-    private static int getEndPosition(String fieldValue, String fieldNewValue) {
-        StringBuilder end = new StringBuilder();
-        char[] charArray = fieldValue.toCharArray();
-        for (int index = charArray.length - 1; index >= 0; index--) {
-            char current = charArray[index];
-            end.insert(0, current);
-            if (!fieldNewValue.endsWith(end.toString())) {
-                return fieldValue.length() - end.length() + 1;
+    private static int getEndPosition(String fieldValue, String fieldNewValue, int start) {
+        String base = fieldValue.substring(start);
+        for (int index = 0; index < base.length(); index++) {
+            if (fieldNewValue.endsWith(base.substring(index))) {
+                return start + index;
             }
         }
-        return 0;
+        return fieldValue.length();
     }
 
     private static int getStartPosition(String fieldValue, String fieldNewValue) {
