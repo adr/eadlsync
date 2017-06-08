@@ -62,7 +62,7 @@ public class JavaDecisionParserTest {
 
     @Test
     public void testParseClass() throws IOException {
-        YStatementJustificationWrapper readDecision = JavaDecisionParser.readModifiedYStatementFromFile(sampleFilePath);
+        YStatementJustificationWrapper readDecision = JavaDecisionParser.readYStatementFromFile(sampleFilePath);
 
         Assert.assertTrue(readDecision.toString(), YStatementJustificationComparator.isEqual(initialDecision, readDecision));
     }
@@ -84,7 +84,7 @@ public class JavaDecisionParserTest {
     public void testClearAnnotation() throws IOException {
         JavaDecisionParser.removeYStatementFromFile(initialDecision);
 
-        Assert.assertNull(JavaDecisionParser.readModifiedYStatementFromFile(sampleFilePath));
+        Assert.assertNull(JavaDecisionParser.readYStatementFromFile(sampleFilePath));
     }
 
     private void writeToFile(String content, Path path) throws IOException {

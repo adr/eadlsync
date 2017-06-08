@@ -19,7 +19,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
  */
 public class JavaDecisionParser {
 
-    public static YStatementJustificationWrapper readModifiedYStatementFromFile(Path path) throws
+    public static YStatementJustificationWrapper readYStatementFromFile(Path path) throws
             IOException {
         // TODO: evaluate if roaster is better option for parsing java classes than the java class loader
         final JavaClassSource javaClass = (JavaClassSource) Roaster.parse(Files.newInputStream(path));

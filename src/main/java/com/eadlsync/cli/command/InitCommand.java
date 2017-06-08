@@ -1,9 +1,5 @@
 package com.eadlsync.cli.command;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.eadlsync.model.config.Config;
@@ -11,7 +7,10 @@ import com.eadlsync.model.config.ConfigCore;
 import com.eadlsync.model.config.ConfigSync;
 import com.eadlsync.model.config.ConfigUser;
 import com.eadlsync.util.net.SeRepoUrlObject;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Created by tobias on 01/06/2017.
@@ -33,9 +32,8 @@ public class InitCommand extends EADLSyncCommand {
 
     private void createConfigFile(Path filePath) throws IOException {
         Files.createFile(filePath);
-        Config config = createConfig();
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(filePath.toFile(), config);
+        config = createConfig();
+        updateConfig();
     }
 
     private Config createConfig() {

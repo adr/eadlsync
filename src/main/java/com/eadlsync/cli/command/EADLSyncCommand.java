@@ -33,10 +33,20 @@ public class EADLSyncCommand {
         this.config = mapper.readValue(EADL_CONFIG.toFile(), Config.class);
     }
 
+    protected void updateConfig() throws IOException {
+        // we assume we only get called in the root directory of a project
+        if (!Files.exists(EADL_CONFIG)) {
+            throw new IOException("No eadlsync repository, please initialize first");
+        } else if (!Files.isWritable(EADL_CONFIG)) {
+            throw new IOException("Could not write config file, please check permissions");
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.writeValue(EADL_CONFIG.toFile(), config);
+    }
+
     protected void readDecisions() throws IOException, UnirestException {
         repo = new CodeRepo(PROJECT_ROOT, config.getCore().getBaseUrl(), config.getCore()
                 .getProjectName(), config.getSync().getRevisionBase());
-
     }
 
     protected boolean notBlank(String value) {

@@ -295,7 +295,7 @@ public class APIConnector {
         } else if (matcherTag.find()) {
             content = matcherTag.group(1);
         } else {
-            LOG.info("No end html tag for key '{}' in [{}] parsed from [{}]", key, content, seItemBody.outerHtml());
+            LOG.debug("No end html tag for key '{}' in [{}] parsed from [{}]", key, content, seItemBody.outerHtml());
         }
 
         content = content.trim();
@@ -315,7 +315,7 @@ public class APIConnector {
         return body;
     }
 
-    public String commitYStatement(ObservableList<YStatementJustificationWrapper> yStatementJustificationWrappers,
+    public String commitYStatement(List<YStatementJustificationWrapper> yStatementJustificationWrappers,
                                    String message) throws UnirestException, UnsupportedEncodingException {
         Set<SeItemWithContent> allSeItems = new HashSet<>();
 
@@ -472,5 +472,9 @@ public class APIConnector {
         User user = new User("EadlSynchronizer", "eadl@sync.com");
         commit.setUser(user);
         return commit;
+    }
+
+    public void changeToCommit(String commitId) {
+        seRepoUrlObject.changeToCommit(commitId);
     }
 }
