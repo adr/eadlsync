@@ -75,9 +75,4 @@ public abstract class ARepo implements IRepo {
         yStatements.removeIf(y -> decision.getId().equals(y.getId()));
         yStatements.add(decision);
     }
-
-    @Override
-    public ListProperty<YStatementJustificationWrapper> yStatementJustificationsProperty() {
-        return this.yStatements;
-    }
 }

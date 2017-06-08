@@ -1,7 +1,5 @@
 package com.eadlsync.model.repo;
 
-import javafx.beans.property.ListProperty;
-
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 
 /**
@@ -13,7 +11,7 @@ import com.eadlsync.model.decision.YStatementJustificationWrapper;
 public interface IRepo {
 
     /**
-     * Sets the context field for the decision with the given id to the given String.
+     * Sets the context YStatementField for the decision with the given id to the given String.
      *
      * @param context as String
      * @param id
@@ -21,7 +19,7 @@ public interface IRepo {
     void updateContext(String context, String id);
 
     /**
-     * Sets the facing field for the decision with the given id to the given String.
+     * Sets the facing YStatementField for the decision with the given id to the given String.
      *
      * @param facing as String
      * @param id
@@ -29,7 +27,7 @@ public interface IRepo {
     void updateFacing(String facing, String id);
 
     /**
-     * Sets the chosen field for the decision with the given id to the given String.
+     * Sets the chosen YStatementField for the decision with the given id to the given String.
      *
      * @param chosen as String
      * @param id
@@ -37,7 +35,7 @@ public interface IRepo {
     void updateChosen(String chosen, String id);
 
     /**
-     * Sets the neglected field for the decision with the given id to the given String.
+     * Sets the neglected YStatementField for the decision with the given id to the given String.
      *
      * @param neglected as String
      * @param id
@@ -45,7 +43,7 @@ public interface IRepo {
     void updateNeglected(String neglected, String id);
 
     /**
-     * Sets the achieving field for the decision with the given id to the given String.
+     * Sets the achieving YStatementField for the decision with the given id to the given String.
      *
      * @param achieving as String
      * @param id
@@ -53,7 +51,7 @@ public interface IRepo {
     void updateAchieving(String achieving, String id);
 
     /**
-     * Sets the accepting field for the decision with the given id to the given String.
+     * Sets the accepting YStatementField for the decision with the given id to the given String.
      *
      * @param accepting as String
      * @param id
@@ -61,7 +59,7 @@ public interface IRepo {
     void updateAccepting(String accepting, String id);
 
     /**
-     * Sets the moreInformation field for the decision with the given id to the given String.
+     * Sets the moreInformation YStatementField for the decision with the given id to the given String.
      *
      * @param moreInformation as String
      * @param id
@@ -76,8 +74,7 @@ public interface IRepo {
     void updateDecision(YStatementJustificationWrapper decision);
 
     /**
-     * Commits the changes of the decisions to the repository with the given commitToBaseRepo message.
-     * For a remote repository this will reload the eads by using the new commit id.
+     * Commits and pushes the local changes to the se-repo
      *
      * @param message for the commitToBaseRepo
      * @return the commit id
@@ -86,17 +83,33 @@ public interface IRepo {
     String commit(String message) throws Exception;
 
     /**
+     * Pulls the changes of the latest commit of the se-repo and applies it to the local decisions.
+     *
+     * @throws Exception
+     */
+    void pull() throws Exception;
+
+    /**
+     * Merge the local decisions with the decisions of the se-repo of the revision with the given commit id.
+     *
+     * @param commitId
+     * @throws Exception
+     */
+    void merge(String commitId) throws Exception;
+
+    /**
+     * Resets the decisions to the decisions of the se-repo with the given commit id.
+     *
+     * @param commitId
+     * @throws Exception
+     */
+    void reset(String commitId) throws Exception;
+
+    /**
      * Reloads the embedded ads for this repository.
      *
      * @throws Exception
      */
     void reloadEADs() throws Exception;
-
-    /**
-     * List property of all the embedded ads of this repository.
-     *
-     * @return the eads of this repository
-     */
-    ListProperty<YStatementJustificationWrapper> yStatementJustificationsProperty();
 
 }

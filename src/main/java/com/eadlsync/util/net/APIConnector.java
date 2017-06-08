@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,6 @@ import com.eadlsync.serepo.data.restinterface.seitem.RelationEntry;
 import com.eadlsync.serepo.data.restinterface.seitem.SeItem;
 import com.eadlsync.serepo.data.restinterface.seitem.SeItemContainer;
 import com.eadlsync.serepo.data.restinterface.seitem.SeItemWithContent;
-import com.eadlsync.sync.EADLSyncInfo;
 import com.eadlsync.util.YStatementConstants;
 import com.eadlsync.util.net.MetadataFactory.OptionState;
 import com.eadlsync.util.net.MetadataFactory.ProblemState;
@@ -110,6 +110,12 @@ public class APIConnector {
         return commitContainer;
     }
 
+    public String getLatestCommit() throws UnirestException {
+        List<Commit> commits = getCommitContainerByUrl().getCommits();
+        commits.sort(Comparator.comparing(Commit::getWhen));
+        return getCommitIdFromCommit(commits.get(0));
+    }
+
     public List<Commit> getCommitsByUrl() throws UnirestException {
         return getCommitContainerByUrl().getCommits();
     }
@@ -119,15 +125,25 @@ public class APIConnector {
         return id.substring(id.lastIndexOf("/") + 1);
     }
 
-    private SeItemContainer getSeItemContainerByUrl() throws UnirestException {
-        HttpResponse<SeItemContainer> seItemContainerResponse = Unirest.get(seRepoUrlObject.SEREPO_SEITEMS).asObject
+    private SeItemContainer getSeItemContainer() throws UnirestException {
+        return getSeItemContainerByCommit(seRepoUrlObject.SEREPO_COMMIT_ID);
+    }
+
+    private SeItemContainer getSeItemContainerByCommit(String commit) throws UnirestException {
+        SeRepoUrlObject newUrlObject = new SeRepoUrlObject(
+                seRepoUrlObject.SEREPO_BASE_URL, seRepoUrlObject.SEREPO_PROJECT, commit);
+        HttpResponse<SeItemContainer> seItemContainerResponse = Unirest.get(newUrlObject.SEREPO_SEITEMS).asObject
                 (SeItemContainer.class);
         SeItemContainer seItemContainer = seItemContainerResponse.getBody();
         return seItemContainer;
     }
 
-    public List<SeItem> getSeItemsByUrl() throws UnirestException {
-        return getSeItemContainerByUrl().getSeItems();
+    public List<SeItem> getSeItems() throws UnirestException {
+        return getSeItemContainer().getSeItems();
+    }
+
+    public List<SeItem> getSeItemsByCommit(String commit) throws UnirestException {
+        return getSeItemContainerByCommit(commit).getSeItems();
     }
 
     private MetadataContainer getMetadataContainerForSeItem(SeItem item) throws UnirestException {
@@ -154,9 +170,9 @@ public class APIConnector {
         return getRelationContainerForSeItem(item).getEntry();
     }
 
-    public List<YStatementJustificationWrapper> getYStatementJustifications() throws
-            UnirestException {
-        List<SeItem> seItems = getSeItemsByUrl();
+    private List<YStatementJustificationWrapper> getYStatementJustifications(String commit)
+            throws UnirestException{
+        List<SeItem> seItems = getSeItemsByCommit(commit);
 
         // find all se-items that are problem occurrences
         List<SeItem> problemItems = new ArrayList<>();
@@ -209,6 +225,16 @@ public class APIConnector {
         }
 
         return yStatementJustifications;
+    }
+
+    public List<YStatementJustificationWrapper> getLatestYStatementJustifications() throws
+            UnirestException {
+        return getYStatementJustifications(getLatestCommit());
+    }
+
+    public List<YStatementJustificationWrapper> getYStatementJustifications() throws
+            UnirestException {
+        return getYStatementJustifications(seRepoUrlObject.SEREPO_COMMIT_ID);
     }
 
     private YStatementJustificationWrapper createYStatementJustification(SeItem problemItem,
@@ -443,7 +469,7 @@ public class APIConnector {
         CreateCommit commit = new CreateCommit();
         commit.setMessage(message);
         commit.setMode(mode);
-        User user = new User(EADLSyncInfo.PROGRAM_NAME, EADLSyncInfo.PROGRAM_EMAIL);
+        User user = new User("EadlSynchronizer", "eadl@sync.com");
         commit.setUser(user);
         return commit;
     }

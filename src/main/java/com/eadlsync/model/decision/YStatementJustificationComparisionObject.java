@@ -194,6 +194,14 @@ public class YStatementJustificationComparisionObject {
         return comp;
     }
 
+    public YStatementJustificationWrapper getCodeDecision() {
+        return codeDecision;
+    }
+
+    public YStatementJustificationWrapper getSeDecision() {
+        return seDecision;
+    }
+
     @Override
     public String toString() {
         String compare = "Compare View{\n";

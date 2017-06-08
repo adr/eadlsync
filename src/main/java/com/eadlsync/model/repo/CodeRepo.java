@@ -8,7 +8,7 @@ import java.net.URLClassLoader;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +17,12 @@ import java.util.stream.Collectors;
 import com.eadlsync.eadl.annotations.YStatementJustification;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
+import com.eadlsync.model.diff.DiffObject;
 import com.eadlsync.util.OS;
 import com.eadlsync.util.io.JavaDecisionParser;
+import com.eadlsync.util.net.APIConnector;
+import com.eadlsync.util.net.SeRepoUrlObject;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,15 +33,28 @@ public class CodeRepo extends ARepo {
 
     private final Logger LOG = LoggerFactory.getLogger(CodeRepo.class);
     private final Path repositoryPath;
+    private final DiffObject diffObject;
+    private final APIConnector connector;
     private Map<String, String> classPaths = new HashMap<>();
 
-    public CodeRepo(String path) throws IOException {
-        this.repositoryPath = Paths.get(path);
-        loadEadsFromDisk();
+    public CodeRepo(Path path, String baseUrl, String project, String baseRevision) throws IOException, UnirestException {
+        this.repositoryPath = path;
+        SeRepoUrlObject seRepoUrlObject = new SeRepoUrlObject(baseUrl, project, baseRevision);
+        this.connector = APIConnector.withSeRepoUrl(seRepoUrlObject);
+        this.yStatements.addAll(loadBaseRevision());
+        this.diffObject = new DiffObject(this.yStatements, loadLocalDecisions(), loadRemoteDecisions());
     }
 
-    private void loadEadsFromDisk() throws IOException {
-        yStatements.clear();
+    private List<YStatementJustificationWrapper> loadBaseRevision() throws UnirestException {
+        return connector.getYStatementJustifications();
+    }
+
+    private List<YStatementJustificationWrapper> loadRemoteDecisions() throws UnirestException {
+        return connector.getLatestYStatementJustifications();
+    }
+
+    private List<YStatementJustificationWrapper> loadLocalDecisions() throws IOException {
+        List<YStatementJustificationWrapper> localYStatements = new ArrayList<>();
         classPaths.clear();
         URLClassLoader finalUrlClassLoader = getUrlClassLoader();
         Files.walk(repositoryPath, FileVisitOption.FOLLOW_LINKS).forEach(path -> {
@@ -49,7 +66,7 @@ public class CodeRepo extends ARepo {
                             .class)) {
                         YStatementJustification yStatementJustification = (YStatementJustification)
                                 annotation;
-                        yStatements.add(new YStatementJustificationWrapperBuilder(yStatementJustification, path.toString()).build());
+                        localYStatements.add(new YStatementJustificationWrapperBuilder(yStatementJustification, path.toString()).build());
                         classPaths.put(yStatementJustification.id(), classPath);
                     }
                 } catch (ClassNotFoundException e) {
@@ -57,6 +74,7 @@ public class CodeRepo extends ARepo {
                 }
             }
         });
+        return localYStatements;
     }
 
     private void writeEadsToDisk() throws IOException {
@@ -101,23 +119,28 @@ public class CodeRepo extends ARepo {
         return repositoryPath.resolve(classPath);
     }
 
-    /**
-     * For a offline code repo this will write the changed decisions to the disk.
-     * It can be called right after any field of an embedded architectural decision is updated.
-     * The commitToBaseRepo message is ignored for offline repositories.
-     *
-     * @param message for the commitToBaseRepo
-     * @throws Exception
-     */
     @Override
     public String commit(String message) throws Exception {
-        // TODO: only write changed eads and not all
-        writeEadsToDisk();
         return "N/A";
     }
 
     @Override
+    public void pull() throws Exception {
+        writeEadsToDisk();
+    }
+
+    @Override
+    public void merge(String commitId) throws Exception {
+
+    }
+
+    @Override
+    public void reset(String commitId) throws Exception {
+
+    }
+
+    @Override
     public void reloadEADs() throws IOException {
-        loadEadsFromDisk();
+        loadLocalDecisions();
     }
 }

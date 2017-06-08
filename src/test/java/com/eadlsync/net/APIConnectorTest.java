@@ -29,13 +29,13 @@ public class APIConnectorTest extends MockedAPI {
 
     @Test
     public void testAPIConnectorgetSeItemContainer() throws UnirestException {
-        List<SeItem> items = APIConnector.withSeRepoUrl(urlObject).getSeItemsByUrl();
+        List<SeItem> items = APIConnector.withSeRepoUrl(urlObject).getSeItems();
         assertFalse(items.isEmpty());
     }
 
     @Test
     public void testGetMetadataForSeItem() throws UnirestException {
-        List<SeItem> items = APIConnector.withSeRepoUrl(urlObject).getSeItemsByUrl();
+        List<SeItem> items = APIConnector.withSeRepoUrl(urlObject).getSeItems();
         SeItem guiItem = items.stream().filter(item -> item.getName().equals("GUI")).
                 collect(Collectors.toList()).get(0);
         MetadataEntry metadata = APIConnector.withSeRepoUrl(urlObject).getMetadataEntry(guiItem);
@@ -45,7 +45,7 @@ public class APIConnectorTest extends MockedAPI {
 
     @Test
     public void testGetRelationsForSeItem() throws UnirestException {
-        List<SeItem> items = APIConnector.withSeRepoUrl(urlObject).getSeItemsByUrl();
+        List<SeItem> items = APIConnector.withSeRepoUrl(urlObject).getSeItems();
         SeItem guiItem = items.stream().filter(item -> item.getName().equals("GUI")).
                 collect(Collectors.toList()).get(0);
         RelationEntry relation = APIConnector.withSeRepoUrl(urlObject).getRelationEntry(guiItem);
@@ -54,7 +54,7 @@ public class APIConnectorTest extends MockedAPI {
 
     @Test
     public void testRelationsPresent() throws UnirestException {
-        List<SeItem> items = APIConnector.withSeRepoUrl(urlObject).getSeItemsByUrl();
+        List<SeItem> items = APIConnector.withSeRepoUrl(urlObject).getSeItems();
         SeItem guiItem = items.stream().filter(item -> item.getName().equals("GUI")).
                 collect(Collectors.toList()).get(0);
         RelationEntry relation = APIConnector.withSeRepoUrl(urlObject).getRelationEntry(guiItem);
