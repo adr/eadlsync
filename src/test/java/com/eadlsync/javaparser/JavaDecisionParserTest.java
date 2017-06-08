@@ -33,15 +33,8 @@ public class JavaDecisionParserTest {
             "@YStatementJustification( id=\"my_sample_id\", context=\"my_context\" )\n" +
             "public class SampleClass {\n" +
             "}";
-    private final YStatementJustificationWrapper initialDecision =
-            new YStatementJustificationWrapperBuilder("my_sample_id", "local_source").
-                    context("my_context").
-                    build();
-    private final YStatementJustificationWrapper sampleDecision =
-            new YStatementJustificationWrapperBuilder("my_sample_id", "remote_source").
-            context("my_modified_context").
-            chosen("my_new_chosen").
-            build();
+    private YStatementJustificationWrapper initialDecision = null;
+    private YStatementJustificationWrapper sampleDecision = null;
 
     private static File sampleFile;
     private static Path sampleFilePath;
@@ -57,6 +50,13 @@ public class JavaDecisionParserTest {
 
     @Before
     public void setUp() throws IOException {
+        initialDecision = new YStatementJustificationWrapperBuilder("my_sample_id", sampleFilePath.toString()).
+                context("my_context").
+                build();
+        sampleDecision = new YStatementJustificationWrapperBuilder("my_sample_id", sampleFilePath.toString()).
+                context("my_modified_context").
+                chosen("my_new_chosen").
+                build();
         writeToFile(sampleClassWithAnnotation, sampleFilePath);
     }
 
@@ -69,7 +69,7 @@ public class JavaDecisionParserTest {
 
     @Test
     public void testModifyAnnotation() throws IOException {
-        JavaDecisionParser.writeModifiedYStatementToFile(sampleDecision, sampleFilePath);
+        JavaDecisionParser.writeModifiedYStatementToFile(sampleDecision);
 
         String content = readFromFile(sampleFilePath);
 
@@ -78,6 +78,13 @@ public class JavaDecisionParserTest {
         Assert.assertTrue(content.contains(sampleDecision.getChosen()));
 
         Assert.assertFalse(content.contains(YStatementConstants.FACING));
+    }
+
+    @Test
+    public void testClearAnnotation() throws IOException {
+        JavaDecisionParser.removeYStatementFromFile(initialDecision);
+
+        Assert.assertNull(JavaDecisionParser.readModifiedYStatementFromFile(sampleFilePath));
     }
 
     private void writeToFile(String content, Path path) throws IOException {

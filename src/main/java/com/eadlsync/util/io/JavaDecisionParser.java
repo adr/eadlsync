@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.eadlsync.eadl.annotations.YStatementJustification;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
@@ -23,6 +24,9 @@ public class JavaDecisionParser {
         // TODO: evaluate if roaster is better option for parsing java classes than the java class loader
         final JavaClassSource javaClass = (JavaClassSource) Roaster.parse(Files.newInputStream(path));
         AnnotationSource annotation = javaClass.getAnnotation(YStatementJustification.class);
+        if (annotation == null) {
+            return null;
+        }
         String id = annotation.getStringValue(YStatementConstants.ID);
         String context = annotation.getStringValue(YStatementConstants.CONTEXT);
         String facing = annotation.getStringValue(YStatementConstants.FACING);
@@ -35,8 +39,8 @@ public class JavaDecisionParser {
                 .build();
     }
 
-    public static void writeModifiedYStatementToFile(YStatementJustificationWrapper yStatement, Path
-            path) throws IOException {
+    public static void writeModifiedYStatementToFile(YStatementJustificationWrapper yStatement) throws IOException {
+        Path path = Paths.get(yStatement.getSource());
         final JavaClassSource javaClass = (JavaClassSource) Roaster.parse(Files.newInputStream(path));
         AnnotationSource annotation = javaClass.getAnnotation(YStatementJustification.class);
         if (annotation.getStringValue(YStatementConstants.ID).equals(yStatement.getId())) {
@@ -44,6 +48,16 @@ public class JavaDecisionParser {
             //YStatementJustificationComparator.equals(annotation, yStatement);
             javaClass.removeAnnotation(annotation);
             addYStatementToClassSource(yStatement, javaClass);
+            Files.write(path, javaClass.toString().getBytes(Charset.defaultCharset()));
+        }
+    }
+
+    public static void removeYStatementFromFile(YStatementJustificationWrapper yStatement) throws IOException {
+        Path path = Paths.get(yStatement.getSource());
+        final JavaClassSource javaClass = (JavaClassSource) Roaster.parse(Files.newInputStream(path));
+        AnnotationSource annotation = javaClass.getAnnotation(YStatementJustification.class);
+        if (annotation.getStringValue(YStatementConstants.ID).equals(yStatement.getId())) {
+            javaClass.removeAnnotation(annotation);
             Files.write(path, javaClass.toString().getBytes(Charset.defaultCharset()));
         }
     }
