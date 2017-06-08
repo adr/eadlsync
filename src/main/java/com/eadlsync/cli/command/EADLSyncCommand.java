@@ -6,7 +6,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.eadlsync.model.config.Config;
+import com.eadlsync.model.repo.CodeRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mashape.unirest.http.exceptions.UnirestException;
 
 /**
  * Created by tobias on 02/06/2017.
@@ -16,6 +18,7 @@ public class EADLSyncCommand {
     protected static final Path PROJECT_ROOT = Paths.get(".").toAbsolutePath().normalize();
     protected static final Path EADL_ROOT = PROJECT_ROOT.resolve(".eadlsync");
     protected static final Path EADL_CONFIG = EADL_ROOT.resolve("config");
+    protected static CodeRepo repo = null;
 
     protected Config config = null;
 
@@ -28,6 +31,12 @@ public class EADLSyncCommand {
         }
         ObjectMapper mapper = new ObjectMapper();
         this.config = mapper.readValue(EADL_CONFIG.toFile(), Config.class);
+    }
+
+    protected void readDecisions() throws IOException, UnirestException {
+        repo = new CodeRepo(PROJECT_ROOT, config.getCore().getBaseUrl(), config.getCore()
+                .getProjectName(), config.getSync().getRevisionBase());
+
     }
 
     protected boolean notBlank(String value) {
