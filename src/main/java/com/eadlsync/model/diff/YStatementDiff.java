@@ -24,38 +24,50 @@ import static com.eadlsync.util.YStatementField.MORE_INFORMATION;
 public class YStatementDiff {
 
     private final String id;
-    private YStatementJustificationWrapper baseDecision;
-    private YStatementJustificationWrapper changedDecision;
-    private Map<YStatementField, StringDiff> diff = new HashMap<>();
+    private YStatementJustificationWrapper changedDecision = null;
+    private Map<YStatementField, String> diff = new HashMap<>();
 
     public static YStatementDiff of(YStatementJustificationWrapper baseDecision, YStatementJustificationWrapper diffDecision) {
         return new YStatementDiff(baseDecision, diffDecision);
     }
 
     private YStatementDiff (YStatementJustificationWrapper baseDecision, YStatementJustificationWrapper diffDecision) {
-        this.id = baseDecision.getId();
-        this.baseDecision = baseDecision;
-        this.changedDecision = diffDecision;
-        if (!YStatementJustificationComparator.isContextEqual(baseDecision, diffDecision)) {
-            diff.put(CONTEXT, StringDiff.of(baseDecision.getContext(), diffDecision.getContext()));
-        }
-        if (!YStatementJustificationComparator.isFacingEqual(baseDecision, diffDecision)) {
-            diff.put(FACING, StringDiff.of(baseDecision.getFacing(), diffDecision.getFacing()));
-        }
-        if (!YStatementJustificationComparator.isChosenEqual(baseDecision, diffDecision)) {
-            diff.put(CHOSEN, StringDiff.of(baseDecision.getChosen(), diffDecision.getChosen()));
-        }
-        if (!YStatementJustificationComparator.isNeglectedEqual(baseDecision, diffDecision)) {
-            diff.put(NEGLECTED, StringDiff.of(baseDecision.getNeglected(), diffDecision.getNeglected()));
-        }
-        if (!YStatementJustificationComparator.isAchievingEqual(baseDecision, diffDecision)) {
-            diff.put(ACHIEVING, StringDiff.of(baseDecision.getAchieving(), diffDecision.getAchieving()));
-        }
-        if (!YStatementJustificationComparator.isAcceptingEqual(baseDecision, diffDecision)) {
-            diff.put(ACCEPTING, StringDiff.of(baseDecision.getAccepting(), diffDecision.getAccepting()));
-        }
-        if (!YStatementJustificationComparator.isMoreInformationEqual(baseDecision, diffDecision)) {
-            diff.put(MORE_INFORMATION, StringDiff.of(baseDecision.getMoreInformation(), diffDecision.getMoreInformation()));
+        if (baseDecision == null) {
+            this.id = diffDecision.getId();
+            this.changedDecision = diffDecision;
+            diff.put(CONTEXT, diffDecision.getContext());
+            diff.put(FACING, diffDecision.getFacing());
+            diff.put(CHOSEN, diffDecision.getChosen());
+            diff.put(NEGLECTED, diffDecision.getNeglected());
+            diff.put(ACHIEVING, diffDecision.getAchieving());
+            diff.put(ACCEPTING, diffDecision.getAccepting());
+            diff.put(MORE_INFORMATION, diffDecision.getMoreInformation());
+        } else if (diffDecision == null) {
+            this.id = baseDecision.getId();
+        } else {
+            this.id = baseDecision.getId();
+            this.changedDecision = diffDecision;
+            if (!YStatementJustificationComparator.isContextEqual(baseDecision, diffDecision)) {
+                diff.put(CONTEXT, diffDecision.getContext());
+            }
+            if (!YStatementJustificationComparator.isFacingEqual(baseDecision, diffDecision)) {
+                diff.put(FACING, diffDecision.getFacing());
+            }
+            if (!YStatementJustificationComparator.isChosenEqual(baseDecision, diffDecision)) {
+                diff.put(CHOSEN, diffDecision.getChosen());
+            }
+            if (!YStatementJustificationComparator.isNeglectedEqual(baseDecision, diffDecision)) {
+                diff.put(NEGLECTED, diffDecision.getNeglected());
+            }
+            if (!YStatementJustificationComparator.isAchievingEqual(baseDecision, diffDecision)) {
+                diff.put(ACHIEVING, diffDecision.getAchieving());
+            }
+            if (!YStatementJustificationComparator.isAcceptingEqual(baseDecision, diffDecision)) {
+                diff.put(ACCEPTING, diffDecision.getAccepting());
+            }
+            if (!YStatementJustificationComparator.isMoreInformationEqual(baseDecision, diffDecision)) {
+                diff.put(MORE_INFORMATION, diffDecision.getMoreInformation());
+            }
         }
     }
 
@@ -64,10 +76,21 @@ public class YStatementDiff {
             return false;
         }
 
-        for (Map.Entry<YStatementField, StringDiff> entry : diff.entrySet()) {
-            StringDiff stringDiff = yStatementDiff.diff.get(entry.getKey());
+        //local changes but remote deleted
+        if (yStatementDiff.changedDecision == null && !diff.isEmpty()) {
+            return true;
+        }
+
+        //local deleted but remote changes
+        if (!yStatementDiff.diff.isEmpty() && changedDecision == null) {
+            return true;
+        }
+
+        // different local and remote change
+        for (Map.Entry<YStatementField, String> entry : diff.entrySet()) {
+            String stringDiff = yStatementDiff.diff.get(entry.getKey());
             if (stringDiff != null) {
-                if (entry.getValue().conflictsWith(stringDiff)) {
+                if (!stringDiff.equals(entry.getValue())) {
                     return true;
                 }
             }
@@ -83,69 +106,37 @@ public class YStatementDiff {
         return false;
     }
 
-    public YStatementJustificationWrapper applyNonConflicting(YStatementDiff yStatementDiff) {
-        YStatementJustificationWrapper appliedDecision =
-                new YStatementJustificationWrapperBuilder(baseDecision).build();
-        diff.entrySet().forEach(entry -> {
-            StringDiff diff = yStatementDiff.diff.get(entry.getKey());
-            switch (entry.getKey()) {
-                case CONTEXT:
-                    if (diff != null) {
-                        appliedDecision.setContext(entry.getValue().applyNonConflicting(diff));
-                    } else {
-                        appliedDecision.setContext(entry.getValue().apply());
-                    }
-                    break;
-                case FACING:
-                    if (diff != null) {
-                        appliedDecision.setFacing(entry.getValue().applyNonConflicting(diff));
-                    } else {
-                        appliedDecision.setFacing(entry.getValue().apply());
-                    }
-                    break;
-                case CHOSEN:
-                    if (diff != null) {
-                        appliedDecision.setChosen(entry.getValue().applyNonConflicting(diff));
-                    } else {
-                        appliedDecision.setChosen(entry.getValue().apply());
-                    }
-                    break;
-                case NEGLECTED:
-                    if (diff != null) {
-                        appliedDecision.setNeglected(entry.getValue().applyNonConflicting(diff));
-                    } else {
-                        appliedDecision.setNeglected(entry.getValue().apply());
-                    }
-                    break;
-                case ACHIEVING:
-                    if (diff != null) {
-                        appliedDecision.setAchieving(entry.getValue().applyNonConflicting(diff));
-                    } else {
-                        appliedDecision.setAchieving(entry.getValue().apply());
-                    }
-                    break;
-                case ACCEPTING:
-                    if (diff != null) {
-                        appliedDecision.setAccepting(entry.getValue().applyNonConflicting(diff));
-                    } else {
-                        appliedDecision.setAccepting(entry.getValue().apply());
-                    }
-                    break;
-                case MORE_INFORMATION:
-                    if (diff != null) {
-                        appliedDecision.setMoreInformation(entry.getValue().applyNonConflicting(diff));
-                    } else {
-                        appliedDecision.setMoreInformation(entry.getValue().apply());
-                    }
-                    break;
+    public List<YStatementJustificationWrapper> applyDiff(List<YStatementJustificationWrapper> baseDecisions) {
+        List<YStatementJustificationWrapper> decision = baseDecisions.stream().filter(y -> y.getId().equals(id)).collect(Collectors.toList());
+        YStatementJustificationWrapper baseDecision;
+        if (decision.isEmpty()) {
+            baseDecision = new YStatementJustificationWrapperBuilder(id, changedDecision.getSource()).build();
+            baseDecisions.add(baseDecision);
+        } else {
+            baseDecision = decision.get(0);
+        }
+        if (changedDecision == null) {
+            baseDecisions.remove(baseDecision);
+            return baseDecisions;
+        }
+        for (Map.Entry<YStatementField, String> entry : diff.entrySet()) {
+            if (entry.getKey() == CONTEXT) {
+                baseDecision.setContext(entry.getValue());
+            } else if (entry.getKey() == FACING) {
+                baseDecision.setFacing(entry.getValue());
+            } else if (entry.getKey() == CHOSEN) {
+                baseDecision.setChosen(entry.getValue());
+            } else if (entry.getKey() == NEGLECTED) {
+                baseDecision.setNeglected(entry.getValue());
+            } else if (entry.getKey() == ACHIEVING) {
+                baseDecision.setAchieving(entry.getValue());
+            } else if (entry.getKey() == ACCEPTING) {
+                baseDecision.setAccepting(entry.getValue());
+            } else if (entry.getKey() == MORE_INFORMATION) {
+                baseDecision.setMoreInformation(entry.getValue());
             }
-
-        });
-        return appliedDecision;
-    }
-
-    public YStatementJustificationWrapper applyDiff() {
-        return this.changedDecision;
+        }
+        return baseDecisions;
     }
 
     public String getId() {

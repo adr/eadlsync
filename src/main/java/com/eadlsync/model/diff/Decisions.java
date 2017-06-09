@@ -15,24 +15,14 @@ import java.util.stream.Collectors;
 public class Decisions {
 
     private final List<YStatementDiff> localDiff = new ArrayList<>();
-    private final List<YStatementJustificationWrapper> additionalLocalYStatements = new ArrayList<>();
-    private final List<YStatementJustificationWrapper> removedLocalYStatements = new ArrayList<>();
-
     private final List<YStatementDiff> remoteDiff = new ArrayList<>();
-    private final List<YStatementJustificationWrapper> additionalRemoteYStatements = new ArrayList<>();
-    private final List<YStatementJustificationWrapper> removedRemoteYStatements = new ArrayList<>();
-
-    private final List<YStatementJustificationWrapper> currentDecisions = new ArrayList<>();
-    private final List<YStatementJustificationWrapper> removedDecisions = new ArrayList<>();
-
+    private final List<YStatementJustificationWrapper> baseDecisions;
+    private List<YStatementJustificationWrapper> currentDecisions;
 
     public Decisions(List<YStatementJustificationWrapper> base, List<YStatementJustificationWrapper> local, List<YStatementJustificationWrapper> remote) {
-        this.currentDecisions.addAll(base);
-        this.additionalLocalYStatements.addAll(initAdditionalYStatements(base, local));
-        this.removedLocalYStatements.addAll(initRemovedYStatements(base, local));
+        this.baseDecisions = base;
+        this.currentDecisions = base;
         this.localDiff.addAll(initDiffYStatements(base, local));
-        this.additionalRemoteYStatements.addAll(initAdditionalYStatements(base, remote));
-        this.removedRemoteYStatements.addAll(initRemovedYStatements(base, remote));
         this.remoteDiff.addAll(initDiffYStatements(base, remote));
     }
 
@@ -40,6 +30,12 @@ public class Decisions {
         ArrayList<YStatementDiff> diff = new ArrayList<>();
         initDifferentYStatements(base, changed).stream().forEach(y ->
                 diff.add(YStatementDiff.of(y.getCodeDecision(), y.getSeDecision()))
+        );
+        initAdditionalYStatements(base, changed).stream().forEach(y ->
+                diff.add(YStatementDiff.of(null, y))
+        );
+        initRemovedYStatements(base, changed).stream().forEach(y ->
+                diff.add(YStatementDiff.of(y, null))
         );
         return diff;
     }
@@ -97,7 +93,7 @@ public class Decisions {
      * @return true if local diff is not empty
      */
     public boolean hasLocalDiff() {
-        return !localDiff.isEmpty() || !removedLocalYStatements.isEmpty();
+        return !localDiff.isEmpty();
     }
 
     /**
@@ -109,7 +105,7 @@ public class Decisions {
      */
     public boolean hasRemoteDiff() {
         // optional
-        return !remoteDiff.isEmpty() || !removedRemoteYStatements.isEmpty();
+        return !remoteDiff.isEmpty();
     }
 
     /**
@@ -121,34 +117,46 @@ public class Decisions {
      * @return true if local and remote changes can be automatically merged
      */
     public boolean canAutoMerge() {
-        // TODO: implement
-        return true;
+        return !localDiff.stream().map(diff -> diff.conflictsWith(remoteDiff)).collect(Collectors.toList()).contains(true);
     }
 
     /**
      * Applies the diff of the local-repo to the base decisions.
      *
+     * @return the decisions of the local repo
      * @throws EADLSyncExecption if automatic merge can not be performed
      */
-    public void applyLocalDiff() throws EADLSyncExecption {
-        localDiff.forEach(YStatementDiff::applyDiff);
-        removedDecisions.addAll(removedLocalYStatements);
+    public List<YStatementJustificationWrapper> applyLocalDiff() throws EADLSyncExecption {
+        for (YStatementDiff diff : localDiff) {
+            diff.applyDiff(currentDecisions);
+        }
+        return this.currentDecisions;
     }
 
     /**
      * Applies the diff of the se-repo to the base decisions.
      *
+     * @return the decisions of the remote repo
      * @throws EADLSyncExecption if automatic merge can not be performed
      */
-    public void applyRemoteDiff() throws EADLSyncExecption {
-        removedDecisions.addAll(removedRemoteYStatements);
+    public List<YStatementJustificationWrapper> applyRemoteDiff() throws EADLSyncExecption {
+        for (YStatementDiff diff : remoteDiff) {
+            diff.applyDiff(currentDecisions);
+        }
+        return this.currentDecisions;
+    }
+
+    public List<YStatementJustificationWrapper> applyLocalAndRemoteDiff() throws EADLSyncExecption {
+        applyLocalDiff();
+        applyRemoteDiff();
+        return this.currentDecisions;
     }
 
     public List<YStatementJustificationWrapper> getCurrentDecisions() {
         return currentDecisions;
     }
 
-    public List<YStatementJustificationWrapper> getRemovedDecisions() {
-        return removedDecisions;
+    public List<YStatementJustificationWrapper> getBaseDecisions() {
+        return baseDecisions;
     }
 }

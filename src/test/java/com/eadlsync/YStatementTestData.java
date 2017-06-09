@@ -21,7 +21,7 @@ public interface YStatementTestData {
     YStatementJustificationWrapper someDecision =
             new YStatementJustificationWrapperBuilder("id", "remote_source").
                     context("some context").
-                    facing("some facing").
+                    facing("facing").
                     chosen("some_chosen").
                     neglected("neglected_one, neglected_two, neglected_three").
                     achieving("some achieving").
@@ -31,8 +31,8 @@ public interface YStatementTestData {
     YStatementJustificationWrapper someNonConflictingDecision =
             new YStatementJustificationWrapperBuilder("id", "remote_source").
                     context("context").
-                    facing("facing more candy").
-                    chosen("chosendecision").
+                    facing("other facing").
+                    chosen("chosen").
                     neglected("neglected_one, neglected_two, neglected_three").
                     achieving("achieving").
                     accepting("accepting").

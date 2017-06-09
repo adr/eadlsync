@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.eadlsync.EADLSyncExecption;
 import com.eadlsync.eadl.annotations.YStatementJustification;
@@ -80,7 +81,8 @@ public class CodeRepo implements IRepo {
         for (YStatementJustificationWrapper yStatementJustificationWrapper : decisions.getCurrentDecisions()) {
             writeEadToClass(yStatementJustificationWrapper);
         }
-        for (YStatementJustificationWrapper yStatementJustificationWrapper : decisions.getRemovedDecisions()) {
+        for (YStatementJustificationWrapper yStatementJustificationWrapper : decisions.getBaseDecisions().stream().filter(
+                decision -> !decisions.getCurrentDecisions().contains(decision)).collect(Collectors.toList())) {
             removeEadFromClass(yStatementJustificationWrapper);
         }
     }
