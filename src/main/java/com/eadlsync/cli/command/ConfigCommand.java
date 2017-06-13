@@ -27,10 +27,6 @@ public class ConfigCommand extends EADLSyncCommand {
     @Parameter(names = "--core.project", description = "Set the project to work with, this shall match a se-repo repository name")
     private String project;
 
-    @Parameter(names = "--sync.revision", description = "Set the latest sync commit id, this is used to indicate local changes", hidden = true)
-    private String lastRevision;
-
-
     public void configure() throws IOException {
         readConfig();
         if (notBlank(name)) {
@@ -43,8 +39,6 @@ public class ConfigCommand extends EADLSyncCommand {
             config.getCore().setBaseUrl(this.baseUrl);
         } else if (notBlank(project)) {
             config.getCore().setProjectName(this.project);
-        } else if (notBlank(lastRevision)) {
-            config.getSync().setRevisionBase(this.lastRevision);
         }
         createConfigFile();
     }

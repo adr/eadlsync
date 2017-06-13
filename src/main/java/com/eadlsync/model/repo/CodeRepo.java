@@ -138,6 +138,7 @@ public class CodeRepo implements IRepo {
                     decisions.applyRemoteDiff();
                     writeEadsToDisk();
                 } else {
+                    writeConflicts();
                     throw EADLSyncExecption.ofState(EADLSyncExecption.EADLSyncOperationState.CONFLICT);
                 }
             } else {
@@ -147,6 +148,10 @@ public class CodeRepo implements IRepo {
         } else {
             throw EADLSyncExecption.ofState(EADLSyncExecption.EADLSyncOperationState.UP_TO_DATE);
         }
+    }
+
+    private void writeConflicts() {
+        // TODO: write conflicting decisions to a conflicts file in the eadl directory
     }
 
     @Override
