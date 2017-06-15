@@ -1,6 +1,6 @@
 package com.eadlsync.util.net;
 
-import com.eadlsync.serepo.data.restinterface.seitem.Relation;
+import ch.hsr.isf.serepo.data.restinterface.seitem.Relation;
 
 /**
  * Created by Tobias on 26.05.2017.

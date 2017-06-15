@@ -13,9 +13,9 @@ jdk:
 
 before_install:
   - chmod +x gradlew
+  - ./gradlew generateTestSource
 
 script:
-  - ./gradlew clean
   - ./gradlew check
 
 after_success:

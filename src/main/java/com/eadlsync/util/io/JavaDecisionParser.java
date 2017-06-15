@@ -5,13 +5,13 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import com.eadlsync.eadl.annotations.YStatementJustification;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
 import com.eadlsync.util.YStatementConstants;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import radar.ad.annotations.YStatementJustification;
 
 /**
  * Created by Tobias on 16.05.2017.
