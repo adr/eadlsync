@@ -40,15 +40,14 @@ public class SeRepoConector {
         });
     }
 
-    private static CommitContainer getCommitContainerByUrl(String commitsUrl) throws UnirestException {
+    public static List<Commit> getCommitsByUrl(String commitsUrl) throws UnirestException {
         HttpResponse<CommitContainer> seItemContainerResponse = Unirest.get(commitsUrl).asObject
                 (CommitContainer.class);
-        CommitContainer commitContainer = seItemContainerResponse.getBody();
-        return commitContainer;
+        return seItemContainerResponse.getBody().getCommits();
     }
 
     public static String getLatestCommit(String commitsUrl) throws UnirestException {
-        List<Commit> commits = getCommitContainerByUrl(commitsUrl).getCommits();
+        List<Commit> commits = getCommitsByUrl(commitsUrl);
         commits.sort(Comparator.comparing(Commit::getWhen).reversed());
         return getCommitIdFromCommit(commits.get(0));
     }

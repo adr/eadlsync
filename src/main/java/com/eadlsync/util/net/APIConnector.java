@@ -63,7 +63,7 @@ import static com.eadlsync.util.net.MetadataFactory.TaggedValues.PROBLEM_STATE;
 import static com.eadlsync.util.net.RelationFactory.ADMentorRelationType.ADDRESSED_BY;
 
 /**
- * Provides utility methods to communicate with the se-repo restful api
+ * Provides utility methods to communicate with the se-repo serepo api
  * <p>
  * Created by Tobias on 31.01.2017.
  */
@@ -103,30 +103,8 @@ public class APIConnector {
         });
     }
 
-    private CommitContainer getCommitContainerByUrl() throws UnirestException {
-        HttpResponse<CommitContainer> seItemContainerResponse = Unirest.get(seRepoUrlObject.SEREPO_URL_COMMITS).asObject
-                (CommitContainer.class);
-        CommitContainer commitContainer = seItemContainerResponse.getBody();
-        return commitContainer;
-    }
-
     public String getLatestCommit() throws UnirestException {
-        List<Commit> commits = getCommitContainerByUrl().getCommits();
-        commits.sort(Comparator.comparing(Commit::getWhen));
-        return getCommitIdFromCommit(commits.get(0));
-    }
-
-    public List<Commit> getCommitsByUrl() throws UnirestException {
-        return getCommitContainerByUrl().getCommits();
-    }
-
-    public String getCommitIdFromCommit(Commit commit) {
-        String id = commit.getId().toString();
-        return id.substring(id.lastIndexOf("/") + 1);
-    }
-
-    private SeItemContainer getSeItemContainer() throws UnirestException {
-        return getSeItemContainerByCommit(seRepoUrlObject.SEREPO_COMMIT_ID);
+        return SeRepoConector.getLatestCommit(seRepoUrlObject.SEREPO_URL_COMMITS);
     }
 
     private SeItemContainer getSeItemContainerByCommit(String commit) throws UnirestException {
@@ -136,10 +114,6 @@ public class APIConnector {
                 (SeItemContainer.class);
         SeItemContainer seItemContainer = seItemContainerResponse.getBody();
         return seItemContainer;
-    }
-
-    public List<SeItem> getSeItems() throws UnirestException {
-        return getSeItemContainer().getSeItems();
     }
 
     public List<SeItem> getSeItemsByCommit(String commit) throws UnirestException {
