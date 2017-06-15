@@ -19,7 +19,7 @@ import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
 import com.eadlsync.model.diff.Decisions;
 import com.eadlsync.util.OS;
 import com.eadlsync.util.io.JavaDecisionParser;
-import com.eadlsync.util.net.APIConnector;
+import com.eadlsync.util.net.YStatementAPI;
 import com.eadlsync.util.net.SeRepoUrlObject;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
@@ -33,13 +33,13 @@ public class CodeRepo implements IRepo {
 
     private final Logger LOG = LoggerFactory.getLogger(CodeRepo.class);
     private final Path repositoryPath;
-    private final APIConnector connector;
+    private final YStatementAPI connector;
     private Decisions decisions;
 
     public CodeRepo(Path path, String baseUrl, String project, String baseRevision) throws IOException, UnirestException {
         this.repositoryPath = path;
         SeRepoUrlObject seRepoUrlObject = new SeRepoUrlObject(baseUrl, project, baseRevision);
-        this.connector = APIConnector.withSeRepoUrl(seRepoUrlObject);
+        this.connector = YStatementAPI.withSeRepoUrl(seRepoUrlObject);
         initDecisions();
     }
 
