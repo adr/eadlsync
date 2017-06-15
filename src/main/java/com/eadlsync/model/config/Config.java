@@ -9,8 +9,6 @@ public class Config {
 
     private ConfigCore core;
 
-    private ConfigSync sync;
-
     public ConfigCore getCore() {
         return core;
     }
@@ -25,13 +23,5 @@ public class Config {
 
     public void setUser(ConfigUser user) {
         this.user = user;
-    }
-
-    public ConfigSync getSync() {
-        return sync;
-    }
-
-    public void setSync(ConfigSync sync) {
-        this.sync = sync;
     }
 }
