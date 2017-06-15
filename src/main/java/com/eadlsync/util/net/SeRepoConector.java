@@ -1,16 +1,16 @@
 package com.eadlsync.util.net;
 
-import java.io.IOException;
-import java.util.Comparator;
-import java.util.List;
-
-import com.eadlsync.serepo.data.restinterface.commit.Commit;
-import com.eadlsync.serepo.data.restinterface.commit.CommitContainer;
+import ch.hsr.isf.serepo.data.restinterface.commit.Commit;
+import ch.hsr.isf.serepo.data.restinterface.commit.CommitContainer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+
+import java.io.IOException;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  *

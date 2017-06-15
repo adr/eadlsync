@@ -1,18 +1,16 @@
 package com.eadlsync.cli.command;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.eadlsync.model.config.Config;
 import com.eadlsync.model.config.ConfigCore;
 import com.eadlsync.model.config.ConfigUser;
-import com.eadlsync.util.YStatementConstants;
 import com.eadlsync.util.net.SeRepoConector;
-import com.eadlsync.util.net.SeRepoUrlObject;
 import com.mashape.unirest.http.exceptions.UnirestException;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static com.eadlsync.util.YStatementConstants.SEREPO_URL_COMMITS;
 
