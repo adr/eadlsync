@@ -1,6 +1,7 @@
 package com.eadlsync.model.repo;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -8,16 +9,19 @@ import java.net.URLClassLoader;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.eadlsync.EADLSyncExecption;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
+import com.eadlsync.model.diff.Decisions;
 import com.eadlsync.util.OS;
 import com.eadlsync.util.io.JavaDecisionParser;
+import com.eadlsync.util.net.APIConnector;
+import com.eadlsync.util.net.SeRepoUrlObject;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import radar.ad.annotations.YStatementJustification;
@@ -25,20 +29,34 @@ import radar.ad.annotations.YStatementJustification;
 /**
  * Created by tobias on 07/03/2017.
  */
-public class CodeRepo extends ARepo {
+public class CodeRepo implements IRepo {
 
     private final Logger LOG = LoggerFactory.getLogger(CodeRepo.class);
     private final Path repositoryPath;
-    private Map<String, String> classPaths = new HashMap<>();
+    private final APIConnector connector;
+    private Decisions decisions;
 
-    public CodeRepo(String path) throws IOException {
-        this.repositoryPath = Paths.get(path);
-        loadEadsFromDisk();
+    public CodeRepo(Path path, String baseUrl, String project, String baseRevision) throws IOException, UnirestException {
+        this.repositoryPath = path;
+        SeRepoUrlObject seRepoUrlObject = new SeRepoUrlObject(baseUrl, project, baseRevision);
+        this.connector = APIConnector.withSeRepoUrl(seRepoUrlObject);
+        initDecisions();
     }
 
-    private void loadEadsFromDisk() throws IOException {
-        yStatements.clear();
-        classPaths.clear();
+    private void initDecisions() throws UnirestException, IOException {
+        this.decisions = new Decisions(loadBaseRevision(), loadLocalDecisions(), loadRemoteDecisions());
+    }
+
+    private List<YStatementJustificationWrapper> loadBaseRevision() throws UnirestException {
+        return connector.getYStatementJustifications();
+    }
+
+    private List<YStatementJustificationWrapper> loadRemoteDecisions() throws UnirestException {
+        return connector.getLatestYStatementJustifications();
+    }
+
+    private List<YStatementJustificationWrapper> loadLocalDecisions() throws IOException {
+        List<YStatementJustificationWrapper> localYStatements = new ArrayList<>();
         URLClassLoader finalUrlClassLoader = getUrlClassLoader();
         Files.walk(repositoryPath, FileVisitOption.FOLLOW_LINKS).forEach(path -> {
             if (isPathToJavaFile(path)) {
@@ -49,30 +67,32 @@ public class CodeRepo extends ARepo {
                             .class)) {
                         YStatementJustification yStatementJustification = (YStatementJustification)
                                 annotation;
-                        yStatements.add(new YStatementJustificationWrapperBuilder(yStatementJustification, path.toString()).build());
-                        classPaths.put(yStatementJustification.id(), classPath);
+                        localYStatements.add(new YStatementJustificationWrapperBuilder(yStatementJustification, path.toString()).build());
                     }
                 } catch (ClassNotFoundException e) {
-                    LOG.error("Could not instantiate class.", e);
+                    LOG.debug("Could not instantiate class.", e);
                 }
             }
         });
+        return localYStatements;
     }
 
     private void writeEadsToDisk() throws IOException {
-        for (YStatementJustificationWrapper yStatementJustificationWrapper : yStatements) {
-            writeEadToClass(yStatementJustificationWrapper.getId());
+        for (YStatementJustificationWrapper yStatementJustificationWrapper : decisions.getCurrentDecisions()) {
+            writeEadToClass(yStatementJustificationWrapper);
+        }
+        for (YStatementJustificationWrapper yStatementJustificationWrapper : decisions.getBaseDecisions().stream().filter(
+                decision -> !decisions.getCurrentDecisions().contains(decision)).collect(Collectors.toList())) {
+            removeEadFromClass(yStatementJustificationWrapper);
         }
     }
 
-    private void writeEadToClass(String id) throws IOException {
-        List<YStatementJustificationWrapper> decisions = yStatements.stream().filter(y -> id.equals(y
-                .getId())).collect(Collectors.toList());
-        if (decisions.isEmpty()) {
-            return;
-        }
-        String classPath = classPaths.get(id);
-        JavaDecisionParser.writeModifiedYStatementToFile(decisions.get(0), convertToRealPath(classPath));
+    private void writeEadToClass(YStatementJustificationWrapper yStatementJustification) throws IOException {
+        JavaDecisionParser.writeModifiedYStatementToFile(yStatementJustification);
+    }
+
+    private void removeEadFromClass(YStatementJustificationWrapper yStatementJustification) throws IOException {
+        JavaDecisionParser.removeYStatementFromFile(yStatementJustification);
     }
 
     private URLClassLoader getUrlClassLoader() throws MalformedURLException {
@@ -95,29 +115,57 @@ public class CodeRepo extends ARepo {
         }
     }
 
-    private Path convertToRealPath(String classPath) {
-        classPath = classPath.replaceAll("\\.", "/");
-        classPath += ".java";
-        return repositoryPath.resolve(classPath);
+    @Override
+    public String commit(String message, boolean isForcing) throws EADLSyncExecption, UnsupportedEncodingException, UnirestException {
+        if (!decisions.hasRemoteDiff() || isForcing) {
+            if (decisions.hasLocalDiff()) {
+                decisions.applyLocalDiff();
+                return connector.commitYStatement(decisions.getCurrentDecisions(), message);
+            } else {
+                throw EADLSyncExecption.ofState(EADLSyncExecption.EADLSyncOperationState.NOTHING_TO_COMMIT);
+            }
+        } else {
+            throw EADLSyncExecption.ofState(EADLSyncExecption.EADLSyncOperationState.NON_FORWARD);
+        }
     }
 
-    /**
-     * For a offline code repo this will write the changed decisions to the disk.
-     * It can be called right after any field of an embedded architectural decision is updated.
-     * The commitToBaseRepo message is ignored for offline repositories.
-     *
-     * @param message for the commitToBaseRepo
-     * @throws Exception
-     */
     @Override
-    public String commit(String message) throws Exception {
-        // TODO: only write changed eads and not all
+    public void pull() throws EADLSyncExecption, IOException {
+        if (decisions.hasRemoteDiff()) {
+            if (decisions.hasLocalDiff()) {
+                if (decisions.canAutoMerge()) {
+                    decisions.applyLocalDiff();
+                    decisions.applyRemoteDiff();
+                    writeEadsToDisk();
+                } else {
+                    throw EADLSyncExecption.ofState(EADLSyncExecption.EADLSyncOperationState.CONFLICT);
+                }
+            } else {
+                decisions.applyRemoteDiff();
+                writeEadsToDisk();
+            }
+        } else {
+            throw EADLSyncExecption.ofState(EADLSyncExecption.EADLSyncOperationState.UP_TO_DATE);
+        }
+    }
+
+    @Override
+    public void merge(String commitId) throws IOException, UnirestException, EADLSyncExecption {
+        connector.changeToCommit(commitId);
+        initDecisions();
+        pull();
+    }
+
+    @Override
+    public void reset(String commitId) throws EADLSyncExecption, IOException, UnirestException {
+        connector.changeToCommit(commitId);
+        initDecisions();
+        decisions.applyRemoteDiff();
         writeEadsToDisk();
-        return "N/A";
     }
 
-    @Override
-    public void reloadEADs() throws IOException {
-        loadEadsFromDisk();
+    public RepoStatus getStatus() {
+        return RepoStatus.of(decisions);
     }
+
 }

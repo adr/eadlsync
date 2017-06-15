@@ -22,6 +22,18 @@ public class YStatementJustificationWrapperBuilder {
         this.source = source;
     }
 
+    public YStatementJustificationWrapperBuilder (YStatementJustificationWrapper wrapper) {
+        this.id = wrapper.getId();
+        this.context = wrapper.getContext();
+        this.facing = wrapper.getFacing();
+        this.chosen = wrapper.getChosen();
+        this.neglected = wrapper.getNeglected();
+        this.achieving = wrapper.getAchieving();
+        this.accepting = wrapper.getAccepting();
+        this.moreInformation = wrapper.getMoreInformation();
+        this.source = wrapper.getSource();
+    }
+
     public YStatementJustificationWrapperBuilder (YStatementJustification annotation, String source) {
         this.id = annotation.id();
         this.context = annotation.context();

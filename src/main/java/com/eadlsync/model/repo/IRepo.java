@@ -1,8 +1,10 @@
 package com.eadlsync.model.repo;
 
-import javafx.beans.property.ListProperty;
+import com.eadlsync.EADLSyncExecption;
+import com.mashape.unirest.http.exceptions.UnirestException;
 
-import com.eadlsync.model.decision.YStatementJustificationWrapper;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Created by tobias on 07/03/2017.
@@ -13,90 +15,36 @@ import com.eadlsync.model.decision.YStatementJustificationWrapper;
 public interface IRepo {
 
     /**
-     * Sets the context field for the decision with the given id to the given String.
+     * Commits and pushes the local changes to the se-repo
+     * Use the isForcing option to commit local changes even if there are changes in the se-repo.
      *
-     * @param context as String
-     * @param id
-     */
-    void updateContext(String context, String id);
-
-    /**
-     * Sets the facing field for the decision with the given id to the given String.
-     *
-     * @param facing as String
-     * @param id
-     */
-    void updateFacing(String facing, String id);
-
-    /**
-     * Sets the chosen field for the decision with the given id to the given String.
-     *
-     * @param chosen as String
-     * @param id
-     */
-    void updateChosen(String chosen, String id);
-
-    /**
-     * Sets the neglected field for the decision with the given id to the given String.
-     *
-     * @param neglected as String
-     * @param id
-     */
-    void updateNeglected(String neglected, String id);
-
-    /**
-     * Sets the achieving field for the decision with the given id to the given String.
-     *
-     * @param achieving as String
-     * @param id
-     */
-    void updateAchieving(String achieving, String id);
-
-    /**
-     * Sets the accepting field for the decision with the given id to the given String.
-     *
-     * @param accepting as String
-     * @param id
-     */
-    void updateAccepting(String accepting, String id);
-
-    /**
-     * Sets the moreInformation field for the decision with the given id to the given String.
-     *
-     * @param moreInformation as String
-     * @param id
-     */
-    void updateMoreInformation(String moreInformation, String id);
-
-    /**
-     * Updates the decision with the same id as the given decision.
-     *
-     * @param decision as YStatementJustificationWrapper
-     */
-    void updateDecision(YStatementJustificationWrapper decision);
-
-    /**
-     * Commits the changes of the decisions to the repository with the given commitToBaseRepo message.
-     * For a remote repository this will reload the eads by using the new commit id.
-     *
-     * @param message for the commitToBaseRepo
+     * @param message
+     * @param isForcing
      * @return the commit id
      * @throws Exception
      */
-    String commit(String message) throws Exception;
+    String commit(String message, boolean isForcing) throws Exception;
 
     /**
-     * Reloads the embedded ads for this repository.
+     * Pulls the changes of the latest commit of the se-repo and applies it to the local decisions.
      *
      * @throws Exception
      */
-    void reloadEADs() throws Exception;
+    void pull() throws Exception;
 
     /**
-     * List property of all the embedded ads of this repository.
+     * Merges the local decisions with the decisions of the se-repo with the given commit id.
      *
-     * @return the eads of this repository
+     * @throws Exception
      */
-    ListProperty<YStatementJustificationWrapper> yStatementJustificationsProperty();
+    void merge(String commitId) throws Exception;
+
+    /**
+     * Resets the local decisions to the decisions of the se-repo with the given commit id.
+     *
+     * @param commitId
+     * @throws Exception
+     */
+    void reset(String commitId) throws Exception;
 
 }

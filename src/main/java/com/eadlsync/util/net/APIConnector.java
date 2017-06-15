@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,6 @@ import ch.hsr.isf.serepo.data.restinterface.seitem.SeItemContainer;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
 import com.eadlsync.model.serepo.data.SeItemWithContent;
-import com.eadlsync.sync.EADLSyncInfo;
 import com.eadlsync.util.YStatementConstants;
 import com.eadlsync.util.net.MetadataFactory.OptionState;
 import com.eadlsync.util.net.MetadataFactory.ProblemState;
@@ -110,6 +110,12 @@ public class APIConnector {
         return commitContainer;
     }
 
+    public String getLatestCommit() throws UnirestException {
+        List<Commit> commits = getCommitContainerByUrl().getCommits();
+        commits.sort(Comparator.comparing(Commit::getWhen));
+        return getCommitIdFromCommit(commits.get(0));
+    }
+
     public List<Commit> getCommitsByUrl() throws UnirestException {
         return getCommitContainerByUrl().getCommits();
     }
@@ -119,15 +125,25 @@ public class APIConnector {
         return id.substring(id.lastIndexOf("/") + 1);
     }
 
-    private SeItemContainer getSeItemContainerByUrl() throws UnirestException {
-        HttpResponse<SeItemContainer> seItemContainerResponse = Unirest.get(seRepoUrlObject.SEREPO_SEITEMS).asObject
+    private SeItemContainer getSeItemContainer() throws UnirestException {
+        return getSeItemContainerByCommit(seRepoUrlObject.SEREPO_COMMIT_ID);
+    }
+
+    private SeItemContainer getSeItemContainerByCommit(String commit) throws UnirestException {
+        SeRepoUrlObject newUrlObject = new SeRepoUrlObject(
+                seRepoUrlObject.SEREPO_BASE_URL, seRepoUrlObject.SEREPO_PROJECT, commit);
+        HttpResponse<SeItemContainer> seItemContainerResponse = Unirest.get(newUrlObject.SEREPO_SEITEMS).asObject
                 (SeItemContainer.class);
         SeItemContainer seItemContainer = seItemContainerResponse.getBody();
         return seItemContainer;
     }
 
-    public List<SeItem> getSeItemsByUrl() throws UnirestException {
-        return getSeItemContainerByUrl().getSeItems();
+    public List<SeItem> getSeItems() throws UnirestException {
+        return getSeItemContainer().getSeItems();
+    }
+
+    public List<SeItem> getSeItemsByCommit(String commit) throws UnirestException {
+        return getSeItemContainerByCommit(commit).getSeItems();
     }
 
     private MetadataContainer getMetadataContainerForSeItem(SeItem item) throws UnirestException {
@@ -154,9 +170,9 @@ public class APIConnector {
         return getRelationContainerForSeItem(item).getEntry();
     }
 
-    public List<YStatementJustificationWrapper> getYStatementJustifications() throws
-            UnirestException {
-        List<SeItem> seItems = getSeItemsByUrl();
+    private List<YStatementJustificationWrapper> getYStatementJustifications(String commit)
+            throws UnirestException{
+        List<SeItem> seItems = getSeItemsByCommit(commit);
 
         // find all se-items that are problem occurrences
         List<SeItem> problemItems = new ArrayList<>();
@@ -209,6 +225,16 @@ public class APIConnector {
         }
 
         return yStatementJustifications;
+    }
+
+    public List<YStatementJustificationWrapper> getLatestYStatementJustifications() throws
+            UnirestException {
+        return getYStatementJustifications(getLatestCommit());
+    }
+
+    public List<YStatementJustificationWrapper> getYStatementJustifications() throws
+            UnirestException {
+        return getYStatementJustifications(seRepoUrlObject.SEREPO_COMMIT_ID);
     }
 
     private YStatementJustificationWrapper createYStatementJustification(SeItem problemItem,
@@ -269,7 +295,7 @@ public class APIConnector {
         } else if (matcherTag.find()) {
             content = matcherTag.group(1);
         } else {
-            LOG.info("No end html tag for key '{}' in [{}] parsed from [{}]", key, content, seItemBody.outerHtml());
+            LOG.debug("No end html tag for key '{}' in [{}] parsed from [{}]", key, content, seItemBody.outerHtml());
         }
 
         content = content.trim();
@@ -289,7 +315,7 @@ public class APIConnector {
         return body;
     }
 
-    public String commitYStatement(ObservableList<YStatementJustificationWrapper> yStatementJustificationWrappers,
+    public String commitYStatement(List<YStatementJustificationWrapper> yStatementJustificationWrappers,
                                    String message) throws UnirestException, UnsupportedEncodingException {
         Set<SeItemWithContent> allSeItems = new HashSet<>();
 
@@ -443,8 +469,12 @@ public class APIConnector {
         CreateCommit commit = new CreateCommit();
         commit.setMessage(message);
         commit.setMode(mode);
-        User user = new User(EADLSyncInfo.PROGRAM_NAME, EADLSyncInfo.PROGRAM_EMAIL);
+        User user = new User("EadlSynchronizer", "eadl@sync.com");
         commit.setUser(user);
         return commit;
+    }
+
+    public void changeToCommit(String commitId) {
+        seRepoUrlObject.changeToCommit(commitId);
     }
 }

@@ -9,16 +9,32 @@ public class SeRepoUrlObject {
 
     public final String SEREPO_BASE_URL;
     public final String SEREPO_PROJECT;
-    public final String SEREPO_COMMIT_ID;
-    public final String SEREPO_URL_COMMITS;
-    public final String SEREPO_SEITEMS;
+    public String SEREPO_COMMIT_ID;
+    public String SEREPO_URL_COMMITS;
+    public String SEREPO_SEITEMS;
 
     public SeRepoUrlObject(String baseUrl, String repoName, String commitId) {
         this.SEREPO_BASE_URL = baseUrl;
         this.SEREPO_PROJECT = repoName;
+        initCommitBasedUrls(commitId);
+        this.SEREPO_URL_COMMITS = String.format(YStatementConstants.SEREPO_URL_COMMITS, SEREPO_BASE_URL, SEREPO_PROJECT);
+    }
+
+    public static SeRepoUrlObject ofCommmitUrl(String commitUrl) {
+        String commitId = commitUrl.substring(commitUrl.lastIndexOf("/") + 1);
+        String baseUrl = String.format("%s/serepo", commitUrl.substring(0, commitUrl.indexOf("/")));
+        String repos = String.format("%s/repos/", baseUrl);
+        String repoName = commitUrl.substring(commitUrl.indexOf(repos) + repos.length(), commitUrl.indexOf("/commits"));
+        return new SeRepoUrlObject(baseUrl, repoName, commitId);
+    }
+
+    private void initCommitBasedUrls(String commitId) {
         this.SEREPO_COMMIT_ID = commitId;
-        this.SEREPO_URL_COMMITS = String.format(YStatementConstants.SEREPO_URL_COMMITS, baseUrl, repoName);
-        this.SEREPO_SEITEMS = String.format(YStatementConstants.SEREPO_SEITEMS, baseUrl, repoName, commitId);
+        this.SEREPO_SEITEMS = String.format(YStatementConstants.SEREPO_SEITEMS, SEREPO_BASE_URL, SEREPO_PROJECT, SEREPO_COMMIT_ID);
+    }
+
+    public void changeToCommit(String commitId) {
+        initCommitBasedUrls(commitId);
     }
 
     public String generateMetadataUrl(String id) {
