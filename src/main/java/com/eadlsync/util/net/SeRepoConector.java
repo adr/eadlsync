@@ -49,7 +49,7 @@ public class SeRepoConector {
 
     public static String getLatestCommit(String commitsUrl) throws UnirestException {
         List<Commit> commits = getCommitContainerByUrl(commitsUrl).getCommits();
-        commits.sort(Comparator.comparing(Commit::getWhen));
+        commits.sort(Comparator.comparing(Commit::getWhen).reversed());
         return getCommitIdFromCommit(commits.get(0));
     }
 
