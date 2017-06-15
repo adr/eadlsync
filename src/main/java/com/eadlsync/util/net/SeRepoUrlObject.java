@@ -20,14 +20,6 @@ public class SeRepoUrlObject {
         this.SEREPO_URL_COMMITS = String.format(YStatementConstants.SEREPO_URL_COMMITS, SEREPO_BASE_URL, SEREPO_PROJECT);
     }
 
-    public static SeRepoUrlObject ofCommmitUrl(String commitUrl) {
-        String commitId = commitUrl.substring(commitUrl.lastIndexOf("/") + 1);
-        String baseUrl = String.format("%s/serepo", commitUrl.substring(0, commitUrl.indexOf("/")));
-        String repos = String.format("%s/repos/", baseUrl);
-        String repoName = commitUrl.substring(commitUrl.indexOf(repos) + repos.length(), commitUrl.indexOf("/commits"));
-        return new SeRepoUrlObject(baseUrl, repoName, commitId);
-    }
-
     private void initCommitBasedUrls(String commitId) {
         this.SEREPO_COMMIT_ID = commitId;
         this.SEREPO_SEITEMS = String.format(YStatementConstants.SEREPO_SEITEMS, SEREPO_BASE_URL, SEREPO_PROJECT, SEREPO_COMMIT_ID);

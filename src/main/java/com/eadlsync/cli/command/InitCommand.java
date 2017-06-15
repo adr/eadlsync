@@ -9,9 +9,12 @@ import com.beust.jcommander.Parameters;
 import com.eadlsync.model.config.Config;
 import com.eadlsync.model.config.ConfigCore;
 import com.eadlsync.model.config.ConfigUser;
+import com.eadlsync.util.YStatementConstants;
 import com.eadlsync.util.net.SeRepoConector;
 import com.eadlsync.util.net.SeRepoUrlObject;
 import com.mashape.unirest.http.exceptions.UnirestException;
+
+import static com.eadlsync.util.YStatementConstants.SEREPO_URL_COMMITS;
 
 /**
  * Created by tobias on 01/06/2017.
@@ -19,20 +22,20 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 @Parameters(separators = "=", commandDescription = "Initializes an eadl code repository")
 public class InitCommand extends EADLSyncCommand {
 
-    private SeRepoUrlObject seRepoUrlObject = null;
+    @Parameter(names = "-u", required = true)
+    private String baseUrl;
 
-    @Parameter(names = "-r", required = true)
-    private String commitUrl;
+    @Parameter(names = "-p", required = true)
+    private String name;
 
     public void initialize() throws IOException, UnirestException {
         if (Files.exists(EADL_ROOT)) {
             throw new IOException("EadlSync root directory already exists for this project");
         } else {
-            seRepoUrlObject = SeRepoUrlObject.ofCommmitUrl(this.commitUrl);
-
             Files.createDirectory(EADL_ROOT);
             createConfigFile(EADL_CONFIG);
-            updateCommitId(SeRepoConector.getLatestCommit(seRepoUrlObject.SEREPO_URL_COMMITS));
+            String commitsUrl = String.format(SEREPO_URL_COMMITS, baseUrl, name);
+            updateCommitId(SeRepoConector.getLatestCommit(commitsUrl));
         }
     }
 
@@ -49,8 +52,8 @@ public class InitCommand extends EADLSyncCommand {
 
         ConfigCore core = new ConfigCore();
         core.setProjectRoot(PROJECT_ROOT.toString());
-        core.setBaseUrl(seRepoUrlObject.SEREPO_BASE_URL);
-        core.setProjectName(seRepoUrlObject.SEREPO_PROJECT);
+        core.setBaseUrl(baseUrl);
+        core.setProjectName(name);
 
         Config config = new Config();
         config.setCore(core);
