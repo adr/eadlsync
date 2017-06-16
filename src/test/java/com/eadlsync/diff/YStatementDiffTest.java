@@ -1,14 +1,9 @@
 package com.eadlsync.diff;
 
-import com.eadlsync.YStatementTestData;
+import com.eadlsync.data.YStatementTestData;
 import com.eadlsync.model.diff.YStatementDiff;
-import com.eadlsync.util.YStatementJustificationComparator;
-import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  *

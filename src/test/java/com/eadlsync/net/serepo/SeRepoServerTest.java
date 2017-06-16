@@ -1,11 +1,21 @@
 package com.eadlsync.net.serepo;
 
-import ch.hsr.isf.serepo.data.restinterface.commit.CommitMode;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+
 import ch.hsr.isf.serepo.data.restinterface.common.User;
 import ch.hsr.isf.serepo.data.restinterface.repository.CreateRepository;
 import ch.hsr.isf.serepo.data.restinterface.repository.Repository;
 import ch.hsr.isf.serepo.data.restinterface.repository.RepositoryContainer;
 import ch.hsr.isf.serepo.server.SeRepoServer;
+import com.eadlsync.data.SeRepoTestData;
 import com.eadlsync.model.serepo.data.SeItemWithContent;
 import com.eadlsync.util.net.SeRepoConector;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,18 +23,13 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static ch.hsr.isf.serepo.data.restinterface.commit.CommitMode.ADD_UPDATE_DELETE;
 import static org.junit.Assert.assertEquals;
@@ -42,7 +47,7 @@ public class SeRepoServerTest extends SeRepoTestData {
     private static final User TEST_USER = new User(SeRepoServerTest.class.getName(), String.format("%s@test.com", SeRepoServerTest.class.getName()));
     private static final Logger LOG = LoggerFactory.getLogger(SeRepoServerTest.class);
     private static SeRepoServer server;
-    private String lastCommit;
+    String lastCommit;
 
 
     static {

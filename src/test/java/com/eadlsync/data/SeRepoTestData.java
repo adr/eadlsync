@@ -1,4 +1,8 @@
-package com.eadlsync.net.serepo;
+package com.eadlsync.data;
+
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.List;
 
 import com.eadlsync.model.serepo.data.SeItemWithContent;
 import com.eadlsync.util.net.MetadataFactory;
@@ -6,24 +10,20 @@ import com.eadlsync.util.net.RelationFactory;
 import com.eadlsync.util.net.SeRepoConector;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Created by tobias on 15/06/2017.
  */
 public class SeRepoTestData {
 
-    static final String TEST_REPO = "test-repo";
-    static final String TEST_DATA_FOLDER = "test/folder/";
-    static final String TEST_PROBLEM_ID = "problem";
-    static final String TEST_OPTION_ID = "option";
-    static final String TEST_SOME_OPTION_ID = "some_option";
-    static final String TEST_OTHER_OPTION_ID = "other_option";
+    protected static final String TEST_REPO = "test-repo";
+    protected static final String TEST_DATA_FOLDER = "test/folder/";
+    protected static final String TEST_PROBLEM_ID = "problem";
+    protected static final String TEST_OPTION_ID = "option";
+    protected static final String TEST_SOME_OPTION_ID = "some_option";
+    protected static final String TEST_OTHER_OPTION_ID = "other_option";
 
 
-    List<SeItemWithContent> createTestData() throws UnsupportedEncodingException, UnirestException {
+    protected List<SeItemWithContent> createTestData() throws UnsupportedEncodingException, UnirestException {
         SeItemWithContent seProblemItem = SeRepoConector.createSeProblemItem(TEST_DATA_FOLDER + TEST_PROBLEM_ID, "context", "facing", MetadataFactory.ProblemState.SOLVED);
         seProblemItem.getRelations().add(RelationFactory.addressedBy("option"));
         seProblemItem.getRelations().add(RelationFactory.addressedBy("some_option"));

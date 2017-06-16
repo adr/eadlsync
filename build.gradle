@@ -71,6 +71,19 @@ task generateTestSource(dependsOn: ["generateSource", "compileSeRepo"]) {
     description 'Generates Java source files for testing.'
 }
 
+test {
+    exclude 'com/eadlsync/suite/**'
+    exclude 'radar/ad/**'
+}
+
+task testUnitTest(type: Test) {
+    include '**/*UnitTestSuite.class'
+}
+
+task testSeRepoServerTests(type: Test) {
+    include '**/*SeRepoServerTestSuite.class'
+}
+
 task initSubmodules(type: Exec) {
     if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
         commandLine "cmd", "/c", "git", "submodule", "update", "--init", "--recursive"
