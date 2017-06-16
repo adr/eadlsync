@@ -11,7 +11,9 @@ import com.mashape.unirest.http.exceptions.UnirestException;
  *
  */
 @Parameters(separators = "=", commandDescription = "Commits the code decisions to the se-repo")
-public class CommitAndPushCommand extends EADLSyncCommand {
+public class CommitCommand extends EADLSyncCommand {
+
+    public static final String NAME = "commit";
 
     @Parameter(names = "-m", required = true)
     private String message;
@@ -19,7 +21,7 @@ public class CommitAndPushCommand extends EADLSyncCommand {
     @Parameter(names = "-f")
     private boolean forceOption;
 
-    public String commitAndPush() throws EADLSyncExecption, IOException, UnirestException {
+    public String commit() throws EADLSyncExecption, IOException, UnirestException {
         readConfig();
         readDecisions();
         String newCommitId = repo.commit(message, forceOption);

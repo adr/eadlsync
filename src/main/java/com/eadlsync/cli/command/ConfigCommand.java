@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Parameters(separators = "=", commandDescription = "Modify the eadlsync config file")
 public class ConfigCommand extends EADLSyncCommand {
 
+    public static final String NAME = "config";
+
     @Parameter(names = "--user.name")
     private String name;
 

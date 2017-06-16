@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.stream.Collectors;
 
 import com.eadlsync.model.config.Config;
@@ -55,10 +56,7 @@ public class EADLSyncCommand {
     }
 
     protected void updateCommitId(String commitId) throws IOException {
-        if (!Files.exists(EADL_REVISION)) {
-            Files.createFile(EADL_REVISION);
-        }
-        Files.write(EADL_REVISION, commitId.getBytes());
+        Files.write(EADL_REVISION, commitId.getBytes(), StandardOpenOption.CREATE);
     }
 
     protected void readDecisions() throws IOException, UnirestException {

@@ -1,5 +1,9 @@
 package com.eadlsync.cli.command;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import com.beust.jcommander.Parameters;
 import com.eadlsync.EADLSyncExecption;
 import com.eadlsync.EADLSyncExecption.EADLSyncOperationState;
@@ -7,16 +11,13 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 /**
  * Created by tobias on 01/06/2017.
  */
 @Parameters(separators = "=", commandDescription = "Pulls the latest changes and commits any local changes afterwards")
 public class SyncCommand extends EADLSyncCommand {
 
+    public static final String NAME = "sync";
     private static final Logger LOG = LoggerFactory.getLogger(SyncCommand.class);
 
     private final String SYNC_MESSAGE = "Automatic sync " + new SimpleDateFormat("dd//MM/yyyy-HH:mm:ss").format(Calendar.getInstance());

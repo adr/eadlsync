@@ -1,5 +1,9 @@
 package com.eadlsync.cli.command;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.eadlsync.model.config.Config;
@@ -7,10 +11,8 @@ import com.eadlsync.model.config.ConfigCore;
 import com.eadlsync.model.config.ConfigUser;
 import com.eadlsync.util.net.SeRepoConector;
 import com.mashape.unirest.http.exceptions.UnirestException;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.eadlsync.util.YStatementConstants.SEREPO_URL_COMMITS;
 
@@ -20,6 +22,9 @@ import static com.eadlsync.util.YStatementConstants.SEREPO_URL_COMMITS;
 @Parameters(separators = "=", commandDescription = "Initializes an eadl code repository")
 public class InitCommand extends EADLSyncCommand {
 
+    public static final String NAME = "init";
+    private static final Logger LOG = LoggerFactory.getLogger(InitCommand.class);
+
     @Parameter(names = "-u", required = true)
     private String baseUrl;
 
@@ -28,13 +33,13 @@ public class InitCommand extends EADLSyncCommand {
 
     public void initialize() throws IOException, UnirestException {
         if (Files.exists(EADL_ROOT)) {
-            throw new IOException("EadlSync root directory already exists for this project");
+            LOG.debug("EadlSync directory already exists for this project");
         } else {
             Files.createDirectory(EADL_ROOT);
             createConfigFile(EADL_CONFIG);
-            String commitsUrl = String.format(SEREPO_URL_COMMITS, baseUrl, name);
-            updateCommitId(SeRepoConector.getLatestCommit(commitsUrl));
         }
+        String commitsUrl = String.format(SEREPO_URL_COMMITS, baseUrl, name);
+        updateCommitId(SeRepoConector.getLatestCommit(commitsUrl));
     }
 
     private void createConfigFile(Path filePath) throws IOException {
