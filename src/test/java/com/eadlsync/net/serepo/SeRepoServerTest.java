@@ -41,13 +41,13 @@ import static org.junit.Assert.assertTrue;
 public class SeRepoServerTest extends SeRepoTestData {
 
     private static final int PORT = 8080;
-    private static final String LOCALHOST_SEREPO = String.format("http://localhost:%s/serepo", PORT);
+    protected static final String LOCALHOST_SEREPO = String.format("http://localhost:%s/serepo", PORT);
     private static final String LOCALHOST_REPOS = String.format("%s/repos", LOCALHOST_SEREPO);
     private static final String LOCALHOST_COMMITS = String.format("%s/%s/commits", LOCALHOST_REPOS, TEST_REPO);
     private static final User TEST_USER = new User(SeRepoServerTest.class.getName(), String.format("%s@test.com", SeRepoServerTest.class.getName()));
     private static final Logger LOG = LoggerFactory.getLogger(SeRepoServerTest.class);
     private static SeRepoServer server;
-    String lastCommit;
+    protected String lastCommit;
 
 
     static {

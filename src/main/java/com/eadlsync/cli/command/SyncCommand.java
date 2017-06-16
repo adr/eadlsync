@@ -2,7 +2,7 @@ package com.eadlsync.cli.command;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.Date;
 
 import com.beust.jcommander.Parameters;
 import com.eadlsync.EADLSyncExecption;
@@ -20,7 +20,7 @@ public class SyncCommand extends EADLSyncCommand {
     public static final String NAME = "sync";
     private static final Logger LOG = LoggerFactory.getLogger(SyncCommand.class);
 
-    private final String SYNC_MESSAGE = "Automatic sync " + new SimpleDateFormat("dd//MM/yyyy-HH:mm:ss").format(Calendar.getInstance());
+    private final String SYNC_MESSAGE = "Automatic sync " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
 
     public String sync() throws IOException, UnirestException, EADLSyncExecption {
         readConfig();
