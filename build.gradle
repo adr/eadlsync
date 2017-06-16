@@ -39,6 +39,7 @@ dependencies {
 
     // testing against se-repo
     testCompile 'junit:junit:4.12'
+    testCompile 'org.hamcrest:hamcrest-all:1.3'
     testCompile 'com.google.code.gson:gson:2.8.1'
     testCompile 'ch.hsr.isf.serepo:serepo-rest:1.0-SNAPSHOT'
 
