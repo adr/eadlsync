@@ -9,101 +9,101 @@ import static org.junit.Assert.assertTrue;
 /**
  *
  */
-public class YStatementJustificationComparatorTest implements YStatementTestData {
+public class YStatementJustificationComparatorTest extends YStatementTestData {
 
     @Test
-    public void isContextEqual() throws Exception {
+    public void isContextEqual() {
         assertTrue(YStatementJustificationComparator.isContextEqual(" context   ", "context "));
     }
 
     @Test
-    public void isFacingEqual() throws Exception {
+    public void isFacingEqual() {
         assertTrue(YStatementJustificationComparator.isFacingEqual(" facing text  ", "facing text"));
     }
 
     @Test
-    public void isChosenEqual() throws Exception {
+    public void isChosenEqual() {
         assertTrue(YStatementJustificationComparator.isChosenEqual(" chosen/id   ", "chosen/id "));
     }
 
     @Test
-    public void isNeglectedEqual() throws Exception {
+    public void isNeglectedEqual() {
         assertTrue(YStatementJustificationComparator.isNeglectedEqual(" id2, some/id, id", "id,id2,   some/id"));
     }
 
     @Test
-    public void isAchievingEqual() throws Exception {
+    public void isAchievingEqual() {
         assertTrue(YStatementJustificationComparator.isAchievingEqual(" achieving   ", "achieving"));
     }
 
     @Test
-    public void isAcceptingEqual() throws Exception {
+    public void isAcceptingEqual() {
         assertTrue(YStatementJustificationComparator.isAcceptingEqual(" accepting   ", "accepting"));
     }
 
     @Test
-    public void isMoreInformationEqual() throws Exception {
+    public void isMoreInformationEqual() {
         assertTrue(YStatementJustificationComparator.isMoreInformationEqual(" more info   ", "more info"));
     }
 
     @Test
-    public void isContextNotEqual() throws Exception {
+    public void isContextNotEqual() {
         assertFalse(YStatementJustificationComparator.isContextEqual(baseDecision, differentBaseDecision));
     }
 
     @Test
-    public void isFacingNotEqual() throws Exception {
+    public void isFacingNotEqual() {
         assertFalse(YStatementJustificationComparator.isFacingEqual(baseDecision, differentBaseDecision));
     }
 
     @Test
-    public void isChosenNotEqual() throws Exception {
+    public void isChosenNotEqual() {
         assertFalse(YStatementJustificationComparator.isChosenEqual(baseDecision, differentBaseDecision));
     }
 
     @Test
-    public void isNeglectedNotEqual() throws Exception {
+    public void isNeglectedNotEqual() {
         assertFalse(YStatementJustificationComparator.isNeglectedEqual(baseDecision, differentBaseDecision));
     }
 
     @Test
-    public void isAchievingNotEqual() throws Exception {
+    public void isAchievingNotEqual() {
         assertFalse(YStatementJustificationComparator.isAchievingEqual(baseDecision, differentBaseDecision));
     }
 
     @Test
-    public void isAcceptingNotEqual() throws Exception {
+    public void isAcceptingNotEqual() {
         assertFalse(YStatementJustificationComparator.isAcceptingEqual(baseDecision, differentBaseDecision));
     }
 
     @Test
-    public void isMoreInformationNotEqual() throws Exception {
+    public void isMoreInformationNotEqual() {
         assertFalse(YStatementJustificationComparator.isMoreInformationEqual(baseDecision, differentBaseDecision));
     }
 
     @Test
-    public void isEqual() throws Exception {
+    public void isEqual() {
         assertTrue(YStatementJustificationComparator.isEqual(baseDecision, baseDecision));
     }
 
     @Test
-    public void isSame() throws Exception {
+    public void isSame() {
         assertTrue(YStatementJustificationComparator.isSame(baseDecision, someDecision));
     }
 
     @Test
-    public void isSameButNotEqual() throws Exception {
+    public void isSameButNotEqual() {
         assertTrue(YStatementJustificationComparator.isSameButNotEqual(baseDecision, someDecision));
     }
 
     @Test
-    public void isNotEqual() throws Exception {
+    public void isNotEqual() {
         assertFalse(YStatementJustificationComparator.isEqual(baseDecision, someDecision));
         assertFalse(YStatementJustificationComparator.isEqual(baseDecision, differentBaseDecision));
     }
 
     @Test
-    public void isNotSame() throws Exception {
+    public void isNotSame() {
         assertFalse(YStatementJustificationComparator.isSame(baseDecision, differentBaseDecision));
     }
 

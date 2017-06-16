@@ -6,9 +6,9 @@ import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
 /**
  *
  */
-public interface YStatementTestData {
+public abstract class YStatementTestData {
 
-    YStatementJustificationWrapper baseDecision =
+    protected YStatementJustificationWrapper baseDecision =
             new YStatementJustificationWrapperBuilder("test/folder/id", "remote_source").
                     context("context").
                     facing("facing").
@@ -18,7 +18,7 @@ public interface YStatementTestData {
                     accepting("accepting").
                     build();
 
-    YStatementJustificationWrapper differentBaseDecision =
+    protected YStatementJustificationWrapper differentBaseDecision =
             new YStatementJustificationWrapperBuilder("test/folder/different_id", "local_source").
                     context("different context").
                     facing("different facing").
@@ -29,7 +29,7 @@ public interface YStatementTestData {
                     moreInformation("different more information").
                     build();
 
-    YStatementJustificationWrapper someDecision =
+    protected YStatementJustificationWrapper someDecision =
             new YStatementJustificationWrapperBuilder("test/folder/id", "remote_source").
                     context("some context").
                     facing("facing").
@@ -39,7 +39,7 @@ public interface YStatementTestData {
                     accepting("some accepting").
                     build();
 
-    YStatementJustificationWrapper someNonConflictingDecision =
+    protected YStatementJustificationWrapper someNonConflictingDecision =
             new YStatementJustificationWrapperBuilder("test/folder/id", "remote_source").
                     context("context").
                     facing("other facing").
@@ -49,7 +49,7 @@ public interface YStatementTestData {
                     accepting("accepting").
                     build();
 
-    YStatementJustificationWrapper someConflictingOtherDecision =
+    protected YStatementJustificationWrapper someConflictingOtherDecision =
             new YStatementJustificationWrapperBuilder("test/folder/id", "remote_source").
                     context("other context").
                     facing("other facing").
@@ -59,7 +59,7 @@ public interface YStatementTestData {
                     accepting("other accepting").
                     build();
 
-    YStatementJustificationWrapper mergedBaseAndSomeDecision =
+    protected YStatementJustificationWrapper mergedBaseAndSomeDecision =
             new YStatementJustificationWrapperBuilder("test/folder/id", "remote_source").
                     context("some context").
                     facing("facing").
@@ -69,7 +69,7 @@ public interface YStatementTestData {
                     accepting("some accepting").
                     build();
 
-    YStatementJustificationWrapper mergedBaseAndSomeAndSomeNonConflictingDecision =
+    protected YStatementJustificationWrapper mergedBaseAndSomeAndSomeNonConflictingDecision =
             new YStatementJustificationWrapperBuilder("test/folder/id", "remote_source").
                     context("some context").
                     facing("other facing").
@@ -78,4 +78,8 @@ public interface YStatementTestData {
                     achieving("some achieving").
                     accepting("some accepting").
                     build();
+
+    protected YStatementJustificationWrapper clone(YStatementJustificationWrapper wrapper) {
+        return new YStatementJustificationWrapperBuilder(wrapper).build();
+    }
 }

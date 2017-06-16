@@ -8,7 +8,7 @@ import org.junit.Test;
 /**
  *
  */
-public class YStatementDiffTest implements YStatementTestData {
+public class YStatementDiffTest extends YStatementTestData {
 
     @Test
     public void testConflictYStatements() {
