@@ -1,25 +1,27 @@
 package com.eadlsync.model.diff;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.eadlsync.EADLSyncExecption;
 import com.eadlsync.model.decision.YStatementJustificationComparisionObject;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.util.YStatementJustificationComparator;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import static com.eadlsync.EADLSyncExecption.EADLSyncOperationState.CONFLICT;
 
 /**
  *
  */
-public class Decisions {
+public class DiffManager {
 
     private final List<YStatementDiff> localDiff = new ArrayList<>();
     private final List<YStatementDiff> remoteDiff = new ArrayList<>();
     private final List<YStatementJustificationWrapper> baseDecisions;
     private List<YStatementJustificationWrapper> currentDecisions;
 
-    public Decisions(List<YStatementJustificationWrapper> base, List<YStatementJustificationWrapper> local, List<YStatementJustificationWrapper> remote) {
+    public DiffManager(List<YStatementJustificationWrapper> base, List<YStatementJustificationWrapper> local, List<YStatementJustificationWrapper> remote) {
         this.baseDecisions = base;
         this.currentDecisions = base;
         this.localDiff.addAll(initDiffYStatements(base, local));
@@ -31,9 +33,9 @@ public class Decisions {
         initDifferentYStatements(base, changed).stream().forEach(y ->
                 diff.add(YStatementDiff.of(y.getCodeDecision(), y.getSeDecision()))
         );
-        initAdditionalYStatements(base, changed).stream().forEach(y ->
-                diff.add(YStatementDiff.of(null, y))
-        );
+//        initAdditionalYStatements(base, changed).stream().forEach(y ->
+//                diff.add(YStatementDiff.of(null, y))
+//        );
         initRemovedYStatements(base, changed).stream().forEach(y ->
                 diff.add(YStatementDiff.of(y, null))
         );
@@ -147,8 +149,16 @@ public class Decisions {
     }
 
     public List<YStatementJustificationWrapper> applyLocalAndRemoteDiff() throws EADLSyncExecption {
-        applyLocalDiff();
-        applyRemoteDiff();
+        if (canAutoMerge()) {
+            if (hasLocalDiff()) {
+                applyLocalDiff();
+            }
+            if (hasRemoteDiff()) {
+                applyRemoteDiff();
+            }
+        } else {
+            throw EADLSyncExecption.ofState(CONFLICT);
+        }
         return this.currentDecisions;
     }
 

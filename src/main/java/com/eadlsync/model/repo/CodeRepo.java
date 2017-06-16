@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import com.eadlsync.EADLSyncExecption;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
-import com.eadlsync.model.diff.Decisions;
+import com.eadlsync.model.diff.DiffManager;
 import com.eadlsync.util.OS;
 import com.eadlsync.util.io.JavaDecisionParser;
 import com.eadlsync.util.net.YStatementAPI;
@@ -34,7 +34,7 @@ public class CodeRepo implements IRepo {
     private final Logger LOG = LoggerFactory.getLogger(CodeRepo.class);
     private final Path repositoryPath;
     private final YStatementAPI connector;
-    private Decisions decisions;
+    private DiffManager diffManager;
 
     public CodeRepo(Path path, String baseUrl, String project, String baseRevision) throws IOException, UnirestException {
         this.repositoryPath = path;
@@ -44,7 +44,7 @@ public class CodeRepo implements IRepo {
     }
 
     private void initDecisions() throws UnirestException, IOException {
-        this.decisions = new Decisions(loadBaseRevision(), loadLocalDecisions(), loadRemoteDecisions());
+        this.diffManager = new DiffManager(loadBaseRevision(), loadLocalDecisions(), loadRemoteDecisions());
     }
 
     private List<YStatementJustificationWrapper> loadBaseRevision() throws UnirestException {
@@ -78,11 +78,11 @@ public class CodeRepo implements IRepo {
     }
 
     private void writeEadsToDisk() throws IOException {
-        for (YStatementJustificationWrapper yStatementJustificationWrapper : decisions.getCurrentDecisions()) {
+        for (YStatementJustificationWrapper yStatementJustificationWrapper : diffManager.getCurrentDecisions()) {
             writeEadToClass(yStatementJustificationWrapper);
         }
-        for (YStatementJustificationWrapper yStatementJustificationWrapper : decisions.getBaseDecisions().stream().filter(
-                decision -> !decisions.getCurrentDecisions().contains(decision)).collect(Collectors.toList())) {
+        for (YStatementJustificationWrapper yStatementJustificationWrapper : diffManager.getBaseDecisions().stream().filter(
+                decision -> !diffManager.getCurrentDecisions().contains(decision)).collect(Collectors.toList())) {
             removeEadFromClass(yStatementJustificationWrapper);
         }
     }
@@ -117,10 +117,10 @@ public class CodeRepo implements IRepo {
 
     @Override
     public String commit(String message, boolean isForcing) throws EADLSyncExecption, UnsupportedEncodingException, UnirestException {
-        if (!decisions.hasRemoteDiff() || isForcing) {
-            if (decisions.hasLocalDiff()) {
-                decisions.applyLocalDiff();
-                return connector.commitYStatement(decisions.getCurrentDecisions(), message);
+        if (!diffManager.hasRemoteDiff() || isForcing) {
+            if (diffManager.hasLocalDiff()) {
+                diffManager.applyLocalDiff();
+                return connector.commitYStatement(diffManager.getCurrentDecisions(), message);
             } else {
                 throw EADLSyncExecption.ofState(EADLSyncExecption.EADLSyncOperationState.NOTHING_TO_COMMIT);
             }
@@ -131,18 +131,18 @@ public class CodeRepo implements IRepo {
 
     @Override
     public void pull() throws EADLSyncExecption, IOException {
-        if (decisions.hasRemoteDiff()) {
-            if (decisions.hasLocalDiff()) {
-                if (decisions.canAutoMerge()) {
-                    decisions.applyLocalDiff();
-                    decisions.applyRemoteDiff();
+        if (diffManager.hasRemoteDiff()) {
+            if (diffManager.hasLocalDiff()) {
+                if (diffManager.canAutoMerge()) {
+                    diffManager.applyLocalDiff();
+                    diffManager.applyRemoteDiff();
                     writeEadsToDisk();
                 } else {
                     writeConflicts();
                     throw EADLSyncExecption.ofState(EADLSyncExecption.EADLSyncOperationState.CONFLICT);
                 }
             } else {
-                decisions.applyRemoteDiff();
+                diffManager.applyRemoteDiff();
                 writeEadsToDisk();
             }
         } else {
@@ -151,7 +151,7 @@ public class CodeRepo implements IRepo {
     }
 
     private void writeConflicts() {
-        // TODO: write conflicting decisions to a conflicts file in the eadl directory
+        // TODO: write conflicting diffManager to a conflicts file in the eadl directory
     }
 
     @Override
@@ -165,12 +165,12 @@ public class CodeRepo implements IRepo {
     public void reset(String commitId) throws EADLSyncExecption, IOException, UnirestException {
         connector.changeToCommit(commitId);
         initDecisions();
-        decisions.applyRemoteDiff();
+        diffManager.applyRemoteDiff();
         writeEadsToDisk();
     }
 
     public RepoStatus getStatus() {
-        return RepoStatus.of(decisions);
+        return RepoStatus.of(diffManager);
     }
 
 }

@@ -5,7 +5,7 @@ import java.util.Arrays;
 import com.eadlsync.EADLSyncExecption;
 import com.eadlsync.data.YStatementTestData;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
-import com.eadlsync.model.diff.Decisions;
+import com.eadlsync.model.diff.DiffManager;
 import com.eadlsync.util.YStatementJustificationComparator;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import org.junit.Test;
 /**
  *
  */
-public class DecisionsTest extends YStatementTestData {
+public class DiffManagerTest extends YStatementTestData {
 
     @Test
     public void testLocalDiffFieldsOnlyHasLocalChanges() {
@@ -94,26 +94,78 @@ public class DecisionsTest extends YStatementTestData {
         Assert.assertFalse(decisionsOfLocalAndRemoteChangesConflict().canAutoMerge());
     }
 
-    private Decisions decisionsOfOnlyLocalChanges() {
+    @Test(expected = EADLSyncExecption.class)
+    public void testLocalAndRemoteConflictDiffFieldsApplyChangesThrowsException() throws
+            EADLSyncExecption {
+        Assert.assertTrue(YStatementJustificationComparator.isEqual
+                (mergedBaseAndSomeAndSomeNonConflictingDecision,
+                        decisionsOfLocalAndRemoteChangesConflict().applyLocalAndRemoteDiff().get(0)));
+    }
+
+    @Test
+    public void testAdditionalLocalDecisionHasNoEffectOnLocalAndRemoteChanges() {
+        Assert.assertFalse(decisionsOfAdditionalLocalDecision().hasLocalDiff());
+        Assert.assertFalse(decisionsOfAdditionalLocalDecision().hasRemoteDiff());
+    }
+
+    @Test
+    public void testAdditionalRemoteDecisionHasNoEffectOnLocalAndRemoteChanges() {
+        Assert.assertFalse(decisionsOfAdditionalRemoteDecision().hasLocalDiff());
+        Assert.assertFalse(decisionsOfAdditionalRemoteDecision().hasRemoteDiff());
+    }
+
+    @Test
+    public void testRemovedLocalDecisionHasLocalChanges() {
+        Assert.assertTrue(decisionsOfRemovedLocalDecision().hasLocalDiff());
+    }
+
+    @Test
+    public void testRemovedRemoteDecisionHasRemoteChanges() {
+        Assert.assertTrue(decisionsOfRemovedRemoteDecision().hasRemoteDiff());
+    }
+
+    private DiffManager decisionsOfOnlyLocalChanges() {
         return createDecisions(clone(baseDecision), clone(someDecision), clone(baseDecision));
     }
 
-    private Decisions decisionsOfOnlyRemoteChanges() {
+    private DiffManager decisionsOfAdditionalLocalDecision() {
+        return new DiffManager(Arrays.asList(clone(baseDecision)), Arrays.asList(clone(baseDecision),
+                differentBaseDecision), Arrays.asList(clone(baseDecision)));
+    }
+
+    private DiffManager decisionsOfRemovedLocalDecision() {
+        return new DiffManager(Arrays.asList(clone(baseDecision), differentBaseDecision), Arrays
+                .asList(clone(baseDecision)), Arrays.asList(clone(baseDecision), differentBaseDecision));
+    }
+
+    private DiffManager decisionsOfOnlyRemoteChanges() {
         return createDecisions(clone(baseDecision), clone(baseDecision), clone(someDecision));
     }
 
-    private Decisions decisionsOfLocalAndRemoteChangesNoConflict() {
-        return createDecisions(clone(baseDecision), clone(someDecision), clone(someNonConflictingDecision));
+    private DiffManager decisionsOfAdditionalRemoteDecision() {
+        return new DiffManager(Arrays.asList(clone(baseDecision)), Arrays.asList(clone(baseDecision)),
+                Arrays.asList(clone(baseDecision), differentBaseDecision));
     }
 
-    private Decisions decisionsOfLocalAndRemoteChangesConflict() {
-        return createDecisions(clone(baseDecision), clone(someDecision), clone(someConflictingOtherDecision));
+    private DiffManager decisionsOfRemovedRemoteDecision() {
+        return new DiffManager(Arrays.asList(clone(baseDecision), differentBaseDecision), Arrays
+                .asList(clone(baseDecision), differentBaseDecision), Arrays.asList(clone(baseDecision)));
     }
 
-    private Decisions createDecisions(YStatementJustificationWrapper base,
-                                      YStatementJustificationWrapper local,
-                                      YStatementJustificationWrapper remote) {
-        return new Decisions(Arrays.asList(base), Arrays.asList(local), Arrays.asList(remote));
+    private DiffManager decisionsOfLocalAndRemoteChangesNoConflict() {
+        return createDecisions(clone(baseDecision), clone(someDecision), clone
+                (someNonConflictingDecision));
+    }
+
+    private DiffManager decisionsOfLocalAndRemoteChangesConflict() {
+        return createDecisions(clone(baseDecision), clone(someDecision), clone
+                (someConflictingOtherDecision));
+    }
+
+    private DiffManager createDecisions(YStatementJustificationWrapper base,
+                                        YStatementJustificationWrapper local,
+                                        YStatementJustificationWrapper remote) {
+        return new DiffManager(Arrays.asList(base), Arrays.asList(local), Arrays.asList(remote));
     }
 
 }
