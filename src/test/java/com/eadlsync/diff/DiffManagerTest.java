@@ -13,7 +13,7 @@ import org.junit.Test;
 /**
  *
  */
-public class DiffManagerTest extends YStatementTestData {
+public class DiffManagerTest extends DiffTest {
 
     @Test
     public void testLocalDiffFieldsOnlyHasLocalChanges() {
@@ -124,48 +124,6 @@ public class DiffManagerTest extends YStatementTestData {
         Assert.assertTrue(decisionsOfRemovedRemoteDecision().hasRemoteDiff());
     }
 
-    private DiffManager decisionsOfOnlyLocalChanges() {
-        return createDecisions(clone(baseDecision), clone(someDecision), clone(baseDecision));
-    }
 
-    private DiffManager decisionsOfAdditionalLocalDecision() {
-        return new DiffManager(Arrays.asList(clone(baseDecision)), Arrays.asList(clone(baseDecision),
-                differentBaseDecision), Arrays.asList(clone(baseDecision)));
-    }
-
-    private DiffManager decisionsOfRemovedLocalDecision() {
-        return new DiffManager(Arrays.asList(clone(baseDecision), differentBaseDecision), Arrays
-                .asList(clone(baseDecision)), Arrays.asList(clone(baseDecision), differentBaseDecision));
-    }
-
-    private DiffManager decisionsOfOnlyRemoteChanges() {
-        return createDecisions(clone(baseDecision), clone(baseDecision), clone(someDecision));
-    }
-
-    private DiffManager decisionsOfAdditionalRemoteDecision() {
-        return new DiffManager(Arrays.asList(clone(baseDecision)), Arrays.asList(clone(baseDecision)),
-                Arrays.asList(clone(baseDecision), differentBaseDecision));
-    }
-
-    private DiffManager decisionsOfRemovedRemoteDecision() {
-        return new DiffManager(Arrays.asList(clone(baseDecision), differentBaseDecision), Arrays
-                .asList(clone(baseDecision), differentBaseDecision), Arrays.asList(clone(baseDecision)));
-    }
-
-    private DiffManager decisionsOfLocalAndRemoteChangesNoConflict() {
-        return createDecisions(clone(baseDecision), clone(someDecision), clone
-                (someNonConflictingDecision));
-    }
-
-    private DiffManager decisionsOfLocalAndRemoteChangesConflict() {
-        return createDecisions(clone(baseDecision), clone(someDecision), clone
-                (someConflictingOtherDecision));
-    }
-
-    private DiffManager createDecisions(YStatementJustificationWrapper base,
-                                        YStatementJustificationWrapper local,
-                                        YStatementJustificationWrapper remote) {
-        return new DiffManager(Arrays.asList(base), Arrays.asList(local), Arrays.asList(remote));
-    }
 
 }

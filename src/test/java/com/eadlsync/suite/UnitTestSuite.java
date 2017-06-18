@@ -1,5 +1,6 @@
 package com.eadlsync.suite;
 
+import com.eadlsync.diff.ConflictManagerViewModelTest;
 import com.eadlsync.diff.DiffManagerTest;
 import com.eadlsync.diff.YStatementDiffTest;
 import com.eadlsync.javaparser.JavaDecisionParserTest;
@@ -12,7 +13,7 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-//        CodeRepoTest.class,
+        ConflictManagerViewModelTest.class,
         DiffManagerTest.class,
         YStatementDiffTest.class,
         JavaDecisionParserTest.class,
