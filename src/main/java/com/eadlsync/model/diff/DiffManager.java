@@ -166,7 +166,19 @@ public class DiffManager {
         return currentDecisions;
     }
 
+    public void setCurrentDecisions(List<YStatementJustificationWrapper> currentDecisions) {
+        this.currentDecisions = currentDecisions;
+    }
+
     public List<YStatementJustificationWrapper> getBaseDecisions() {
         return baseDecisions;
+    }
+
+    public List<YStatementDiff> getLocalDiff() {
+        return localDiff;
+    }
+
+    public List<YStatementDiff> getRemoteDiff() {
+        return remoteDiff;
     }
 }

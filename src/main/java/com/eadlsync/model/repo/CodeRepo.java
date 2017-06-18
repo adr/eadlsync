@@ -1,5 +1,19 @@
 package com.eadlsync.model.repo;
 
+import com.eadlsync.EADLSyncExecption;
+import com.eadlsync.gui.ConflictManagerView;
+import com.eadlsync.model.decision.YStatementJustificationWrapper;
+import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
+import com.eadlsync.model.diff.DiffManager;
+import com.eadlsync.util.OS;
+import com.eadlsync.util.io.JavaDecisionParser;
+import com.eadlsync.util.net.SeRepoUrlObject;
+import com.eadlsync.util.net.YStatementAPI;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import radar.ad.annotations.YStatementJustification;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
@@ -12,19 +26,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.eadlsync.EADLSyncExecption;
-import com.eadlsync.model.decision.YStatementJustificationWrapper;
-import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
-import com.eadlsync.model.diff.DiffManager;
-import com.eadlsync.util.OS;
-import com.eadlsync.util.io.JavaDecisionParser;
-import com.eadlsync.util.net.YStatementAPI;
-import com.eadlsync.util.net.SeRepoUrlObject;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import radar.ad.annotations.YStatementJustification;
 
 /**
  * Created by tobias on 07/03/2017.
@@ -133,13 +134,14 @@ public class CodeRepo implements IRepo {
     public void pull() throws EADLSyncExecption, IOException {
         if (diffManager.hasRemoteDiff()) {
             if (diffManager.hasLocalDiff()) {
-                if (diffManager.canAutoMerge()) {
+                if (!diffManager.canAutoMerge()) {
+                    if (new ConflictManagerView(diffManager).showDialog()) {
+                        writeEadsToDisk();
+                    }
+                } else {
                     diffManager.applyLocalDiff();
                     diffManager.applyRemoteDiff();
                     writeEadsToDisk();
-                } else {
-                    writeConflicts();
-                    throw EADLSyncExecption.ofState(EADLSyncExecption.EADLSyncOperationState.CONFLICT);
                 }
             } else {
                 diffManager.applyRemoteDiff();
@@ -148,10 +150,6 @@ public class CodeRepo implements IRepo {
         } else {
             throw EADLSyncExecption.ofState(EADLSyncExecption.EADLSyncOperationState.UP_TO_DATE);
         }
-    }
-
-    private void writeConflicts() {
-        // TODO: write conflicting diffManager to a conflicts file in the eadl directory
     }
 
     @Override

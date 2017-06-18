@@ -24,9 +24,10 @@ import static com.eadlsync.util.YStatementField.MORE_INFORMATION;
 public class YStatementDiff {
 
     private final String id;
-    private YStatementJustificationWrapper changedDecision = null;
-    private Map<YStatementField, String> diff = new HashMap<>();
 
+    private YStatementJustificationWrapper changedDecision = null;
+
+    private Map<YStatementField, String> diff = new HashMap<>();
     public static YStatementDiff of(YStatementJustificationWrapper baseDecision, YStatementJustificationWrapper diffDecision) {
         return new YStatementDiff(baseDecision, diffDecision);
     }
@@ -141,5 +142,9 @@ public class YStatementDiff {
 
     public String getId() {
         return id;
+    }
+
+    public YStatementJustificationWrapper getChangedDecision() {
+        return changedDecision;
     }
 }
