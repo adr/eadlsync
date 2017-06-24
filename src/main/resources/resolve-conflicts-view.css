@@ -1,0 +1,66 @@
+.approve-button .radio {
+    -fx-background-image: url('/graphics/approve.png');
+    -fx-background-position: center;
+}
+
+.neglected-button .radio {
+    -fx-background-image: url('/graphics/reject.png');
+    -fx-background-position: center;
+}
+
+.approve-button .dot {
+    -fx-background-color: transparent;
+}
+
+.neglected-button .dot {
+    -fx-background-color: transparent;
+}
+
+.radio-button:selected {
+    -fx-opacity: 1;
+}
+
+.radio-button {
+    -fx-opacity: 0.2;
+}
+
+.radio-button .radio {
+    -fx-border-width: 0px;
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+    -fx-border-radius: 15px;
+    -fx-padding: 5px;
+}
+
+.modified {
+    -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #38CA38, #319159);
+}
+
+.modified-merge {
+    -fx-background-color: #319159;
+}
+
+.modified-remote {
+    -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #319159, #38CA38);
+}
+
+.modified-merge-remote {
+    -fx-background-color: #319159;
+}
+
+.neglected {
+    -fx-strikethrough: true;
+}
+
+.select-all {
+    -fx-padding: 10 0 0 0;
+}
+
+.split-pane *.split-pane-divider {
+    -fx-padding: 0 1 0 1;
+}
+
+.dialog-pane *.button-bar {
+    -fx-max-height: 0;
+    -fx-pref-height: 0;
+}

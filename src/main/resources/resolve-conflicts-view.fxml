@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.DialogPane?>
@@ -8,34 +11,21 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.TextFlow?>
 
-<DialogPane prefHeight="300.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1">
+<DialogPane prefHeight="300.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
    <header>
-      <Label fx:id="lblTitle" alignment="CENTER" wrapText="true" />
+      <Label fx:id="lblTitle" alignment="TOP_LEFT" wrapText="true">
+         <padding>
+            <Insets left="10.0" right="10.0" top="10.0" />
+         </padding></Label>
    </header>
    <content>
       <BorderPane>
-         <top>
-            <SplitPane dividerPositions="0.5" BorderPane.alignment="CENTER">
-              <items>
-                  <VBox>
-                     <children>
-                        <TextArea fx:id="txtLocalDecision" editable="false" prefHeight="300.0" />
-                        <RadioButton fx:id="radioLocalDecision" mnemonicParsing="false" text="Choose local changes" />
-                     </children>
-                  </VBox>
-                  <VBox>
-                     <children>
-                        <TextArea fx:id="txtRemoteDecision" editable="false" prefHeight="300.0" />
-                        <RadioButton fx:id="radioRemoteDecision" mnemonicParsing="false" text="Choose remote changes" />
-                     </children>
-                  </VBox>
-              </items>
-            </SplitPane>
-         </top>
          <bottom>
             <BorderPane BorderPane.alignment="CENTER">
                <bottom>
@@ -45,13 +35,405 @@
                       <Button fx:id="btnFinish" mnemonicParsing="false" onAction="#resolveConflicts" text="Finish" />
                         <Button fx:id="btnNext" defaultButton="true" mnemonicParsing="false" onAction="#goNext" text="Next" />
                     </buttons>
+                     <BorderPane.margin>
+                        <Insets top="10.0" />
+                     </BorderPane.margin>
                   </ButtonBar>
                </bottom>
                <center>
-                  <ListView fx:id="listDecisions" disable="true" prefHeight="200.0" BorderPane.alignment="CENTER" />
+                  <ListView fx:id="listDecisions" disable="true" prefHeight="200.0" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets top="10.0" />
+                     </BorderPane.margin></ListView>
                </center>
             </BorderPane>
          </bottom>
+         <center>
+            <SplitPane dividerPositions="0.3444730077120823, 0.6812339331619537" minHeight="200.0" BorderPane.alignment="CENTER">
+              <items>
+                  <VBox minWidth="235.0" spacing="5.0">
+                     <children>
+                        <HBox fillHeight="false">
+                           <children>
+                              <RadioButton fx:id="btnLocalContextNeglected" mnemonicParsing="false" styleClass="neglected-button" HBox.hgrow="NEVER">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="localContext" />
+                                 </toggleGroup>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                              <RadioButton fx:id="btnLocalContext" mnemonicParsing="false" styleClass="approve-button" toggleGroup="$localContext" HBox.hgrow="NEVER">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                              <HBox HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label wrapText="true" HBox.hgrow="ALWAYS">
+                                       <graphic>
+                                          <TextFlow fx:id="txtLocalContext" />
+                                       </graphic>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                        <HBox fillHeight="false">
+                           <children>
+                              <RadioButton fx:id="btnLocalFacingNeglected" mnemonicParsing="false" styleClass="neglected-button">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="localFacing" />
+                                 </toggleGroup>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                              <RadioButton fx:id="btnLocalFacing" mnemonicParsing="false" styleClass="approve-button" toggleGroup="$localFacing">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                              <HBox HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label fx:id="lblLocalFacing" wrapText="true" HBox.hgrow="ALWAYS">
+                                       <graphic>
+                                          <TextFlow fx:id="txtLocalFacing" />
+                                       </graphic>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                        <HBox fillHeight="false">
+                           <children>
+                              <RadioButton fx:id="btnLocalChosenNeglected" mnemonicParsing="false" styleClass="neglected-button">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="localChosen" />
+                                 </toggleGroup>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                              <RadioButton fx:id="btnLocalChosen" mnemonicParsing="false" styleClass="approve-button" toggleGroup="$localChosen">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                              <HBox HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label wrapText="true" HBox.hgrow="ALWAYS">
+                                       <graphic>
+                                          <TextFlow fx:id="txtLocalChosen" />
+                                       </graphic>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                        <HBox fillHeight="false">
+                           <children>
+                              <RadioButton fx:id="btnLocalNeglectedNeglected" mnemonicParsing="false" styleClass="neglected-button">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="localNeglected" />
+                                 </toggleGroup>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                              <RadioButton fx:id="btnLocalNeglected" mnemonicParsing="false" styleClass="approve-button" toggleGroup="$localNeglected">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                              <HBox HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label wrapText="true" HBox.hgrow="ALWAYS">
+                                       <graphic>
+                                          <TextFlow fx:id="txtLocalNeglected" />
+                                       </graphic>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                        <HBox fillHeight="false">
+                           <children>
+                              <RadioButton fx:id="btnLocalAchievingNeglected" mnemonicParsing="false" styleClass="neglected-button">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="localAchieving" />
+                                 </toggleGroup>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                              <RadioButton fx:id="btnLocalAchieving" mnemonicParsing="false" styleClass="approve-button" toggleGroup="$localAchieving">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                              <HBox HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label wrapText="true" HBox.hgrow="ALWAYS">
+                                       <graphic>
+                                          <TextFlow fx:id="txtLocalAchieving" />
+                                       </graphic>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                        <HBox fillHeight="false">
+                           <children>
+                              <RadioButton fx:id="btnLocalAcceptingNeglected" mnemonicParsing="false" styleClass="neglected-button">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="localAccepting" />
+                                 </toggleGroup>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                              <RadioButton fx:id="btnLocalAccepting" mnemonicParsing="false" styleClass="approve-button" toggleGroup="$localAccepting">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                              <HBox HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label wrapText="true" HBox.hgrow="ALWAYS">
+                                       <graphic>
+                                          <TextFlow fx:id="txtLocalAccepting" />
+                                       </graphic>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <RadioButton fx:id="btnAllLocalNeglected" mnemonicParsing="false">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <styleClass>
+                                    <String fx:value="neglected-button" />
+                                    <String fx:value="select-all" />
+                                 </styleClass>
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="local" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="btnAllLocal" mnemonicParsing="false" toggleGroup="$local" HBox.hgrow="ALWAYS">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <styleClass>
+                                    <String fx:value="approve-button" />
+                                    <String fx:value="select-all" />
+                                 </styleClass></RadioButton>
+                              <Label alignment="BOTTOM_LEFT" text="Select All local changes" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <VBox minWidth="235.0" spacing="5.0">
+                     <children>
+                        <HBox>
+                           <children>
+                              <Label fx:id="lblMergedContext" wrapText="true" />
+                           </children>
+                        </HBox>
+                        <HBox>
+                           <children>
+                              <Label fx:id="lblMergedFacing" wrapText="true" />
+                           </children>
+                        </HBox>
+                        <HBox>
+                           <children>
+                              <Label fx:id="lblMergedChosen" wrapText="true" />
+                           </children>
+                        </HBox>
+                        <HBox>
+                           <children>
+                              <Label fx:id="lblMergedNeglected" wrapText="true" />
+                           </children>
+                        </HBox>
+                        <HBox>
+                           <children>
+                              <Label fx:id="lblMergedAchieving" wrapText="true" />
+                           </children>
+                        </HBox>
+                        <HBox>
+                           <children>
+                              <Label fx:id="lblMergedAccepting" wrapText="true" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <VBox minWidth="235.0" spacing="5.0">
+                     <children>
+                        <HBox alignment="TOP_RIGHT" fillHeight="false">
+                           <children>
+                              <HBox HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label wrapText="true" HBox.hgrow="ALWAYS">
+                                       <graphic>
+                                          <TextFlow fx:id="txtRemoteContext" />
+                                       </graphic>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <RadioButton fx:id="btnRemoteContext" mnemonicParsing="false" styleClass="approve-button">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="remoteContext" />
+                                 </toggleGroup>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                              <RadioButton fx:id="btnRemoteContextNeglected" mnemonicParsing="false" styleClass="neglected-button" toggleGroup="$remoteContext">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                           </children>
+                        </HBox>
+                        <HBox alignment="TOP_RIGHT" fillHeight="false">
+                           <children>
+                              <HBox HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label fx:id="lblLocalFacing1" wrapText="true" HBox.hgrow="ALWAYS">
+                                       <graphic>
+                                          <TextFlow fx:id="txtRemoteFacing" />
+                                       </graphic>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <RadioButton fx:id="btnRemoteFacing" mnemonicParsing="false" styleClass="approve-button">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="remoteFacing" />
+                                 </toggleGroup>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                              <RadioButton fx:id="btnRemoteFacingNeglected" mnemonicParsing="false" styleClass="neglected-button" toggleGroup="$remoteFacing">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                           </children>
+                        </HBox>
+                        <HBox alignment="TOP_RIGHT" fillHeight="false">
+                           <children>
+                              <HBox HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label wrapText="true" HBox.hgrow="ALWAYS">
+                                       <graphic>
+                                          <TextFlow fx:id="txtRemoteChosen" />
+                                       </graphic>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <RadioButton fx:id="btnRemoteChosen" mnemonicParsing="false" styleClass="approve-button">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="remoteChosen" />
+                                 </toggleGroup>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                              <RadioButton fx:id="btnRemoteChosenNeglected" mnemonicParsing="false" styleClass="neglected-button" toggleGroup="$remoteChosen">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                           </children>
+                        </HBox>
+                        <HBox alignment="TOP_RIGHT" fillHeight="false">
+                           <children>
+                              <HBox HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label wrapText="true" HBox.hgrow="ALWAYS">
+                                       <graphic>
+                                          <TextFlow fx:id="txtRemoteNeglected" />
+                                       </graphic>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <RadioButton fx:id="btnRemoteNeglected" mnemonicParsing="false" styleClass="approve-button">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="remoteNeglected" />
+                                 </toggleGroup>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                              <RadioButton fx:id="btnRemoteNeglectedNeglected" mnemonicParsing="false" styleClass="neglected-button" toggleGroup="$remoteNeglected">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                           </children>
+                        </HBox>
+                        <HBox alignment="TOP_RIGHT" fillHeight="false">
+                           <children>
+                              <HBox HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label wrapText="true" HBox.hgrow="ALWAYS">
+                                       <graphic>
+                                          <TextFlow fx:id="txtRemoteAchieving" />
+                                       </graphic>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <RadioButton fx:id="btnRemoteAchieving" mnemonicParsing="false" styleClass="approve-button">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="remoteAchieving" />
+                                 </toggleGroup>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                              <RadioButton fx:id="btnRemoteAchievingNeglected" mnemonicParsing="false" styleClass="neglected-button" toggleGroup="$remoteAchieving">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                           </children>
+                        </HBox>
+                        <HBox alignment="TOP_RIGHT" fillHeight="false">
+                           <children>
+                              <HBox HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label wrapText="true" HBox.hgrow="ALWAYS">
+                                       <graphic>
+                                          <TextFlow fx:id="txtRemoteAccepting" />
+                                       </graphic>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <RadioButton fx:id="btnRemoteAccepting" mnemonicParsing="false" styleClass="approve-button">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="remoteAccepting" />
+                                 </toggleGroup>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                              <RadioButton fx:id="btnRemoteAcceptingNeglected" mnemonicParsing="false" styleClass="neglected-button" toggleGroup="$remoteAccepting">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor></RadioButton>
+                           </children>
+                        </HBox>
+                        <HBox alignment="TOP_RIGHT">
+                           <children>
+                              <Label alignment="BOTTOM_LEFT" text="Select All remote changes" />
+                              <RadioButton fx:id="btnAllRemote" mnemonicParsing="false" HBox.hgrow="ALWAYS">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="remote" />
+                                 </toggleGroup>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <styleClass>
+                                    <String fx:value="approve-button" />
+                                    <String fx:value="select-all" />
+                                 </styleClass>
+                              </RadioButton>
+                              <RadioButton fx:id="btnAllRemoteNeglected" mnemonicParsing="false" toggleGroup="$remote">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <styleClass>
+                                    <String fx:value="neglected-button" />
+                                    <String fx:value="select-all" />
+                                 </styleClass></RadioButton>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+              </items>
+            </SplitPane>
+         </center>
       </BorderPane>
    </content>
    <graphic>

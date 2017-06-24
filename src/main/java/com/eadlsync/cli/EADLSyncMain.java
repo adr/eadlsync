@@ -1,6 +1,11 @@
 package com.eadlsync.cli;
 
 import java.io.IOException;
+import java.util.Arrays;
+
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 
 import com.beust.jcommander.JCommander;
 import com.eadlsync.EADLSyncExecption;
@@ -14,6 +19,10 @@ import com.eadlsync.cli.command.ResetCommand;
 import com.eadlsync.cli.command.StatusCommand;
 import com.eadlsync.cli.command.SyncCommand;
 import com.eadlsync.cli.option.MainOption;
+import com.eadlsync.gui.ConflictManagerView;
+import com.eadlsync.model.decision.YStatementJustificationWrapper;
+import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
+import com.eadlsync.model.diff.DiffManager;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by Tobias on 23.04.2017.
  */
-public class EADLSyncMain {
+public class EADLSyncMain extends Application {
 
     private static final Logger LOG = LoggerFactory.getLogger(EADLSyncMain.class);
     private static final InitCommand INIT_COMMAND = new InitCommand();
@@ -34,7 +43,102 @@ public class EADLSyncMain {
     private static final ResetCommand RESET_COMMAND = new ResetCommand();
     private static final SyncCommand SYNC_COMMAND = new SyncCommand();
 
+    static YStatementJustificationWrapper someBaseDecision =
+            new YStatementJustificationWrapperBuilder("test/some/folder/some_id", "remote_source").
+                    context("context").
+                    facing("facing").
+                    chosen("test/folder/chosen").
+                    neglected("test/folder/neglected_one, test/folder/neglected_two, test/folder/neglected_three").
+                    achieving("achieving").
+                    accepting("accepting").
+                    build();
+
+    static YStatementJustificationWrapper someDecision =
+            new YStatementJustificationWrapperBuilder("test/some/folder/some_id", "remote_source").
+                    context("some context").
+                    facing("facing").
+                    chosen("test/folder/some_chosen").
+                    neglected("test/folder/neglected_one, test/folder/neglected_two, test/folder/neglected_three").
+                    achieving("some achieving").
+                    accepting("some accepting").
+                    build();
+
+    static YStatementJustificationWrapper someConflictingDecision =
+            new YStatementJustificationWrapperBuilder("test/some/folder/some_id", "remote_source").
+                    context("other context").
+                    facing("other facing").
+                    chosen("test/folder/other_chosen").
+                    neglected("test/folder/neglected_other_one, test/folder/neglected_other_two, test/folder/neglected_other_three").
+                    achieving("other achieving").
+                    accepting("other accepting").
+                    build();
+
+    static YStatementJustificationWrapper otherBaseDecision =
+            new YStatementJustificationWrapperBuilder("test/other/folder/other_id", "remote_source").
+                    context("context").
+                    facing("facing").
+                    chosen("test/folder/chosen").
+                    neglected("test/folder/neglected_one, test/folder/neglected_two, test/folder/neglected_three").
+                    achieving("achieving").
+                    accepting("accepting").
+                    build();
+
+    static YStatementJustificationWrapper otherDecision =
+            new YStatementJustificationWrapperBuilder("test/other/folder/other_id", "remote_source").
+                    context("some context").
+                    facing("facing").
+                    chosen("test/folder/some_chosen").
+                    neglected("test/folder/neglected_one, test/folder/neglected_two, test/folder/neglected_three").
+                    achieving("some achieving").
+                    accepting("some accepting").
+                    build();
+
+    static YStatementJustificationWrapper otherConflictingDecision =
+            new YStatementJustificationWrapperBuilder("test/other/folder/other_id", "remote_source").
+                    context("other context").
+                    facing("other facing").
+                    chosen("test/folder/other_chosen").
+                    neglected("test/folder/neglected_other_one, test/folder/neglected_other_two, test/folder/neglected_other_three").
+                    achieving("other achieving").
+                    accepting("other accepting").
+                    build();
+
+    static YStatementJustificationWrapper diffBaseDecision =
+            new YStatementJustificationWrapperBuilder("test/diff/folder/diff_id", "remote_source").
+                    context("context").
+                    facing("facing").
+                    chosen("test/folder/chosen").
+                    neglected("test/folder/neglected_one, test/diff/folder/neglected_two, test/folder/neglected_three").
+                    achieving("achieving").
+                    accepting("accepting").
+                    build();
+
+    static YStatementJustificationWrapper diffDecision =
+            new YStatementJustificationWrapperBuilder("test/diff/folder/diff_id", "remote_source").
+                    context("some context").
+                    facing("facing").
+                    chosen("test/folder/some_chosen").
+                    neglected("test/folder/neglected_one, test/folder/neglected_two, test/folder/neglected_three").
+                    achieving("some achieving").
+                    accepting("some accepting").
+                    build();
+
+    static YStatementJustificationWrapper diffConflictingDecision =
+            new YStatementJustificationWrapperBuilder("test/diff/folder/diff_id", "remote_source").
+                    context("other context").
+                    facing("other facing").
+                    chosen("test/folder/other_chosen").
+                    neglected("test/folder/neglected_other_one, test/folder/neglected_other_two, test/folder/neglected_other_three").
+                    achieving("other achieving").
+                    accepting("other accepting").
+                    build();
+
+
+
     public static void main(String[] args) {
+
+        launch();
+        System.exit(0);
 
         MainOption option = new MainOption();
         JCommander commander = JCommander.newBuilder().addObject(option).
@@ -149,4 +253,14 @@ public class EADLSyncMain {
 
     }
 
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        DiffManager diffManager = new DiffManager(
+                Arrays.asList(someBaseDecision, otherBaseDecision, diffBaseDecision),
+                Arrays.asList(someDecision, otherDecision, diffDecision),
+                Arrays.asList(someConflictingDecision, otherConflictingDecision, diffConflictingDecision));
+        ConflictManagerView view = new ConflictManagerView(diffManager);
+        view.showDialog();
+        Platform.exit();
+    }
 }

@@ -6,17 +6,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
-import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
 import com.eadlsync.util.YStatementField;
 import com.eadlsync.util.YStatementJustificationComparator;
 
+import static com.eadlsync.util.YStatementField.ACCEPTING;
+import static com.eadlsync.util.YStatementField.ACHIEVING;
+import static com.eadlsync.util.YStatementField.CHOSEN;
 import static com.eadlsync.util.YStatementField.CONTEXT;
 import static com.eadlsync.util.YStatementField.FACING;
-import static com.eadlsync.util.YStatementField.CHOSEN;
-import static com.eadlsync.util.YStatementField.NEGLECTED;
-import static com.eadlsync.util.YStatementField.ACHIEVING;
-import static com.eadlsync.util.YStatementField.ACCEPTING;
 import static com.eadlsync.util.YStatementField.MORE_INFORMATION;
+import static com.eadlsync.util.YStatementField.NEGLECTED;
 
 /**
  *
@@ -28,10 +27,10 @@ public class YStatementDiff {
     private YStatementJustificationWrapper changedDecision = null;
 
     private Map<YStatementField, String> diff = new HashMap<>();
+
     public static YStatementDiff of(YStatementJustificationWrapper baseDecision, YStatementJustificationWrapper diffDecision) {
         return new YStatementDiff(baseDecision, diffDecision);
     }
-
     private YStatementDiff (YStatementJustificationWrapper baseDecision, YStatementJustificationWrapper diffDecision) {
         if (baseDecision == null) {
             this.id = diffDecision.getId();
@@ -111,8 +110,9 @@ public class YStatementDiff {
         List<YStatementJustificationWrapper> decision = baseDecisions.stream().filter(y -> y.getId().equals(id)).collect(Collectors.toList());
         YStatementJustificationWrapper baseDecision;
         if (decision.isEmpty()) {
-            baseDecision = new YStatementJustificationWrapperBuilder(id, changedDecision.getSource()).build();
-            baseDecisions.add(baseDecision);
+//            baseDecision = new YStatementJustificationWrapperBuilder(id, changedDecision.getSource()).build();
+//            baseDecisions.add(baseDecision);
+            return baseDecisions;
         } else {
             baseDecision = decision.get(0);
         }
@@ -146,5 +146,9 @@ public class YStatementDiff {
 
     public YStatementJustificationWrapper getChangedDecision() {
         return changedDecision;
+    }
+
+    public Map<YStatementField, String> getDiff() {
+        return diff;
     }
 }

@@ -1,6 +1,7 @@
 package com.eadlsync.gui;
 
-import com.eadlsync.model.diff.DiffManager;
+import java.io.IOException;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DialogPane;
@@ -8,7 +9,7 @@ import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
-import java.io.IOException;
+import com.eadlsync.model.diff.DiffManager;
 
 /**
  * Created by tobias on 18/06/2017.
@@ -26,6 +27,7 @@ public class ConflictManagerView {
         try {
             loader.setController(conflictManagerController);
             DialogPane root = loader.load();
+            root.getStylesheets().add(getClass().getResource("/resolve-conflicts-view.css").toExternalForm());
 
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Resolve conflicts");

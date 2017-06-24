@@ -64,6 +64,7 @@ public class DiffManager {
                     .collect(Collectors.toList())
                     .isEmpty();
             if (isNotAvailable) {
+                System.out.println("removed " + yStatementJustification);
                 removed.add(yStatementJustification);
             }
         }
@@ -81,6 +82,7 @@ public class DiffManager {
                         YStatementJustificationComparisionObject(yStatement, seSameYStatements.get(0));
                 if (decisionCompareObject.hasSameObjectWithDifferentFields()) {
                     different.add(decisionCompareObject);
+                    System.out.println("changed " + decisionCompareObject);
                 }
             }
         }
@@ -106,7 +108,6 @@ public class DiffManager {
      * @return true if remote diff is not empty
      */
     public boolean hasRemoteDiff() {
-        // optional
         return !remoteDiff.isEmpty();
     }
 
