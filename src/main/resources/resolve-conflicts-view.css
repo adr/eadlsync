@@ -33,23 +33,19 @@
 }
 
 .modified {
-    -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #38CA38, #319159);
+    -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, rgba(47, 155, 101, 0.2), rgba(50, 155, 50, 0.3));
 }
 
 .modified-merge {
-    -fx-background-color: #319159;
+    -fx-background-color: rgba(50, 155, 50, 0.3);
 }
 
 .modified-remote {
-    -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #319159, #38CA38);
+    -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, rgba(50, 155, 50, 0.3), rgba(47, 155, 101, 0.2));
 }
 
 .modified-merge-remote {
-    -fx-background-color: #319159;
-}
-
-.neglected {
-    -fx-strikethrough: true;
+    -fx-background-color: rgba(50, 155, 50, 0.3);
 }
 
 .select-all {
@@ -63,4 +59,8 @@
 .dialog-pane *.button-bar {
     -fx-max-height: 0;
     -fx-pref-height: 0;
+}
+
+.list-view:disabled {
+    -fx-opacity: 0.9;
 }

@@ -34,7 +34,7 @@ public class ConflictManagerView {
             alert.setResizable(true);
             alert.setDialogPane(root);
             alert.initStyle(StageStyle.UTILITY);
-            alert.initModality(Modality.NONE);
+            alert.initModality(Modality.WINDOW_MODAL);
 
             Window window = alert.getDialogPane().getScene().getWindow();
             window.setOnCloseRequest(event -> window.hide());

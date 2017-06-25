@@ -5,12 +5,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 
+import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.diff.ConflictManagerViewModel;
 import com.eadlsync.model.diff.DiffManager;
+
+import static com.eadlsync.gui.DiffUtilFX.getDiffHighlightedTextNodes;
 
 /**
  * Created by tobias on 17/06/2017.
@@ -84,39 +86,23 @@ public class ConflictManagerController {
         btnNext.disableProperty().bind(conflictManagerViewModel.canGoToNextConflictProperty().not());
         btnFinish.disableProperty().bind(conflictManagerViewModel.isAllConflictsResolvedProperty().not());
 
-        txtLocalContext.getChildren().add(new Text(conflictManagerViewModel.getCurrentLocalDecision().getChangedDecision().getContext()));
-        txtLocalFacing.getChildren().add(new Text(conflictManagerViewModel.getCurrentLocalDecision().getChangedDecision().getFacing()));
-        txtLocalChosen.getChildren().add(new Text(conflictManagerViewModel.getCurrentLocalDecision().getChangedDecision().getChosen()));
-        txtLocalNeglected.getChildren().add(new Text(conflictManagerViewModel.getCurrentLocalDecision().getChangedDecision().getNeglected()));
-        txtLocalAchieving.getChildren().add(new Text(conflictManagerViewModel.getCurrentLocalDecision().getChangedDecision().getAchieving()));
-        txtLocalAccepting.getChildren().add(new Text(conflictManagerViewModel.getCurrentLocalDecision().getChangedDecision().getAccepting()));
-
+        YStatementJustificationWrapper localDecision = conflictManagerViewModel.getCurrentLocalDecision().getChangedDecision();
+        updateLocalDecisionFields(localDecision);
+        
+        YStatementJustificationWrapper remoteDecision = conflictManagerViewModel.getCurrentRemoteDecision().getChangedDecision();
+        updateRemoteDecisionFields(remoteDecision);
+        
         conflictManagerViewModel.currentLocalDecisionProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                txtLocalContext.getChildren().setAll(new Text(newValue.getChangedDecision().getContext()));
-                txtLocalFacing.getChildren().setAll(new Text(newValue.getChangedDecision().getFacing()));
-                txtLocalChosen.getChildren().setAll(new Text(newValue.getChangedDecision().getChosen()));
-                txtLocalNeglected.getChildren().setAll(new Text(newValue.getChangedDecision().getNeglected()));
-                txtLocalAchieving.getChildren().setAll(new Text(newValue.getChangedDecision().getAchieving()));
-                txtLocalAccepting.getChildren().setAll(new Text(newValue.getChangedDecision().getAccepting()));
+                YStatementJustificationWrapper changedDecision = newValue.getChangedDecision();
+                updateLocalDecisionFields(changedDecision);
             }
         });
 
-        txtRemoteContext.getChildren().add(new Text(conflictManagerViewModel.getCurrentRemoteDecision().getChangedDecision().getContext()));
-        txtRemoteFacing.getChildren().add(new Text(conflictManagerViewModel.getCurrentRemoteDecision().getChangedDecision().getFacing()));
-        txtRemoteChosen.getChildren().add(new Text(conflictManagerViewModel.getCurrentRemoteDecision().getChangedDecision().getChosen()));
-        txtRemoteNeglected.getChildren().add(new Text(conflictManagerViewModel.getCurrentRemoteDecision().getChangedDecision().getNeglected()));
-        txtRemoteAchieving.getChildren().add(new Text(conflictManagerViewModel.getCurrentRemoteDecision().getChangedDecision().getAchieving()));
-        txtRemoteAccepting.getChildren().add(new Text(conflictManagerViewModel.getCurrentRemoteDecision().getChangedDecision().getAccepting()));
-
         conflictManagerViewModel.currentRemoteDecisionProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                txtRemoteContext.getChildren().setAll(new Text(newValue.getChangedDecision().getContext()));
-                txtRemoteFacing.getChildren().setAll(new Text(newValue.getChangedDecision().getFacing()));
-                txtRemoteChosen.getChildren().setAll(new Text(newValue.getChangedDecision().getChosen()));
-                txtRemoteNeglected.getChildren().setAll(new Text(newValue.getChangedDecision().getNeglected()));
-                txtRemoteAchieving.getChildren().setAll(new Text(newValue.getChangedDecision().getAchieving()));
-                txtRemoteAccepting.getChildren().setAll(new Text(newValue.getChangedDecision().getAccepting()));
+                YStatementJustificationWrapper changedDecision = newValue.getChangedDecision();
+                updateRemoteDecisionFields(changedDecision);
             }
         });
 
@@ -208,6 +194,24 @@ public class ConflictManagerController {
         });
 
         setListenersForStyling();
+    }
+
+    private void updateLocalDecisionFields(YStatementJustificationWrapper localDecision) {
+        txtLocalContext.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedContextProperty(), localDecision.getContext()));
+        txtLocalFacing.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedFacingProperty(), localDecision.getFacing()));
+        txtLocalChosen.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedChosenProperty(), localDecision.getChosen()));
+        txtLocalNeglected.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedNeglectedProperty(), localDecision.getNeglected()));
+        txtLocalAchieving.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedAchievingProperty(), localDecision.getAchieving()));
+        txtLocalAccepting.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedAcceptingProperty(), localDecision.getAccepting()));
+    }
+
+    private void updateRemoteDecisionFields(YStatementJustificationWrapper remoteDecision) {
+        txtRemoteContext.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedContextProperty(), remoteDecision.getContext()));
+        txtRemoteFacing.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedFacingProperty(), remoteDecision.getFacing()));
+        txtRemoteChosen.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedChosenProperty(), remoteDecision.getChosen()));
+        txtRemoteNeglected.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedNeglectedProperty(), remoteDecision.getNeglected()));
+        txtRemoteAchieving.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedAchievingProperty(), remoteDecision.getAchieving()));
+        txtRemoteAccepting.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedAcceptingProperty(), remoteDecision.getAccepting()));
     }
 
     private void setListenersForStyling() {
@@ -317,90 +321,6 @@ public class ConflictManagerController {
             } else {
                 lblMergedAccepting.getParent().getStyleClass().remove("modified-merge-remote");
                 txtRemoteAccepting.getParent().getParent().getStyleClass().remove("modified-remote");
-            }
-        });
-        btnLocalContextNeglected.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                txtLocalContext.getChildren().forEach(node -> node.getStyleClass().add("neglected"));
-            } else {
-                txtLocalContext.getChildren().forEach(node -> node.getStyleClass().remove("neglected"));
-            }
-        });
-        btnLocalFacingNeglected.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                txtLocalFacing.getChildren().forEach(node -> node.getStyleClass().add("neglected"));
-            } else {
-                txtLocalFacing.getChildren().forEach(node -> node.getStyleClass().remove("neglected"));
-            }
-        });
-        btnLocalChosenNeglected.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                txtLocalChosen.getChildren().forEach(node -> node.getStyleClass().add("neglected"));
-            } else {
-                txtLocalChosen.getChildren().forEach(node -> node.getStyleClass().remove("neglected"));
-            }
-        });
-        btnLocalNeglectedNeglected.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                txtLocalNeglected.getChildren().forEach(node -> node.getStyleClass().add("neglected"));
-            } else {
-                txtLocalNeglected.getChildren().forEach(node -> node.getStyleClass().remove("neglected"));
-            }
-        });
-        btnLocalAchievingNeglected.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                txtLocalAchieving.getChildren().forEach(node -> node.getStyleClass().add("neglected"));
-            } else {
-                txtLocalAchieving.getChildren().forEach(node -> node.getStyleClass().remove("neglected"));
-            }
-        });
-        btnLocalAcceptingNeglected.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                txtLocalAccepting.getChildren().forEach(node -> node.getStyleClass().add("neglected"));
-            } else {
-                txtLocalAccepting.getChildren().forEach(node -> node.getStyleClass().remove("neglected"));
-            }
-        });
-        btnRemoteContextNeglected.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                txtRemoteContext.getChildren().forEach(node -> node.getStyleClass().add("neglected"));
-            } else {
-                txtRemoteContext.getChildren().forEach(node -> node.getStyleClass().remove("neglected"));
-            }
-        });
-        btnRemoteFacingNeglected.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                txtRemoteFacing.getChildren().forEach(node -> node.getStyleClass().add("neglected"));
-            } else {
-                txtRemoteFacing.getChildren().forEach(node -> node.getStyleClass().remove("neglected"));
-            }
-        });
-        btnRemoteChosenNeglected.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                txtRemoteChosen.getChildren().forEach(node -> node.getStyleClass().add("neglected"));
-            } else {
-                txtRemoteChosen.getChildren().forEach(node -> node.getStyleClass().remove("neglected"));
-            }
-        });
-        btnRemoteNeglectedNeglected.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                txtRemoteNeglected.getChildren().forEach(node -> node.getStyleClass().add("neglected"));
-            } else {
-                txtRemoteNeglected.getChildren().forEach(node -> node.getStyleClass().remove("neglected"));
-            }
-        });
-        btnRemoteAchievingNeglected.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                txtRemoteAchieving.getChildren().forEach(node -> node.getStyleClass().add("neglected"));
-            } else {
-                txtRemoteAchieving.getChildren().forEach(node -> node.getStyleClass().remove("neglected"));
-            }
-        });
-        btnRemoteAcceptingNeglected.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                txtRemoteAccepting.getChildren().forEach(node -> node.getStyleClass().add("neglected"));
-            } else {
-                txtRemoteAccepting.getChildren().forEach(node -> node.getStyleClass().remove("neglected"));
             }
         });
     }

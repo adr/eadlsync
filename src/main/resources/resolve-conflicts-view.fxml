@@ -72,6 +72,9 @@
                                        <graphic>
                                           <TextFlow fx:id="txtLocalContext" />
                                        </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
                                     </Label>
                                  </children>
                               </HBox>
