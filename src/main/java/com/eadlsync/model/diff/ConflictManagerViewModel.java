@@ -91,94 +91,65 @@ public class ConflictManagerViewModel {
     private String accepting = "";
 
     public ConflictManagerViewModel(DiffManager diffManager) {
+        
         resultingDecisions.addAll(diffManager.getCurrentDecisions());
         diffManager.getLocalDiff().forEach(localYStatementDiff -> diffManager.getRemoteDiff().forEach
                 (remoteYStatementDiff -> {
-            if (YStatementJustificationComparator.isSame(localYStatementDiff.getChangedDecision(),
-                    remoteYStatementDiff.getChangedDecision())) {
-                if (localYStatementDiff.conflictsWith(remoteYStatementDiff)) {
-                    localConflictingDecisions.add(localYStatementDiff);
-                    remoteConflictingDecisions.add(remoteYStatementDiff);
-                } else if (!isLocalContextSelected.get()) {
-                    localYStatementDiff.applyDiff(resultingDecisions);
-                    remoteYStatementDiff.applyDiff(resultingDecisions);
-                }
-            }
-        }));
+                    if (localYStatementDiff.getId().equals(remoteYStatementDiff.getId())) {
+                        if (localYStatementDiff.conflictsWith(remoteYStatementDiff)) {
+                            localConflictingDecisions.add(localYStatementDiff);
+                            remoteConflictingDecisions.add(remoteYStatementDiff);
+                        }
+//                        else if (!isLocalContextSelected.get()) {
+//                            localYStatementDiff.applyDiff(resultingDecisions);
+//                            remoteYStatementDiff.applyDiff(resultingDecisions);
+//                        }
+                    }
+                }));
+        
         ids.addAll(localConflictingDecisions.stream().map(YStatementDiff::getId).collect(Collectors
                 .toList()));
+        
         setBindings();
+        
+        currentIndex.set(-1);
         goToNextConflict();
     }
 
     private void setBindings() {
-        currentIndex.set(-1);
-        isAllLocalSelected.bind(isLocalContextSelected.and(isLocalFacingSelected).and(isLocalChosenSelected).and(isLocalNeglectedSelected).and(isLocalAchievingSelected).and(isLocalAcceptingSelected));
-        isAllLocalNeglected.bind(isLocalContextNeglected.and(isLocalFacingNeglected).and(isLocalChosenNeglected).and(isLocalNeglectedNeglected).and(isLocalAchievingNeglected).and(isLocalAcceptingNeglected));
-        isAllRemoteSelected.bind(isRemoteContextSelected.and(isRemoteFacingSelected).and(isRemoteChosenSelected).and(isRemoteNeglectedSelected).and(isRemoteAchievingSelected).and(isRemoteAcceptingSelected));
-        isAllRemoteNeglected.bind(isRemoteContextNeglected.and(isRemoteFacingNeglected).and(isRemoteChosenNeglected).and(isRemoteNeglectedNeglected).and(isRemoteAchievingNeglected).and(isRemoteAcceptingNeglected));
-                
-        isCurrentConflictResolved.bind(isLocalContextSelected.or(isLocalContextNeglected).and
-                (isRemoteContextSelected.or(isRemoteContextNeglected)).
-                and(isLocalFacingSelected.or(isLocalFacingNeglected).and(isRemoteFacingSelected.or
-                        (isRemoteFacingNeglected))).
-                and(isLocalChosenSelected.or(isLocalChosenNeglected).and(isRemoteChosenSelected.or
-                        (isRemoteChosenNeglected))).
-                and(isLocalNeglectedSelected.or(isLocalNeglectedNeglected).and
-                        (isRemoteNeglectedSelected.or(isRemoteNeglectedNeglected))).
-                and(isLocalAchievingSelected.or(isLocalAchievingNeglected).and
-                        (isRemoteAchievingSelected.or(isRemoteAchievingNeglected))).
-                and(isLocalAcceptingSelected.or(isLocalAcceptingNeglected).and
-                        (isRemoteAcceptingSelected.or(isRemoteAcceptingNeglected))));
+        isAllLocalSelected.bind(isLocalContextChanged.not().or(isLocalContextSelected).and(isLocalFacingChanged.not().or(isLocalFacingSelected)).and(isLocalChosenChanged.not().or(isLocalChosenSelected)).and(isLocalNeglectedChanged.not().or(isLocalNeglectedSelected)).and(isLocalAchievingChanged.not().or(isLocalAchievingSelected)).and(isLocalAcceptingChanged.not().or(isLocalAcceptingSelected)));
+        isAllLocalNeglected.bind(isLocalContextChanged.not().or(isLocalContextNeglected).and(isLocalFacingChanged.not().or(isLocalFacingNeglected)).and(isLocalChosenChanged.not().or(isLocalChosenNeglected)).and(isLocalNeglectedChanged.not().or(isLocalNeglectedNeglected)).and(isLocalAchievingChanged.not().or(isLocalAchievingNeglected)).and(isLocalAcceptingChanged.not().or(isLocalAcceptingNeglected)));
+        isAllRemoteSelected.bind(isRemoteContextChanged.not().or(isRemoteContextSelected).and(isRemoteFacingChanged.not().or(isRemoteFacingSelected)).and(isRemoteChosenChanged.not().or(isRemoteChosenSelected)).and(isRemoteNeglectedChanged.not().or(isRemoteNeglectedSelected)).and(isRemoteAchievingChanged.not().or(isRemoteAchievingSelected)).and(isRemoteAcceptingChanged.not().or(isRemoteAcceptingSelected)));
+        isAllRemoteNeglected.bind(isRemoteContextChanged.not().or(isRemoteContextNeglected).and(isRemoteFacingChanged.not().or(isRemoteFacingNeglected)).and(isRemoteChosenChanged.not().or(isRemoteChosenNeglected)).and(isRemoteNeglectedChanged.not().or(isRemoteNeglectedNeglected)).and(isRemoteAchievingChanged.not().or(isRemoteAchievingNeglected)).and(isRemoteAcceptingChanged.not().or(isRemoteAcceptingNeglected)));
+
+
+        bindIsCurrentConflictResolvedToConflictingFields();
 
         canGoToNextConflict.bind(currentIndex.lessThan(localConflictingDecisions.size() - 1).and
                 (isCurrentConflictResolved));
+
         isAllConflictsResolved.bind(isCurrentConflictResolved.and(canGoToNextConflict.not()));
 
         currentLocalDecision.addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 currentId.setValue(newValue.getId());
                 isLocalContextChanged.set(newValue.getDiff().containsKey(YStatementField.CONTEXT));
-                isLocalContextNeglected.set(!isLocalContextChanged.get());
-                isLocalContextSelected.set(!isLocalContextChanged.get());
                 isLocalFacingChanged.set(newValue.getDiff().containsKey(YStatementField.FACING));
-                isLocalFacingNeglected.set(!isLocalFacingChanged.get());
-                isLocalFacingSelected.set(!isLocalFacingChanged.get());
                 isLocalChosenChanged.set(newValue.getDiff().containsKey(YStatementField.CHOSEN));
-                isLocalChosenNeglected.set(!isLocalChosenChanged.get());
-                isLocalChosenSelected.set(!isLocalChosenChanged.get());
                 isLocalNeglectedChanged.set(newValue.getDiff().containsKey(YStatementField.NEGLECTED));
-                isLocalNeglectedNeglected.set(!isLocalNeglectedChanged.get());
-                isLocalNeglectedSelected.set(!isLocalNeglectedChanged.get());
                 isLocalAchievingChanged.set(newValue.getDiff().containsKey(YStatementField.ACHIEVING));
-                isLocalAchievingNeglected.set(!isLocalAchievingChanged.get());
-                isLocalAchievingSelected.set(!isLocalAchievingChanged.get());
                 isLocalAcceptingChanged.set(newValue.getDiff().containsKey(YStatementField.ACCEPTING));
-                isLocalAcceptingNeglected.set(!isLocalAcceptingChanged.get());
-                isLocalAcceptingSelected.set(!isLocalAcceptingChanged.get());
             }
         });
 
         currentRemoteDecision.addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 isRemoteContextChanged.set(newValue.getDiff().containsKey(YStatementField.CONTEXT));
-                isRemoteContextNeglected.set(!isRemoteContextChanged.get());
-                isRemoteContextSelected.set(!isRemoteContextChanged.get());
                 isRemoteFacingChanged.set(newValue.getDiff().containsKey(YStatementField.FACING));
-                isRemoteFacingNeglected.set(!isRemoteFacingChanged.get());
-                isRemoteFacingSelected.set(!isRemoteFacingChanged.get());
                 isRemoteChosenChanged.set(newValue.getDiff().containsKey(YStatementField.CHOSEN));
-                isRemoteChosenNeglected.set(!isRemoteChosenChanged.get());
-                isRemoteChosenSelected.set(!isRemoteChosenChanged.get());
                 isRemoteNeglectedChanged.set(newValue.getDiff().containsKey(YStatementField.NEGLECTED));
-                isRemoteNeglectedNeglected.set(!isRemoteNeglectedChanged.get());
-                isRemoteNeglectedSelected.set(!isRemoteNeglectedChanged.get());
                 isRemoteAchievingChanged.set(newValue.getDiff().containsKey(YStatementField.ACHIEVING));
-                isRemoteAchievingNeglected.set(!isRemoteAchievingChanged.get());
-                isRemoteAchievingSelected.set(!isRemoteAchievingChanged.get());
                 isRemoteAcceptingChanged.set(newValue.getDiff().containsKey(YStatementField.ACCEPTING));
-                isRemoteAcceptingNeglected.set(!isRemoteAcceptingChanged.get());
-                isRemoteAcceptingSelected.set(!isRemoteAcceptingChanged.get());
             }
         });
 
@@ -199,9 +170,14 @@ public class ConflictManagerViewModel {
                 neglected = decision.getNeglected();
                 achieving = decision.getAchieving();
                 accepting = decision.getAccepting();
+                removeAllSelection();
             }
         });
 
+        setUpSelectionListeners();
+    }
+
+    private void setUpSelectionListeners() {
         isLocalContextSelected.addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 mergedContext.set(getCurrentLocalDecision().getChangedDecision().getContext());
@@ -300,28 +276,20 @@ public class ConflictManagerViewModel {
         });
     }
 
-    private void setOriginalContext() {
-        mergedContext.set(context);
-    }
-
-    private void setOriginalFacing() {
-        mergedFacing.set(facing);
-    }
-
-    private void setOriginalChosen() {
-        mergedChosen.set(chosen);
-    }
-
-    private void setOriginalNeglected() {
-        mergedNeglected.set(neglected);
-    }
-
-    private void setOriginalAchieving() {
-        mergedAchieving.set(achieving);
-    }
-
-    private void setOriginalAccepting() {
-        mergedAccepting.set(accepting);
+    private void bindIsCurrentConflictResolvedToConflictingFields() {
+        isCurrentConflictResolved.bind(
+                isLocalContextChanged.not().or(isLocalContextSelected.or(isLocalContextNeglected)).
+                and(isRemoteContextChanged.not().or(isRemoteContextSelected.or(isRemoteContextNeglected))).
+                and(isLocalFacingChanged.not().or(isLocalFacingSelected.or(isLocalFacingNeglected))).
+                and(isRemoteFacingChanged.not().or(isRemoteFacingSelected.or(isRemoteFacingNeglected))).
+                and(isLocalChosenChanged.not().or(isLocalChosenSelected.or(isLocalChosenNeglected))).
+                and(isRemoteChosenChanged.not().or(isRemoteChosenSelected.or(isRemoteChosenNeglected))).
+                and(isLocalNeglectedChanged.not().or(isLocalNeglectedSelected.or(isLocalNeglectedNeglected))).
+                and(isRemoteNeglectedChanged.not().or(isRemoteNeglectedSelected.or(isRemoteNeglectedNeglected))).
+                and(isLocalAchievingChanged.not().or(isLocalAchievingSelected.or(isLocalAchievingNeglected))).
+                and(isRemoteAchievingChanged.not().or(isRemoteAchievingSelected.or(isRemoteAchievingNeglected))).
+                and(isLocalAcceptingChanged.not().or(isLocalAcceptingSelected.or(isLocalAcceptingNeglected))).
+                and(isRemoteAcceptingChanged.not().or(isRemoteAcceptingSelected.or(isRemoteAcceptingNeglected))));
     }
 
     public void goToNextConflict() {
@@ -353,39 +321,123 @@ public class ConflictManagerViewModel {
             }
         }
     }
-    
+
+    /**
+     * true sets all local selected fields to true and all neglected fields to false.
+     * true sets all local neglected fields to true and all selected fields to false.
+     * applies only to fields where {@code isLocal<Field>Selected} returns true.
+     *
+     * @param value
+     */
     public void setAllLocalSelected(boolean value) {
-        isLocalContextSelected.set(value);
-        isLocalFacingSelected.set(value);
-        isLocalChosenSelected.set(value);
-        isLocalNeglectedSelected.set(value);
-        isLocalAchievingSelected.set(value);
-        isLocalAcceptingSelected.set(value);
-        isLocalContextNeglected.set(!value);
-        isLocalFacingNeglected.set(!value);
-        isLocalChosenNeglected.set(!value);
-        isLocalNeglectedNeglected.set(!value);
-        isLocalAchievingNeglected.set(!value);
-        isLocalAcceptingNeglected.set(!value);
+        if (isLocalContextChanged.get()) isLocalContextSelected.set(value);
+        if (isLocalFacingChanged.get()) isLocalFacingSelected.set(value);
+        if (isLocalChosenChanged.get()) isLocalChosenSelected.set(value);
+        if (isLocalNeglectedChanged.get()) isLocalNeglectedSelected.set(value);
+        if (isLocalAchievingChanged.get()) isLocalAchievingSelected.set(value);
+        if (isLocalAcceptingChanged.get()) isLocalAcceptingSelected.set(value);
+        if (isLocalContextChanged.get()) isLocalContextNeglected.set(!value);
+        if (isLocalFacingChanged.get()) isLocalFacingNeglected.set(!value);
+        if (isLocalChosenChanged.get()) isLocalChosenNeglected.set(!value);
+        if (isLocalNeglectedChanged.get()) isLocalNeglectedNeglected.set(!value);
+        if (isLocalAchievingChanged.get()) isLocalAchievingNeglected.set(!value);
+        if (isLocalAcceptingChanged.get()) isLocalAcceptingNeglected.set(!value);
     }
 
+    /**
+     * @see #setAllLocalSelected(boolean)
+     */
     public void setAllRemoteSelected(boolean value) {
-        isRemoteContextSelected.set(value);
-        isRemoteFacingSelected.set(value);
-        isRemoteChosenSelected.set(value);
-        isRemoteNeglectedSelected.set(value);
-        isRemoteAchievingSelected.set(value);
-        isRemoteAcceptingSelected.set(value);
-        isRemoteContextNeglected.set(!value);
-        isRemoteFacingNeglected.set(!value);
-        isRemoteChosenNeglected.set(!value);
-        isRemoteNeglectedNeglected.set(!value);
-        isRemoteAchievingNeglected.set(!value);
-        isRemoteAcceptingNeglected.set(!value);
+        if (isRemoteContextChanged.get()) isRemoteContextSelected.set(value);
+        if (isRemoteFacingChanged.get()) isRemoteFacingSelected.set(value);
+        if (isRemoteChosenChanged.get()) isRemoteChosenSelected.set(value);
+        if (isRemoteNeglectedChanged.get()) isRemoteNeglectedSelected.set(value);
+        if (isRemoteAchievingChanged.get()) isRemoteAchievingSelected.set(value);
+        if (isRemoteAcceptingChanged.get()) isRemoteAcceptingSelected.set(value);
+        if (isRemoteContextChanged.get()) isRemoteContextNeglected.set(!value);
+        if (isRemoteFacingChanged.get()) isRemoteFacingNeglected.set(!value);
+        if (isRemoteChosenChanged.get()) isRemoteChosenNeglected.set(!value);
+        if (isRemoteNeglectedChanged.get()) isRemoteNeglectedNeglected.set(!value);
+        if (isRemoteAchievingChanged.get()) isRemoteAchievingNeglected.set(!value);
+        if (isRemoteAcceptingChanged.get()) isRemoteAcceptingNeglected.set(!value);
+    }
+
+    /**
+     * clear the selection of all fields
+     */
+    private void removeAllSelection() {
+        isLocalContextChanged.set(false);
+        isLocalFacingChanged.set(false);
+        isLocalChosenChanged.set(false);
+        isLocalNeglectedChanged.set(false);
+        isLocalAchievingChanged.set(false);
+        isLocalAcceptingChanged.set(false);
+        isRemoteContextChanged.set(false);
+        isRemoteFacingChanged.set(false);
+        isRemoteChosenChanged.set(false);
+        isRemoteNeglectedChanged.set(false);
+        isRemoteAchievingChanged.set(false);
+        isRemoteAcceptingChanged.set(false);
+        isLocalContextSelected.set(false);
+        isLocalFacingSelected.set(false);
+        isLocalChosenSelected.set(false);
+        isLocalNeglectedSelected.set(false);
+        isLocalAchievingSelected.set(false);
+        isLocalAcceptingSelected.set(false);
+        isRemoteContextSelected.set(false);
+        isRemoteFacingSelected.set(false);
+        isRemoteChosenSelected.set(false);
+        isRemoteNeglectedSelected.set(false);
+        isRemoteAchievingSelected.set(false);
+        isRemoteAcceptingSelected.set(false);
+        isLocalContextNeglected.set(false);
+        isLocalFacingNeglected.set(false);
+        isLocalChosenNeglected.set(false);
+        isLocalNeglectedNeglected.set(false);
+        isLocalAchievingNeglected.set(false);
+        isLocalAcceptingNeglected.set(false);
+        isRemoteContextNeglected.set(false);
+        isRemoteFacingNeglected.set(false);
+        isRemoteChosenNeglected.set(false);
+        isRemoteNeglectedNeglected.set(false);
+        isRemoteAchievingNeglected.set(false);
+        isRemoteAcceptingNeglected.set(false);
+    }
+
+    private void setOriginalContext() {
+        mergedContext.set(context);
+    }
+
+    private void setOriginalFacing() {
+        mergedFacing.set(facing);
+    }
+
+    private void setOriginalChosen() {
+        mergedChosen.set(chosen);
+    }
+
+    private void setOriginalNeglected() {
+        mergedNeglected.set(neglected);
+    }
+
+    private void setOriginalAchieving() {
+        mergedAchieving.set(achieving);
+    }
+
+    private void setOriginalAccepting() {
+        mergedAccepting.set(accepting);
     }
 
     public List<YStatementJustificationWrapper> getResultingDecisions() {
         return resultingDecisions;
+    }
+
+    public YStatementDiff getCurrentLocalDecision() {
+        return currentLocalDecision.get();
+    }
+
+    public YStatementDiff getCurrentRemoteDecision() {
+        return currentRemoteDecision.get();
     }
 
     public ListProperty idsProperty() {
@@ -486,14 +538,6 @@ public class ConflictManagerViewModel {
 
     public BooleanProperty isRemoteAcceptingChangedProperty() {
         return isRemoteAcceptingChanged;
-    }
-
-    public YStatementDiff getCurrentLocalDecision() {
-        return currentLocalDecision.get();
-    }
-
-    public YStatementDiff getCurrentRemoteDecision() {
-        return currentRemoteDecision.get();
     }
 
     public BooleanProperty isLocalContextSelectedProperty() {

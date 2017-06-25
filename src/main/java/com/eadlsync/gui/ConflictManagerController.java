@@ -21,155 +21,56 @@ public class ConflictManagerController {
     private DiffManager diffManager;
     private boolean isFinishedSuccessfully = false;
 
-    @FXML
-    private Label lblTitle;
-
-    @FXML
-    private ListView listDecisions;
-
-    @FXML
-    private Button btnFinish;
-
-    @FXML
-    private Button btnNext;
-
-    @FXML
-    private Label lblMergedContext;
-
-    @FXML
-    private Label lblMergedFacing;
-
-    @FXML
-    private Label lblMergedChosen;
-
-    @FXML
-    private Label lblMergedNeglected;
-
-    @FXML
-    private Label lblMergedAchieving;
-
-    @FXML
-    private Label lblMergedAccepting;
-
-    @FXML
-    private TextFlow txtLocalContext;
-
-    @FXML
-    private TextFlow txtLocalFacing;
-
-    @FXML
-    private TextFlow txtLocalChosen;
-
-    @FXML
-    private TextFlow txtLocalNeglected;
-
-    @FXML
-    private TextFlow txtLocalAchieving;
-
-    @FXML
-    private TextFlow txtLocalAccepting;
-
-    @FXML
-    private TextFlow txtRemoteContext;
-
-    @FXML
-    private TextFlow txtRemoteFacing;
-
-    @FXML
-    private TextFlow txtRemoteChosen;
-
-    @FXML
-    private TextFlow txtRemoteNeglected;
-
-    @FXML
-    private TextFlow txtRemoteAchieving;
-
-    @FXML
-    private TextFlow txtRemoteAccepting;
-
-    @FXML
-    private RadioButton btnLocalContext;
-
-    @FXML
-    private RadioButton btnLocalFacing;
-
-    @FXML
-    private RadioButton btnLocalChosen;
-
-    @FXML
-    private RadioButton btnLocalNeglected;
-
-    @FXML
-    private RadioButton btnLocalAchieving;
-
-    @FXML
-    private RadioButton btnLocalAccepting;
-
-    @FXML
-    private RadioButton btnRemoteContext;
-
-    @FXML
-    private RadioButton btnRemoteFacing;
-
-    @FXML
-    private RadioButton btnRemoteChosen;
-
-    @FXML
-    private RadioButton btnRemoteNeglected;
-
-    @FXML
-    private RadioButton btnRemoteAchieving;
-
-    @FXML
-    private RadioButton btnRemoteAccepting;
-
-    @FXML
-    private RadioButton btnLocalContextNeglected;
-
-    @FXML
-    private RadioButton btnLocalFacingNeglected;
-
-    @FXML
-    private RadioButton btnLocalChosenNeglected;
-
-    @FXML
-    private RadioButton btnLocalNeglectedNeglected;
-
-    @FXML
-    private RadioButton btnLocalAchievingNeglected;
-
-    @FXML
-    private RadioButton btnLocalAcceptingNeglected;
-
-    @FXML
-    private RadioButton btnRemoteContextNeglected;
-
-    @FXML
-    private RadioButton btnRemoteFacingNeglected;
-
-    @FXML
-    private RadioButton btnRemoteChosenNeglected;
-
-    @FXML
-    private RadioButton btnRemoteNeglectedNeglected;
-
-    @FXML
-    private RadioButton btnRemoteAchievingNeglected;
-
-    @FXML
-    private RadioButton btnRemoteAcceptingNeglected;
-
-    @FXML
-    private RadioButton btnAllLocal;
-
-    @FXML
-    private RadioButton btnAllLocalNeglected;
-
-    @FXML
-    private RadioButton btnAllRemote;
-
-    @FXML
-    private RadioButton btnAllRemoteNeglected;
+    @FXML private Label lblTitle;
+    @FXML  private ListView listDecisions;
+    @FXML  private Button btnFinish;
+    @FXML  private Button btnNext;
+    @FXML  private Label lblMergedContext;
+    @FXML  private Label lblMergedFacing;
+    @FXML  private Label lblMergedChosen;
+    @FXML  private Label lblMergedNeglected;
+    @FXML  private Label lblMergedAchieving;
+    @FXML  private Label lblMergedAccepting;
+    @FXML  private TextFlow txtLocalContext;
+    @FXML  private TextFlow txtLocalFacing;
+    @FXML  private TextFlow txtLocalChosen;
+    @FXML  private TextFlow txtLocalNeglected;
+    @FXML  private TextFlow txtLocalAchieving;
+    @FXML  private TextFlow txtLocalAccepting;
+    @FXML  private TextFlow txtRemoteContext;
+    @FXML  private TextFlow txtRemoteFacing;
+    @FXML  private TextFlow txtRemoteChosen;
+    @FXML  private TextFlow txtRemoteNeglected;
+    @FXML  private TextFlow txtRemoteAchieving;
+    @FXML  private TextFlow txtRemoteAccepting;
+    @FXML  private RadioButton btnLocalContext;
+    @FXML  private RadioButton btnLocalFacing;
+    @FXML  private RadioButton btnLocalChosen;
+    @FXML  private RadioButton btnLocalNeglected;
+    @FXML  private RadioButton btnLocalAchieving;
+    @FXML  private RadioButton btnLocalAccepting;
+    @FXML  private RadioButton btnRemoteContext;
+    @FXML  private RadioButton btnRemoteFacing;
+    @FXML  private RadioButton btnRemoteChosen;
+    @FXML  private RadioButton btnRemoteNeglected;
+    @FXML  private RadioButton btnRemoteAchieving;
+    @FXML  private RadioButton btnRemoteAccepting;
+    @FXML  private RadioButton btnLocalContextNeglected;
+    @FXML  private RadioButton btnLocalFacingNeglected;
+    @FXML  private RadioButton btnLocalChosenNeglected;
+    @FXML  private RadioButton btnLocalNeglectedNeglected;
+    @FXML  private RadioButton btnLocalAchievingNeglected;
+    @FXML  private RadioButton btnLocalAcceptingNeglected;
+    @FXML  private RadioButton btnRemoteContextNeglected;
+    @FXML  private RadioButton btnRemoteFacingNeglected;
+    @FXML  private RadioButton btnRemoteChosenNeglected;
+    @FXML  private RadioButton btnRemoteNeglectedNeglected;
+    @FXML  private RadioButton btnRemoteAchievingNeglected;
+    @FXML  private RadioButton btnRemoteAcceptingNeglected;
+    @FXML  private RadioButton btnAllLocal;
+    @FXML  private RadioButton btnAllLocalNeglected;
+    @FXML  private RadioButton btnAllRemote;
+    @FXML  private RadioButton btnAllRemoteNeglected;
 
 
     public ConflictManagerController(DiffManager diffManager) {

@@ -9,21 +9,15 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.TextFlow?>
 
-<DialogPane prefHeight="300.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
-   <header>
-      <Label fx:id="lblTitle" alignment="TOP_LEFT" wrapText="true">
-         <padding>
-            <Insets left="10.0" right="10.0" top="10.0" />
-         </padding></Label>
-   </header>
+<DialogPane minHeight="350.0" minWidth="750.0" prefWidth="780.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
    <content>
       <BorderPane>
          <bottom>
@@ -49,10 +43,15 @@
             </BorderPane>
          </bottom>
          <center>
-            <SplitPane dividerPositions="0.3444730077120823, 0.6812339331619537" minHeight="200.0" BorderPane.alignment="CENTER">
+            <SplitPane dividerPositions="0.3444730077120823, 0.6812339331619537" minHeight="350.0" minWidth="750.0" BorderPane.alignment="CENTER">
               <items>
-                  <VBox minWidth="235.0" spacing="5.0">
+                  <VBox minWidth="250.0" spacing="5.0">
                      <children>
+                        <Label text="Context" underline="true">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
                         <HBox fillHeight="false">
                            <children>
                               <RadioButton fx:id="btnLocalContextNeglected" mnemonicParsing="false" styleClass="neglected-button" HBox.hgrow="NEVER">
@@ -77,6 +76,11 @@
                               </HBox>
                            </children>
                         </HBox>
+                        <Label text="Facing" underline="true">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
                         <HBox fillHeight="false">
                            <children>
                               <RadioButton fx:id="btnLocalFacingNeglected" mnemonicParsing="false" styleClass="neglected-button">
@@ -101,6 +105,11 @@
                               </HBox>
                            </children>
                         </HBox>
+                        <Label text="Chosen" underline="true">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
                         <HBox fillHeight="false">
                            <children>
                               <RadioButton fx:id="btnLocalChosenNeglected" mnemonicParsing="false" styleClass="neglected-button">
@@ -125,6 +134,11 @@
                               </HBox>
                            </children>
                         </HBox>
+                        <Label text="Neglected" underline="true">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
                         <HBox fillHeight="false">
                            <children>
                               <RadioButton fx:id="btnLocalNeglectedNeglected" mnemonicParsing="false" styleClass="neglected-button">
@@ -149,6 +163,11 @@
                               </HBox>
                            </children>
                         </HBox>
+                        <Label text="Achieving" underline="true">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
                         <HBox fillHeight="false">
                            <children>
                               <RadioButton fx:id="btnLocalAchievingNeglected" mnemonicParsing="false" styleClass="neglected-button">
@@ -173,6 +192,11 @@
                               </HBox>
                            </children>
                         </HBox>
+                        <Label text="Accepting" underline="true">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
                         <HBox fillHeight="false">
                            <children>
                               <RadioButton fx:id="btnLocalAcceptingNeglected" mnemonicParsing="false" styleClass="neglected-button">
@@ -219,38 +243,67 @@
                                     <String fx:value="approve-button" />
                                     <String fx:value="select-all" />
                                  </styleClass></RadioButton>
-                              <Label alignment="BOTTOM_LEFT" text="Select All local changes" />
                            </children>
                         </HBox>
                      </children>
                   </VBox>
-                  <VBox minWidth="235.0" spacing="5.0">
+                  <VBox minWidth="250.0" spacing="5.0">
                      <children>
+                        <Label alignment="CENTER_RIGHT" text="Context" textAlignment="RIGHT" underline="true">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
                         <HBox>
                            <children>
                               <Label fx:id="lblMergedContext" wrapText="true" />
                            </children>
                         </HBox>
+                        <Label alignment="CENTER_RIGHT" text="Facing" textAlignment="RIGHT" underline="true">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
                         <HBox>
                            <children>
                               <Label fx:id="lblMergedFacing" wrapText="true" />
                            </children>
                         </HBox>
+                        <Label alignment="CENTER_RIGHT" text="Chosen" textAlignment="RIGHT" underline="true">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
                         <HBox>
                            <children>
                               <Label fx:id="lblMergedChosen" wrapText="true" />
                            </children>
                         </HBox>
+                        <Label alignment="CENTER_RIGHT" text="Neglected" textAlignment="RIGHT" underline="true">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
                         <HBox>
                            <children>
                               <Label fx:id="lblMergedNeglected" wrapText="true" />
                            </children>
                         </HBox>
+                        <Label alignment="CENTER_RIGHT" text="Achieving" textAlignment="RIGHT" underline="true">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
                         <HBox>
                            <children>
                               <Label fx:id="lblMergedAchieving" wrapText="true" />
                            </children>
                         </HBox>
+                        <Label alignment="CENTER_RIGHT" text="Accepting" textAlignment="RIGHT" underline="true">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
                         <HBox>
                            <children>
                               <Label fx:id="lblMergedAccepting" wrapText="true" />
@@ -258,8 +311,13 @@
                         </HBox>
                      </children>
                   </VBox>
-                  <VBox minWidth="235.0" spacing="5.0">
+                  <VBox alignment="TOP_RIGHT" minWidth="250.0" spacing="5.0">
                      <children>
+                        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Context" textAlignment="RIGHT" underline="true" VBox.vgrow="ALWAYS">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
                         <HBox alignment="TOP_RIGHT" fillHeight="false">
                            <children>
                               <HBox HBox.hgrow="ALWAYS">
@@ -284,6 +342,11 @@
                                  </cursor></RadioButton>
                            </children>
                         </HBox>
+                        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Facing" textAlignment="RIGHT" underline="true" VBox.vgrow="ALWAYS">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
                         <HBox alignment="TOP_RIGHT" fillHeight="false">
                            <children>
                               <HBox HBox.hgrow="ALWAYS">
@@ -308,6 +371,11 @@
                                  </cursor></RadioButton>
                            </children>
                         </HBox>
+                        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Chosen" textAlignment="RIGHT" underline="true" VBox.vgrow="ALWAYS">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
                         <HBox alignment="TOP_RIGHT" fillHeight="false">
                            <children>
                               <HBox HBox.hgrow="ALWAYS">
@@ -332,6 +400,11 @@
                                  </cursor></RadioButton>
                            </children>
                         </HBox>
+                        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Neglected" textAlignment="RIGHT" underline="true" VBox.vgrow="ALWAYS">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
                         <HBox alignment="TOP_RIGHT" fillHeight="false">
                            <children>
                               <HBox HBox.hgrow="ALWAYS">
@@ -356,6 +429,11 @@
                                  </cursor></RadioButton>
                            </children>
                         </HBox>
+                        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Achieving" textAlignment="RIGHT" underline="true">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
                         <HBox alignment="TOP_RIGHT" fillHeight="false">
                            <children>
                               <HBox HBox.hgrow="ALWAYS">
@@ -380,6 +458,11 @@
                                  </cursor></RadioButton>
                            </children>
                         </HBox>
+                        <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Accepting" textAlignment="RIGHT" underline="true" VBox.vgrow="ALWAYS">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                        </Label>
                         <HBox alignment="TOP_RIGHT" fillHeight="false">
                            <children>
                               <HBox HBox.hgrow="ALWAYS">
@@ -406,7 +489,6 @@
                         </HBox>
                         <HBox alignment="TOP_RIGHT">
                            <children>
-                              <Label alignment="BOTTOM_LEFT" text="Select All remote changes" />
                               <RadioButton fx:id="btnAllRemote" mnemonicParsing="false" HBox.hgrow="ALWAYS">
                                  <toggleGroup>
                                     <ToggleGroup fx:id="remote" />
@@ -436,7 +518,17 @@
          </center>
       </BorderPane>
    </content>
-   <graphic>
-      <ScrollPane prefHeight="200.0" prefWidth="200.0" />
-   </graphic>
+   <header>
+      <BorderPane>
+         <center>
+            <Label fx:id="lblTitle" alignment="TOP_LEFT" wrapText="true" BorderPane.alignment="CENTER_LEFT" />
+         </center>
+         <padding>
+            <Insets left="10.0" right="10.0" top="10.0" />
+         </padding>
+         <left>
+            <Label text="Current decision is " BorderPane.alignment="CENTER" />
+         </left>
+      </BorderPane>
+   </header>
 </DialogPane>
