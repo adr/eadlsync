@@ -33,13 +33,15 @@ public class ConflictManagerViewModelTest extends DiffTest {
 
     @Test
     public void testCanFinishWhenLastDecisionIsResolved() {
-        conflictManagerViewModel.isLocalDecisionSelectedProperty().setValue(true);
+        conflictManagerViewModel.setAllLocalSelected(true);
+        conflictManagerViewModel.setAllRemoteSelected(false);
         Assert.assertTrue(conflictManagerViewModel.isAllConflictsResolvedProperty().get());
     }
 
     @Test
     public void testSelectingLocalDecisionResultsInLocalDecision() {
-        conflictManagerViewModel.isLocalDecisionSelectedProperty().setValue(true);
+        conflictManagerViewModel.setAllLocalSelected(true);
+        conflictManagerViewModel.setAllRemoteSelected(false);
         conflictManagerViewModel.finishResolvingCurrentConflict();
 
         Assert.assertTrue(YStatementJustificationComparator.isEqual(someDecision, conflictManagerViewModel.getResultingDecisions().get(0)));
@@ -47,7 +49,8 @@ public class ConflictManagerViewModelTest extends DiffTest {
 
     @Test
     public void testSelectingRemoteDecisionResultsInRemoteDecision() {
-        conflictManagerViewModel.isRemoteDecisionSelectedProperty().setValue(true);
+        conflictManagerViewModel.setAllLocalSelected(false);
+        conflictManagerViewModel.setAllRemoteSelected(true);
         conflictManagerViewModel.finishResolvingCurrentConflict();
 
         Assert.assertTrue(YStatementJustificationComparator.isEqual(someConflictingOtherDecision, conflictManagerViewModel.getResultingDecisions().get(0)));

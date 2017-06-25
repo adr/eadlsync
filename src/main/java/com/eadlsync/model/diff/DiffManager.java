@@ -66,7 +66,6 @@ public class DiffManager {
                     .collect(Collectors.toList())
                     .isEmpty();
             if (isNotAvailable) {
-                System.out.println("removed " + yStatementJustification);
                 removed.add(yStatementJustification);
             }
         }
@@ -84,7 +83,6 @@ public class DiffManager {
                         YStatementJustificationComparisionObject(yStatement, seSameYStatements.get(0));
                 if (decisionCompareObject.hasSameObjectWithDifferentFields()) {
                     different.add(decisionCompareObject);
-                    System.out.println("changed " + decisionCompareObject);
                 }
             }
         }
@@ -151,6 +149,12 @@ public class DiffManager {
         return this.currentDecisions;
     }
 
+    /**
+     * Applies the local diff and afterwards the remote one without checking for merge conflicts.
+     *
+     * @return a list with all yStatementJustifications merged
+     * @throws EADLSyncExecption if at least one decision can not be automatically merged
+     */
     public List<YStatementJustificationWrapper> applyLocalAndRemoteDiff() throws EADLSyncExecption {
         if (canAutoMerge()) {
             if (hasLocalDiff()) {
@@ -165,7 +169,12 @@ public class DiffManager {
         return this.currentDecisions;
     }
 
-    public List<YStatementJustificationWrapper> applyNonConflictingLocalAndRemoteDiff() throws EADLSyncExecption {
+    /**
+     * Applies all non conflicting diffs of the local decisions and afterwards the remote ones.
+     *
+     * @return a list with all non conflicting yStatementJustifications merged
+     */
+    public List<YStatementJustificationWrapper> applyNonConflictingLocalAndRemoteDiff() {
         for (YStatementDiff diff : remoteDiff) {
             if (!diff.conflictsWith(localDiff)) {
                 diff.applyDiff(currentDecisions);
