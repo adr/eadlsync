@@ -1,5 +1,18 @@
 package com.eadlsync.model.repo;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.annotation.Annotation;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.eadlsync.EADLSyncExecption;
 import com.eadlsync.gui.ConflictManagerView;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
@@ -13,19 +26,6 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import radar.ad.annotations.YStatementJustification;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.annotation.Annotation;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.file.FileVisitOption;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by tobias on 07/03/2017.
@@ -135,6 +135,7 @@ public class CodeRepo implements IRepo {
         if (diffManager.hasRemoteDiff()) {
             if (diffManager.hasLocalDiff()) {
                 if (!diffManager.canAutoMerge()) {
+                    diffManager.applyNonConflictingLocalAndRemoteDiff();
                     if (new ConflictManagerView(diffManager).showDialog()) {
                         writeEadsToDisk();
                     }

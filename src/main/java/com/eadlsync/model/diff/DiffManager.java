@@ -163,6 +163,20 @@ public class DiffManager {
         return this.currentDecisions;
     }
 
+    public List<YStatementJustificationWrapper> applyNonConflictingLocalAndRemoteDiff() throws EADLSyncExecption {
+        for (YStatementDiff diff : remoteDiff) {
+            if (!diff.conflictsWith(localDiff)) {
+                diff.applyDiff(currentDecisions);
+            }
+        }
+        for (YStatementDiff diff : localDiff) {
+            if (!diff.conflictsWith(remoteDiff)) {
+                diff.applyDiff(currentDecisions);
+            }
+        }
+        return this.currentDecisions;
+    }
+
     public List<YStatementJustificationWrapper> getCurrentDecisions() {
         return currentDecisions;
     }
