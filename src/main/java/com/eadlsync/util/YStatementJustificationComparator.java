@@ -88,7 +88,7 @@ public class YStatementJustificationComparator {
         return isSame(codeDecision, seDecision) && isContextEqual(codeDecision, seDecision) &&
                 isFacingEqual(codeDecision, seDecision) && isChosenEqual(codeDecision, seDecision) &&
                 isNeglectedEqual(codeDecision, seDecision) && isAchievingEqual(codeDecision, seDecision) &&
-                isAcceptingEqual(codeDecision, seDecision) && isMoreInformationEqual(codeDecision, seDecision);
+                isAcceptingEqual(codeDecision, seDecision);
     }
 
     /**

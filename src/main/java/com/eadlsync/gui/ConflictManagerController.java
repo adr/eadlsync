@@ -95,14 +95,18 @@ public class ConflictManagerController {
         conflictManagerViewModel.currentLocalDecisionProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 YStatementJustificationWrapper changedDecision = newValue.getChangedDecision();
-                updateLocalDecisionFields(changedDecision);
+                if (newValue.getChangedDecision() != null) {
+                    updateLocalDecisionFields(changedDecision);
+                }
             }
         });
 
         conflictManagerViewModel.currentRemoteDecisionProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 YStatementJustificationWrapper changedDecision = newValue.getChangedDecision();
-                updateRemoteDecisionFields(changedDecision);
+                if (newValue.getChangedDecision() != null) {
+                    updateRemoteDecisionFields(changedDecision);
+                }
             }
         });
 

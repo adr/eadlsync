@@ -9,6 +9,7 @@ import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.util.YStatementField;
 import com.eadlsync.util.YStatementJustificationComparator;
 
+import static com.eadlsync.model.decision.YStatementJustificationWrapper.deleted;
 import static com.eadlsync.util.YStatementField.ACCEPTING;
 import static com.eadlsync.util.YStatementField.ACHIEVING;
 import static com.eadlsync.util.YStatementField.CHOSEN;
@@ -33,6 +34,7 @@ public class YStatementDiff {
     }
     private YStatementDiff (YStatementJustificationWrapper baseDecision, YStatementJustificationWrapper diffDecision) {
         if (baseDecision == null) {
+            /** so far no additional decisions are supported **/
             this.id = diffDecision.getId();
             this.changedDecision = diffDecision;
             diff.put(CONTEXT, diffDecision.getContext());
@@ -44,6 +46,14 @@ public class YStatementDiff {
             diff.put(MORE_INFORMATION, diffDecision.getMoreInformation());
         } else if (diffDecision == null) {
             this.id = baseDecision.getId();
+            this.changedDecision = deleted(id);
+            diff.put(CONTEXT, changedDecision.getContext());
+            diff.put(FACING, changedDecision.getFacing());
+            diff.put(CHOSEN, changedDecision.getChosen());
+            diff.put(NEGLECTED, changedDecision.getNeglected());
+            diff.put(ACHIEVING, changedDecision.getAchieving());
+            diff.put(ACCEPTING, changedDecision.getAccepting());
+            diff.put(MORE_INFORMATION, changedDecision.getMoreInformation());
         } else {
             this.id = baseDecision.getId();
             this.changedDecision = diffDecision;
@@ -76,16 +86,6 @@ public class YStatementDiff {
             return false;
         }
 
-        //local changes but remote deleted
-        if (yStatementDiff.changedDecision == null && !diff.isEmpty()) {
-            return true;
-        }
-
-        //local deleted but remote changes
-        if (!yStatementDiff.diff.isEmpty() && changedDecision == null) {
-            return true;
-        }
-
         // different local and remote change
         for (Map.Entry<YStatementField, String> entry : diff.entrySet()) {
             String stringDiff = yStatementDiff.diff.get(entry.getKey());
@@ -110,13 +110,14 @@ public class YStatementDiff {
         List<YStatementJustificationWrapper> decision = baseDecisions.stream().filter(y -> y.getId().equals(id)).collect(Collectors.toList());
         YStatementJustificationWrapper baseDecision;
         if (decision.isEmpty()) {
+            /** so far no additional decisions are supported **/
 //            baseDecision = new YStatementJustificationWrapperBuilder(id, changedDecision.getSource()).build();
 //            baseDecisions.add(baseDecision);
             return baseDecisions;
         } else {
             baseDecision = decision.get(0);
         }
-        if (changedDecision == null) {
+        if (YStatementJustificationComparator.isEqual(changedDecision, deleted(id))) {
             baseDecisions.remove(baseDecision);
             return baseDecisions;
         }

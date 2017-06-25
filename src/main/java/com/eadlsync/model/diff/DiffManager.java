@@ -33,11 +33,13 @@ public class DiffManager {
         initDifferentYStatements(base, changed).stream().forEach(y ->
                 diff.add(YStatementDiff.of(y.getCodeDecision(), y.getSeDecision()))
         );
+        /** so far no additional decisions are supported **/
 //        initAdditionalYStatements(base, changed).stream().forEach(y ->
 //                diff.add(YStatementDiff.of(null, y))
 //        );
         initRemovedYStatements(base, changed).stream().forEach(y ->
                 diff.add(YStatementDiff.of(y, null))
+
         );
         return diff;
     }

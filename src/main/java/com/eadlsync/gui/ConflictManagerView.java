@@ -6,7 +6,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DialogPane;
 import javafx.stage.Modality;
-import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
 import com.eadlsync.model.diff.DiffManager;
@@ -33,7 +32,6 @@ public class ConflictManagerView {
             alert.setTitle("Resolve conflicts");
             alert.setResizable(true);
             alert.setDialogPane(root);
-            alert.initStyle(StageStyle.UTILITY);
             alert.initModality(Modality.WINDOW_MODAL);
 
             Window window = alert.getDialogPane().getScene().getWindow();

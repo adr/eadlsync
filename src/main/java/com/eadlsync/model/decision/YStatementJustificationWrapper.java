@@ -16,6 +16,19 @@ public class YStatementJustificationWrapper {
         this.source = source;
     }
 
+    public static YStatementJustificationWrapper deleted(String id) {
+        final String deleted = "<deleted>";
+        return new YStatementJustificationWrapperBuilder(id,deleted).
+                context(deleted).
+                facing(deleted).
+                chosen(deleted).
+                neglected(deleted).
+                achieving(deleted).
+                accepting(deleted).
+                moreInformation(deleted).
+                build();
+    }
+
     public String getId() {
         return id;
     }

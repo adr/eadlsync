@@ -86,6 +86,7 @@ public class CodeRepo implements IRepo {
                 decision -> !diffManager.getCurrentDecisions().contains(decision)).collect(Collectors.toList())) {
             removeEadFromClass(yStatementJustificationWrapper);
         }
+        /** so far no additional decisions are supported **/
     }
 
     private void writeEadToClass(YStatementJustificationWrapper yStatementJustification) throws IOException {

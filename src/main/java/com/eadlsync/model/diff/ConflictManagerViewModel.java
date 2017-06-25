@@ -21,6 +21,8 @@ import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
 import com.eadlsync.util.YStatementField;
 import com.eadlsync.util.YStatementJustificationComparator;
 
+import static com.eadlsync.model.decision.YStatementJustificationWrapper.deleted;
+
 /**
  * Created by tobias on 17/06/2017.
  */
@@ -330,10 +332,11 @@ public class ConflictManagerViewModel {
                     build();
             for (int index = 0; index < resultingDecisions.size(); index++) {
                 YStatementJustificationWrapper decision = resultingDecisions.get(index);
-                // if resultingDecision is null find way to remove decision with current id
                 if (YStatementJustificationComparator.isSame(decision, chosenDecision)) {
                     resultingDecisions.remove(index);
-                    resultingDecisions.add(chosenDecision);
+                    if (!YStatementJustificationComparator.isEqual(chosenDecision, deleted(currentId.get()))) {
+                        resultingDecisions.add(chosenDecision);
+                    }
                     break;
                 }
             }
