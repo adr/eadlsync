@@ -406,6 +406,22 @@ public class ConflictManagerController {
     }
 
     @FXML
+    public void mergeLocalNonConflicting() {
+        conflictManagerViewModel.mergeLocalNonConflicting();
+    }
+
+    @FXML
+    public void mergeRemoteNonConflicting() {
+        conflictManagerViewModel.mergeRemoteNonConflicting();
+    }
+
+    @FXML
+    public void mergeNonConflicting() {
+        mergeLocalNonConflicting();
+        mergeRemoteNonConflicting();
+    }
+
+    @FXML
     public void goNext() {
         conflictManagerViewModel.goToNextConflict();
     }

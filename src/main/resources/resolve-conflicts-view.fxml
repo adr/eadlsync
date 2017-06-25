@@ -11,6 +11,7 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -221,6 +222,14 @@
                               </HBox>
                            </children>
                         </HBox>
+                        <Label text="(De-)select all local fields" underline="true">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="30.0" />
+                           </VBox.margin>
+                        </Label>
                         <HBox prefHeight="100.0" prefWidth="200.0">
                            <children>
                               <RadioButton fx:id="btnAllLocalNeglected" mnemonicParsing="false">
@@ -487,6 +496,14 @@
                                  </cursor></RadioButton>
                            </children>
                         </HBox>
+                        <Label text="(De-)select all remote fields" underline="true">
+                           <font>
+                              <Font size="13.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="30.0" />
+                           </VBox.margin>
+                        </Label>
                         <HBox alignment="TOP_RIGHT">
                            <children>
                               <RadioButton fx:id="btnAllRemote" mnemonicParsing="false" HBox.hgrow="ALWAYS">
@@ -521,7 +538,10 @@
    <header>
       <BorderPane>
          <center>
-            <Label fx:id="lblTitle" alignment="TOP_LEFT" wrapText="true" BorderPane.alignment="CENTER_LEFT" />
+            <Label fx:id="lblTitle" alignment="TOP_LEFT" wrapText="true" BorderPane.alignment="CENTER_LEFT">
+               <font>
+                  <Font size="13.0" />
+               </font></Label>
          </center>
          <padding>
             <Insets left="10.0" right="10.0" top="10.0" />
@@ -529,6 +549,45 @@
          <left>
             <Label text="Current decision is " BorderPane.alignment="CENTER" />
          </left>
+         <right>
+            <HBox spacing="5.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button maxHeight="16.0" maxWidth="16.0" minHeight="16.0" minWidth="16.0" mnemonicParsing="false" onAction="#mergeLocalNonConflicting" prefHeight="16.0" prefWidth="16.0" style="-fx-background-image: url('/graphics/merge-local.png');">
+                     <HBox.margin>
+                        <Insets top="5.0" />
+                     </HBox.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <tooltip>
+                        <Tooltip text="Select all local non conflicting fields" />
+                     </tooltip>
+                  </Button>
+                  <Button maxHeight="16.0" maxWidth="16.0" minHeight="16.0" minWidth="16.0" mnemonicParsing="false" onAction="#mergeNonConflicting" prefHeight="16.0" prefWidth="16.0" style="-fx-background-image: url('/graphics/merge.png');">
+                     <HBox.margin>
+                        <Insets top="5.0" />
+                     </HBox.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <tooltip>
+                        <Tooltip text="Select all non conflicting fields" />
+                     </tooltip>
+                  </Button>
+                  <Button maxHeight="16.0" maxWidth="16.0" minHeight="16.0" minWidth="16.0" mnemonicParsing="false" onAction="#mergeRemoteNonConflicting" prefHeight="16.0" prefWidth="16.0" style="-fx-background-image: url('/graphics/merge-remote.png');">
+                     <HBox.margin>
+                        <Insets top="5.0" />
+                     </HBox.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <tooltip>
+                        <Tooltip text="Select all remote non conflicting fields" />
+                     </tooltip>
+                  </Button>
+               </children>
+            </HBox>
+         </right>
       </BorderPane>
    </header>
 </DialogPane>

@@ -292,6 +292,24 @@ public class ConflictManagerViewModel {
                 and(isRemoteAcceptingChanged.not().or(isRemoteAcceptingSelected.or(isRemoteAcceptingNeglected))));
     }
 
+    public void mergeLocalNonConflicting() {
+        if (isLocalContextChanged.and(isRemoteContextChanged.not()).get()) isLocalContextSelected.set(true);
+        if (isLocalFacingChanged.and(isRemoteFacingChanged.not()).get()) isLocalFacingSelected.set(true);
+        if (isLocalChosenChanged.and(isRemoteChosenChanged.not()).get()) isLocalChosenSelected.set(true);
+        if (isLocalNeglectedChanged.and(isRemoteNeglectedChanged.not()).get()) isLocalNeglectedSelected.set(true);
+        if (isLocalAchievingChanged.and(isRemoteAchievingChanged.not()).get()) isLocalAchievingSelected.set(true);
+        if (isLocalAcceptingChanged.and(isRemoteAcceptingChanged.not()).get()) isLocalAcceptingSelected.set(true);
+    }
+
+    public void mergeRemoteNonConflicting() {
+        if (isRemoteContextChanged.and(isLocalContextChanged.not()).get()) isRemoteContextSelected.set(true);
+        if (isRemoteFacingChanged.and(isLocalFacingChanged.not()).get()) isRemoteFacingSelected.set(true);
+        if (isRemoteChosenChanged.and(isLocalChosenChanged.not()).get()) isRemoteChosenSelected.set(true);
+        if (isRemoteNeglectedChanged.and(isLocalNeglectedChanged.not()).get()) isRemoteNeglectedSelected.set(true);
+        if (isRemoteAchievingChanged.and(isLocalAchievingChanged.not()).get()) isRemoteAchievingSelected.set(true);
+        if (isRemoteAcceptingChanged.and(isLocalAcceptingChanged.not()).get()) isRemoteAcceptingSelected.set(true);
+    }
+
     public void goToNextConflict() {
         finishResolvingCurrentConflict();
         currentIndex.set(currentIndex.getValue() + 1);
