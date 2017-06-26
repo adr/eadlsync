@@ -19,7 +19,7 @@ import static javafx.scene.paint.Color.DARKRED;
  */
 public class DiffUtilFX {
 
-    public static List<Text> getDiffHighlightedTextNodes(StringProperty baseString, String modifiedString) {
+    public static List<Text> getDiffHighlightedTextNodes(StringProperty baseString, String modifiedString, String separator) {
         return getDiffHighlightedTextNodes(baseString.get(), modifiedString, " ");
     }
 
@@ -36,23 +36,21 @@ public class DiffUtilFX {
 
                 int startPositionDelta = delta.getOriginal().getPosition();
                 int endPositionDelta = delta.getOriginal().last();
-                String normalText = "";
+                StringBuilder normalText = new StringBuilder();
+
+                if (offset < startPositionDelta) {
+                    if (offset != 0) normalText.append(separator);
+                    for (int i = offset; i < startPositionDelta; i++) {
+                        normalText.append(baseList.get(i));
+                        normalText.append(separator);
+                    }
+                    textFlow.add(getNormalTextNode(normalText.toString()));
+                }
+                offset = endPositionDelta + 1;
 
                 switch (delta.getType()) {
 
                     case CHANGE:
-
-                        if (offset < startPositionDelta) {
-                            normalText = (offset == 0) ? normalText : separator.concat(normalText);
-                            for (int i = offset; i < startPositionDelta; i++) {
-                                normalText += baseList.get(i).concat(separator);
-                            }
-                            textFlow.add(getNormalTextNode(normalText));
-                        }
-                        offset = endPositionDelta + 1;
-
-                        System.out.println(String.format("change original  at %d to %d with %s", delta.getOriginal().getPosition(), delta.getOriginal().last(), delta.getOriginal().getLines()));
-                        System.out.println(String.format("change revised at %d to %d with %s", delta.getRevised().getPosition(), delta.getRevised().last(), delta.getRevised().getLines()));
 
                         String changedRemoveText = delta.getOriginal().getLines().stream().collect(Collectors.joining(separator));
                         textFlow.add(getDeletionTextNode(changedRemoveText));
@@ -63,53 +61,28 @@ public class DiffUtilFX {
                         break;
                     case DELETE:
 
-
-                        if (offset < startPositionDelta) {
-                            normalText = (offset == 0) ? normalText : separator.concat(normalText);
-                            for (int i = offset; i < startPositionDelta; i++) {
-                                normalText += baseList.get(i).concat(separator);
-                            }
-                            textFlow.add(getNormalTextNode(normalText));
-                        }
-                        offset = endPositionDelta + 1;
-
-                        System.out.println(String.format("delete original  at %d to %d with %s", delta.getOriginal().getPosition(), delta.getOriginal().last(), delta.getOriginal().getLines()));
-                        System.out.println(String.format("delete revised at %d to %d with %s", delta.getRevised().getPosition(), delta.getRevised().last(), delta.getRevised().getLines()));
-
                         String  deletion = delta.getOriginal().getLines().stream().collect(Collectors.joining(separator));
                         textFlow.add(getDeletionTextNode(deletion));
-
 
                         break;
                     case INSERT:
 
-                        if (offset < startPositionDelta) {
-                            normalText = (offset == 0) ? normalText : separator.concat(normalText);
-                            for (int i = offset; i < startPositionDelta; i++) {
-                                normalText += baseList.get(i).concat(separator);
-                            }
-                            textFlow.add(getNormalTextNode(normalText));
-                        }
-                        offset = endPositionDelta + 1;
-
-                        System.out.println(String.format("insert original  at %d to %d with %s", delta.getOriginal().getPosition(), delta.getOriginal().last(), delta.getOriginal().getLines()));
-                        System.out.println(String.format("insert revised at %d to %d with %s", delta.getRevised().getPosition(), delta.getRevised().last(), delta.getRevised().getLines()));
-
+                        String suffix = (endPositionDelta == -1) ? separator : "";
                         String addition = delta.getRevised().getLines().stream().collect(Collectors.joining(separator));
-                        textFlow.add(getAdditionTextNode(addition));
+                        textFlow.add(getAdditionTextNode(addition.concat(suffix)));
 
                         break;
                     default:
                         break;
                 }
             }
-            System.out.println(offset);
             if (offset < baseList.size()) {
-                String normalText = "";
+                StringBuilder normalText = new StringBuilder();
                 for (int i = offset; i < baseList.size(); i++) {
-                    normalText += baseList.get(i).concat(i + 1 == baseList.size() ? "" : separator);
+                    normalText.append(baseList.get(i));
+                    if (i + 1 != baseList.size()) normalText.append(separator);
                 }
-                textFlow.add(getNormalTextNode(normalText));
+                textFlow.add(getNormalTextNode(normalText.toString()));
             }
         } else {
             textFlow.add(new Text(modifiedString));
