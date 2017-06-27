@@ -19,13 +19,30 @@ import static javafx.scene.paint.Color.DARKRED;
  */
 public class DiffUtilFX {
 
-    public static List<Text> getDiffHighlightedTextNodes(StringProperty baseString, String modifiedString, String separator) {
-        return getDiffHighlightedTextNodes(baseString.get(), modifiedString, " ");
+    enum DiffType{
+        WORDS(" "),
+        CHARS(""),
+        LINES("\n");
+
+        private String separator = "";
+
+        DiffType(String s) {
+            separator = s;
+        }
+
+        public String getSeparator() {
+            return separator;
+        }
     }
 
-    public static List<Text> getDiffHighlightedTextNodes(String baseString, String modifiedString, String separator) {
+    public static List<Text> getDiffHighlightedTextNodes(StringProperty baseString, String modifiedString, DiffType type) {
+        return getDiffHighlightedTextNodes(baseString.get(), modifiedString, type);
+    }
+
+    public static List<Text> getDiffHighlightedTextNodes(String baseString, String modifiedString, DiffType type) {
 
         List<Text> textFlow = new ArrayList<>();
+        String separator = type.getSeparator();
 
         if ((baseString != null) && (modifiedString != null)) {
             List<String> baseList = Arrays.asList(baseString.split(separator));

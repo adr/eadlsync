@@ -1,10 +1,8 @@
 package com.eadlsync.gui;
 
+import com.eadlsync.gui.DiffUtilFX.DiffType;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.RadioButton;
+import javafx.scene.control.*;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 
@@ -24,6 +22,7 @@ public class ConflictManagerController {
     private boolean isFinishedSuccessfully = false;
 
     @FXML private Label lblTitle;
+    @FXML private ComboBox<DiffType> boxDiffType;
     @FXML  private ListView listDecisions;
     @FXML  private Button btnFinish;
     @FXML  private Button btnNext;
@@ -86,26 +85,26 @@ public class ConflictManagerController {
         btnNext.disableProperty().bind(conflictManagerViewModel.canGoToNextConflictProperty().not());
         btnFinish.disableProperty().bind(conflictManagerViewModel.isAllConflictsResolvedProperty().not());
 
-        YStatementJustificationWrapper localDecision = conflictManagerViewModel.getCurrentLocalDecision().getChangedDecision();
-        updateLocalDecisionFields(localDecision);
-        
-        YStatementJustificationWrapper remoteDecision = conflictManagerViewModel.getCurrentRemoteDecision().getChangedDecision();
-        updateRemoteDecisionFields(remoteDecision);
+        for (DiffType type : DiffType.values()) {
+            boxDiffType.getItems().add(type);
+        }
+        boxDiffType.setValue(DiffType.WORDS);
+
+        updateLocalDecisionFields(boxDiffType.getValue());
+        updateRemoteDecisionFields(boxDiffType.getValue());
         
         conflictManagerViewModel.currentLocalDecisionProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                YStatementJustificationWrapper changedDecision = newValue.getChangedDecision();
                 if (newValue.getChangedDecision() != null) {
-                    updateLocalDecisionFields(changedDecision);
+                    updateLocalDecisionFields(boxDiffType.getValue());
                 }
             }
         });
 
         conflictManagerViewModel.currentRemoteDecisionProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                YStatementJustificationWrapper changedDecision = newValue.getChangedDecision();
                 if (newValue.getChangedDecision() != null) {
-                    updateRemoteDecisionFields(changedDecision);
+                    updateRemoteDecisionFields(boxDiffType.getValue());
                 }
             }
         });
@@ -200,22 +199,24 @@ public class ConflictManagerController {
         setListenersForStyling();
     }
 
-    private void updateLocalDecisionFields(YStatementJustificationWrapper localDecision) {
-        txtLocalContext.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedContextProperty(), localDecision.getContext()));
-        txtLocalFacing.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedFacingProperty(), localDecision.getFacing()));
-        txtLocalChosen.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedChosenProperty(), localDecision.getChosen()));
-        txtLocalNeglected.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedNeglectedProperty(), localDecision.getNeglected()));
-        txtLocalAchieving.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedAchievingProperty(), localDecision.getAchieving()));
-        txtLocalAccepting.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedAcceptingProperty(), localDecision.getAccepting()));
+    private void updateLocalDecisionFields(DiffType type) {
+        YStatementJustificationWrapper localDecision = conflictManagerViewModel.getCurrentLocalDecision().getChangedDecision();
+        txtLocalContext.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.getOriginalContext(), localDecision.getContext(), type));
+        txtLocalFacing.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.getOriginalFacing(), localDecision.getFacing(), type));
+        txtLocalChosen.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.getOriginalChosen(), localDecision.getChosen(), type));
+        txtLocalNeglected.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.getOriginalNeglected(), localDecision.getNeglected(), type));
+        txtLocalAchieving.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.getOriginalAchieving(), localDecision.getAchieving(), type));
+        txtLocalAccepting.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.getOriginalAccepting(), localDecision.getAccepting(), type));
     }
 
-    private void updateRemoteDecisionFields(YStatementJustificationWrapper remoteDecision) {
-        txtRemoteContext.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedContextProperty(), remoteDecision.getContext()));
-        txtRemoteFacing.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedFacingProperty(), remoteDecision.getFacing()));
-        txtRemoteChosen.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedChosenProperty(), remoteDecision.getChosen()));
-        txtRemoteNeglected.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedNeglectedProperty(), remoteDecision.getNeglected()));
-        txtRemoteAchieving.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedAchievingProperty(), remoteDecision.getAchieving()));
-        txtRemoteAccepting.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.mergedAcceptingProperty(), remoteDecision.getAccepting()));
+    private void updateRemoteDecisionFields(DiffType type) {
+        YStatementJustificationWrapper remoteDecision = conflictManagerViewModel.getCurrentRemoteDecision().getChangedDecision();
+        txtRemoteContext.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.getOriginalContext(), remoteDecision.getContext(), type));
+        txtRemoteFacing.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.getOriginalFacing(), remoteDecision.getFacing(), type));
+        txtRemoteChosen.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.getOriginalChosen(), remoteDecision.getChosen(), type));
+        txtRemoteNeglected.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.getOriginalNeglected(), remoteDecision.getNeglected(), type));
+        txtRemoteAchieving.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.getOriginalAchieving(), remoteDecision.getAchieving(), type));
+        txtRemoteAccepting.getChildren().setAll(getDiffHighlightedTextNodes(conflictManagerViewModel.getOriginalAccepting(), remoteDecision.getAccepting(), type));
     }
 
     private void setListenersForStyling() {
@@ -327,6 +328,12 @@ public class ConflictManagerController {
                 txtRemoteAccepting.getParent().getParent().getStyleClass().remove("modified-remote");
             }
         });
+    }
+
+    @FXML
+    public void updateDiff() {
+        updateLocalDecisionFields(boxDiffType.getValue());
+        updateRemoteDecisionFields(boxDiffType.getValue());
     }
 
     @FXML

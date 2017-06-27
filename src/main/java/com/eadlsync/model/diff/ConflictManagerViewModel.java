@@ -85,12 +85,12 @@ public class ConflictManagerViewModel {
     private BooleanProperty isAllLocalNeglected = new SimpleBooleanProperty(false);
     private BooleanProperty isAllRemoteSelected = new SimpleBooleanProperty(false);
     private BooleanProperty isAllRemoteNeglected = new SimpleBooleanProperty(false);
-    private String context = "";
-    private String facing = "";
-    private String chosen = "";
-    private String neglected = "";
-    private String achieving = "";
-    private String accepting = "";
+    private String originalContext = "";
+    private String originalFacing = "";
+    private String originalChosen = "";
+    private String originalNeglected = "";
+    private String originalAchieving = "";
+    private String originalAccepting = "";
 
     public ConflictManagerViewModel(DiffManager diffManager) {
         
@@ -166,12 +166,12 @@ public class ConflictManagerViewModel {
                 mergedNeglected.set(decision.getNeglected());
                 mergedAchieving.set(decision.getAchieving());
                 mergedAccepting.set(decision.getAccepting());
-                context = decision.getContext();
-                facing = decision.getFacing();
-                chosen = decision.getChosen();
-                neglected = decision.getNeglected();
-                achieving = decision.getAchieving();
-                accepting = decision.getAccepting();
+                originalContext = decision.getContext();
+                originalFacing = decision.getFacing();
+                originalChosen = decision.getChosen();
+                originalNeglected = decision.getNeglected();
+                originalAchieving = decision.getAchieving();
+                originalAccepting = decision.getAccepting();
                 removeAllSelection();
             }
         });
@@ -344,8 +344,8 @@ public class ConflictManagerViewModel {
     }
 
     /**
-     * true sets all local selected fields to true and all neglected fields to false.
-     * true sets all local neglected fields to true and all selected fields to false.
+     * true sets all local selected fields to true and all originalNeglected fields to false.
+     * true sets all local originalNeglected fields to true and all selected fields to false.
      * applies only to fields where {@code isLocal<Field>Selected} returns true.
      *
      * @param value
@@ -426,27 +426,51 @@ public class ConflictManagerViewModel {
     }
 
     private void setOriginalContext() {
-        mergedContext.set(context);
+        mergedContext.set(originalContext);
     }
 
     private void setOriginalFacing() {
-        mergedFacing.set(facing);
+        mergedFacing.set(originalFacing);
     }
 
     private void setOriginalChosen() {
-        mergedChosen.set(chosen);
+        mergedChosen.set(originalChosen);
     }
 
     private void setOriginalNeglected() {
-        mergedNeglected.set(neglected);
+        mergedNeglected.set(originalNeglected);
     }
 
     private void setOriginalAchieving() {
-        mergedAchieving.set(achieving);
+        mergedAchieving.set(originalAchieving);
     }
 
     private void setOriginalAccepting() {
-        mergedAccepting.set(accepting);
+        mergedAccepting.set(originalAccepting);
+    }
+
+    public String getOriginalContext() {
+        return originalContext;
+    }
+
+    public String getOriginalFacing() {
+        return originalFacing;
+    }
+
+    public String getOriginalChosen() {
+        return originalChosen;
+    }
+
+    public String getOriginalNeglected() {
+        return originalNeglected;
+    }
+
+    public String getOriginalAchieving() {
+        return originalAchieving;
+    }
+
+    public String getOriginalAccepting() {
+        return originalAccepting;
     }
 
     public List<YStatementJustificationWrapper> getResultingDecisions() {

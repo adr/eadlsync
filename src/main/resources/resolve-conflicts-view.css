@@ -1,9 +1,13 @@
 .approve-button .radio {
+    -fx-background-size: stretch;
+    -fx-background-repeat: no-repeat;
     -fx-background-image: url('/graphics/approve.png');
     -fx-background-position: center;
 }
 
 .neglected-button .radio {
+    -fx-background-size: stretch;
+    -fx-background-repeat: no-repeat;
     -fx-background-image: url('/graphics/reject.png');
     -fx-background-position: center;
 }
@@ -63,4 +67,23 @@
 
 .list-view:disabled {
     -fx-opacity: 0.9;
+}
+
+.merge-local {
+    -fx-background-image: url('/graphics/merge-local.png');
+}
+
+.merge-remote {
+    -fx-background-image: url('/graphics/merge-remote.png');
+}
+
+.merge-both {
+    -fx-background-image: url('/graphics/merge.png');
+}
+
+.merge-button {
+    -fx-background-size: stretch;
+    -fx-background-repeat: no-repeat;
+    -fx-background-color: transparent;
+    -fx-background-position: center;
 }
