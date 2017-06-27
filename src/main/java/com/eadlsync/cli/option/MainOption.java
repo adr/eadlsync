@@ -1,6 +1,9 @@
 package com.eadlsync.cli.option;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import com.beust.jcommander.Parameter;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by tobias on 02/06/2017.
@@ -14,19 +17,18 @@ public class MainOption {
     @Parameter(names = "--debug", description = "Debug mode")
     private boolean debug = false;
 
-    public boolean isHelp() {
-        return help;
+
+    public void printHelp() {
+
     }
 
-    public void setHelp(boolean help) {
-        this.help = help;
+    public void enableDebugMode() {
+        setLoggingLevel(Level.DEBUG);
     }
 
-    public boolean isDebug() {
-        return debug;
+    public static void setLoggingLevel(Level level) {
+        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        root.setLevel(level);
     }
 
-    public void setDebug(boolean debug) {
-        this.debug = debug;
-    }
 }
