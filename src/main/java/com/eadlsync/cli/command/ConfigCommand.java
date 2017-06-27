@@ -6,13 +6,16 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import static com.eadlsync.cli.command.ConfigCommand.DESCRIPTION;
+
 /**
  * Created by tobias on 01/06/2017.
  */
-@Parameters(separators = "=", commandDescription = "Modify the eadlsync config file")
+@Parameters(separators = "=", commandDescription = DESCRIPTION)
 public class ConfigCommand extends EADLSyncCommand {
 
     public static final String NAME = "config";
+    public static final String DESCRIPTION = "use 'eadlsync config --[user|core]=<value>' to update the decisions in the se-repo";
 
     @Parameter(names = "--user.name")
     private String name;

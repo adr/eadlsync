@@ -36,7 +36,7 @@ public class EADLSyncCommand {
         this.config = mapper.readValue(EADL_CONFIG.toFile(), Config.class);
     }
 
-    private String readCommitId() throws IOException {
+    protected String readCommitId() throws IOException {
         if (!Files.exists(EADL_REVISION)) {
             throw new IOException("No eadlsync-commitid found, please initialize first");
         } else {

@@ -7,13 +7,16 @@ import com.beust.jcommander.Parameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.eadlsync.cli.command.DeInitCommand.DESCRIPTION;
+
 /**
  *
  */
-@Parameters(separators = "=", commandDescription = "De-Initializes an eadl code repository")
+@Parameters(separators = "=", commandDescription = DESCRIPTION)
 public class DeInitCommand extends EADLSyncCommand {
 
     public static final String NAME = "deinit";
+    public static final String DESCRIPTION = "use 'eadlsync deinit' de-initialize eadlsync in this directory";
     private static final Logger LOG = LoggerFactory.getLogger(DeInitCommand.class);
 
     public void deInit() throws IOException {

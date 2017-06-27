@@ -14,15 +14,17 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.eadlsync.cli.command.InitCommand.DESCRIPTION;
 import static com.eadlsync.util.YStatementConstants.SEREPO_URL_COMMITS;
 
 /**
  * Created by tobias on 01/06/2017.
  */
-@Parameters(separators = "=", commandDescription = "Initializes an eadl code repository")
+@Parameters(separators = "=", commandDescription = DESCRIPTION)
 public class InitCommand extends EADLSyncCommand {
 
     public static final String NAME = "init";
+    public static final String DESCRIPTION = "use 'eadlsync init -u=<base-url> -p=<project>' to initialize eadlsync in this directory";
     private static final Logger LOG = LoggerFactory.getLogger(InitCommand.class);
 
     @Parameter(names = "-u", required = true)

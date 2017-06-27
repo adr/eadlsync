@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 public class SyncCommand extends EADLSyncCommand {
 
     public static final String NAME = "sync";
+    public static final String DESCRIPTION = "use 'eadlsync sync' to update the local decisions and afterwards update the decisions of the se-repo";
     private static final Logger LOG = LoggerFactory.getLogger(SyncCommand.class);
 
     private final String SYNC_MESSAGE = "Automatic sync " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());

@@ -174,13 +174,7 @@ public class EADLSyncMain extends Application {
         }
 
         if (StatusCommand.NAME.equals(commander.getParsedCommand())) {
-            try {
-                STATUS_COMMAND.getStatus();
-            } catch (IOException e) {
-                LOG.debug("Error reading the config file", e);
-            } catch (UnirestException e) {
-                LOG.debug("Error accessing the se-repo", e);
-            }
+            STATUS_COMMAND.printStatus();
         }
 
         if (PullCommand.NAME.equals(commander.getParsedCommand())) {

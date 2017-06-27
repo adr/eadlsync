@@ -170,7 +170,7 @@ public class CodeRepo implements IRepo {
     }
 
     public RepoStatus getStatus() {
-        return RepoStatus.of(diffManager);
+        return new RepoStatus(diffManager);
     }
 
 }
