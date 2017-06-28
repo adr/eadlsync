@@ -322,7 +322,7 @@ public class ConflictManagerViewModel {
     public void finishResolvingCurrentConflict() {
         if (isCurrentConflictResolved.get()) {
             YStatementJustificationWrapper chosenDecision = new YStatementJustificationWrapperBuilder
-                    (currentId.get(), currentLocalDecision.get().getChangedDecision().getSource()).
+                    (currentId.get()).
                     context(mergedContext.get()).
                     facing(mergedFacing.get()).
                     chosen(mergedChosen.get()).

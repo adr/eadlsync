@@ -44,7 +44,7 @@ public class EADLSyncMain extends Application {
     private static final SyncCommand SYNC_COMMAND = new SyncCommand();
 
     static YStatementJustificationWrapper someBaseDecision =
-            new YStatementJustificationWrapperBuilder("test/some/folder/some_id", "remote_source").
+            new YStatementJustificationWrapperBuilder("test/some/folder/some_id").
                     context("context").
                     facing("facing").
                     chosen("test/folder/chosen").
@@ -54,7 +54,7 @@ public class EADLSyncMain extends Application {
                     build();
 
     static YStatementJustificationWrapper someDecision =
-            new YStatementJustificationWrapperBuilder("test/some/folder/some_id", "remote_source").
+            new YStatementJustificationWrapperBuilder("test/some/folder/some_id").
                     context("some context").
                     facing("facing").
                     chosen("test/folder/some_chosen").
@@ -64,7 +64,7 @@ public class EADLSyncMain extends Application {
                     build();
 
     static YStatementJustificationWrapper someConflictingDecision =
-            new YStatementJustificationWrapperBuilder("test/some/folder/some_id", "remote_source").
+            new YStatementJustificationWrapperBuilder("test/some/folder/some_id").
                     context("other context").
                     facing("other facing").
                     chosen("test/folder/other_chosen").
@@ -74,7 +74,7 @@ public class EADLSyncMain extends Application {
                     build();
 
     static YStatementJustificationWrapper otherBaseDecision =
-            new YStatementJustificationWrapperBuilder("test/other/folder/other_id", "remote_source").
+            new YStatementJustificationWrapperBuilder("test/other/folder/other_id").
                     context("context").
                     facing("facing").
                     chosen("test/folder/chosen").
@@ -84,7 +84,7 @@ public class EADLSyncMain extends Application {
                     build();
 
     static YStatementJustificationWrapper otherDecision =
-            new YStatementJustificationWrapperBuilder("test/other/folder/other_id", "remote_source").
+            new YStatementJustificationWrapperBuilder("test/other/folder/other_id").
                     context("some context").
                     facing("facing").
                     chosen("test/folder/some_chosen").
@@ -94,7 +94,7 @@ public class EADLSyncMain extends Application {
                     build();
 
     static YStatementJustificationWrapper otherConflictingDecision =
-            new YStatementJustificationWrapperBuilder("test/other/folder/other_id", "remote_source").
+            new YStatementJustificationWrapperBuilder("test/other/folder/other_id").
                     context("other context").
                     facing("other facing").
                     chosen("test/folder/other_chosen").
@@ -104,7 +104,7 @@ public class EADLSyncMain extends Application {
                     build();
 
     static YStatementJustificationWrapper diffBaseDecision =
-            new YStatementJustificationWrapperBuilder("test/diff/folder/diff_id", "remote_source").
+            new YStatementJustificationWrapperBuilder("test/diff/folder/diff_id").
                     context("context").
                     facing("facing").
                     chosen("test/folder/chosen").
@@ -114,7 +114,7 @@ public class EADLSyncMain extends Application {
                     build();
 
     static YStatementJustificationWrapper diffDecision =
-            new YStatementJustificationWrapperBuilder("test/diff/folder/diff_id", "remote_source").
+            new YStatementJustificationWrapperBuilder("test/diff/folder/diff_id").
                     context("some context").
                     facing("facing").
                     chosen("test/folder/some_chosen").
@@ -124,7 +124,7 @@ public class EADLSyncMain extends Application {
                     build();
 
     static YStatementJustificationWrapper diffConflictingDecision =
-            new YStatementJustificationWrapperBuilder("test/diff/folder/diff_id", "remote_source").
+            new YStatementJustificationWrapperBuilder("test/diff/folder/diff_id").
                     context("other context").
                     facing("other facing").
                     chosen("test/folder/other_chosen").

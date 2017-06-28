@@ -15,11 +15,9 @@ public class YStatementJustificationWrapperBuilder {
     private String achieving = "";
     private String accepting = "";
     private String moreInformation = "";
-    private String source = "unspecified";
 
-    public YStatementJustificationWrapperBuilder(String id, String source) {
+    public YStatementJustificationWrapperBuilder(String id) {
         this.id = id;
-        this.source = source;
     }
 
     public YStatementJustificationWrapperBuilder (YStatementJustificationWrapper wrapper) {
@@ -31,7 +29,6 @@ public class YStatementJustificationWrapperBuilder {
         this.achieving = wrapper.getAchieving();
         this.accepting = wrapper.getAccepting();
         this.moreInformation = wrapper.getMoreInformation();
-        this.source = wrapper.getSource();
     }
 
     public YStatementJustificationWrapperBuilder (YStatementJustification annotation, String source) {
@@ -43,7 +40,6 @@ public class YStatementJustificationWrapperBuilder {
         this.achieving = annotation.achieving();
         this.accepting = annotation.accepting();
         this.moreInformation = annotation.moreInformation();
-        this.source = source;
     }
 
     public YStatementJustificationWrapperBuilder context(String context) {
@@ -82,7 +78,7 @@ public class YStatementJustificationWrapperBuilder {
     }
 
     public YStatementJustificationWrapper build() {
-        YStatementJustificationWrapper y = new YStatementJustificationWrapper(this.source);
+        YStatementJustificationWrapper y = new YStatementJustificationWrapper();
         y.setId(notNull(this.id));
         y.setContext(notNull(this.context));
         y.setAccepting(notNull(this.accepting));

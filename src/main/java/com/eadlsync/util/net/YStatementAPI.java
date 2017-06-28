@@ -8,6 +8,7 @@ import ch.hsr.isf.serepo.data.restinterface.seitem.RelationEntry;
 import ch.hsr.isf.serepo.data.restinterface.seitem.SeItem;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
+import com.eadlsync.model.decision.DecisionSourceMapping;
 import com.eadlsync.model.serepo.data.SeItemWithContent;
 import com.eadlsync.util.YStatementConstants;
 import com.eadlsync.util.net.MetadataFactory.OptionState;
@@ -148,11 +149,13 @@ public class YStatementAPI {
             String chosen = getIdFromFolderAndName(chosenOptionItem.getFolder(), chosenOptionItem.getName());
             String achieving = parseForContent(YStatementConstants.SEITEM_ACHIEVING, optionBody);
             String accepting = parseForContent(YStatementConstants.SEITEM_ACCEPTING, optionBody);
-            return new YStatementJustificationWrapperBuilder(id, source).context(context).facing(facing)
+            DecisionSourceMapping.putRemoteSource(id, source);
+            return new YStatementJustificationWrapperBuilder(id).context(context).facing(facing)
                     .chosen(chosen).neglected(neglectedIds).achieving(achieving).accepting(accepting)
                     .build();
         } else {
-            return new YStatementJustificationWrapperBuilder(id, source).context(context).facing(facing).
+            DecisionSourceMapping.putRemoteSource(id, source);
+            return new YStatementJustificationWrapperBuilder(id).context(context).facing(facing).
                     neglected(neglectedIds).build();
         }
     }

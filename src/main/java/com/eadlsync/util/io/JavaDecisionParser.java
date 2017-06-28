@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
+import com.eadlsync.model.decision.DecisionSourceMapping;
 import com.eadlsync.util.YStatementConstants;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
@@ -34,13 +35,14 @@ public class JavaDecisionParser {
         String neglected = annotation.getStringValue(YStatementConstants.NEGLECTED);
         String achieving = annotation.getStringValue(YStatementConstants.ACHIEVING);
         String accepting = annotation.getStringValue(YStatementConstants.ACCEPTING);
-        return new YStatementJustificationWrapperBuilder(id, path.toString()).context(context).facing
+        DecisionSourceMapping.putLocalSource(id, path.toString());
+        return new YStatementJustificationWrapperBuilder(id).context(context).facing
                 (facing).chosen(chosen).neglected(neglected).achieving(achieving).accepting(accepting)
                 .build();
     }
 
     public static void writeModifiedYStatementToFile(YStatementJustificationWrapper yStatement) throws IOException {
-        Path path = Paths.get(yStatement.getSource());
+        Path path = Paths.get(DecisionSourceMapping.getLocalSource(yStatement.getId()));
         final JavaClassSource javaClass = (JavaClassSource) Roaster.parse(Files.newInputStream(path));
         AnnotationSource annotation = javaClass.getAnnotation(YStatementJustification.class);
         if (annotation.getStringValue(YStatementConstants.ID).equals(yStatement.getId())) {
@@ -53,7 +55,7 @@ public class JavaDecisionParser {
     }
 
     public static void removeYStatementFromFile(YStatementJustificationWrapper yStatement) throws IOException {
-        Path path = Paths.get(yStatement.getSource());
+        Path path = Paths.get(DecisionSourceMapping.getLocalSource(yStatement.getId()));
         final JavaClassSource javaClass = (JavaClassSource) Roaster.parse(Files.newInputStream(path));
         AnnotationSource annotation = javaClass.getAnnotation(YStatementJustification.class);
         if (annotation.getStringValue(YStatementConstants.ID).equals(yStatement.getId())) {

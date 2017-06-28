@@ -10,15 +10,10 @@ public class YStatementJustificationWrapper {
     private String achieving = "";
     private String accepting = "";
     private String moreInformation = "";
-    private final String source;
-
-    protected YStatementJustificationWrapper(String source) {
-        this.source = source;
-    }
 
     public static YStatementJustificationWrapper deleted(String id) {
         final String deleted = "<deleted>";
-        return new YStatementJustificationWrapperBuilder(id,deleted).
+        return new YStatementJustificationWrapperBuilder(id).
                 context(deleted).
                 facing(deleted).
                 chosen(deleted).
@@ -91,10 +86,6 @@ public class YStatementJustificationWrapper {
 
     public void setMoreInformation(String moreInformation) {
         this.moreInformation = moreInformation;
-    }
-
-    public String getSource() {
-        return this.source;
     }
 
     @Override

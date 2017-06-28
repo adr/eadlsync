@@ -78,11 +78,11 @@ public class YStatementJustificationComparisionObject {
     }
 
     private String addHeadIfNeeded(int index) {
-        return isPreviousDifferent(index) ? "" : String.format(HEAD, codeDecision.getSource()) + "\n";
+        return isPreviousDifferent(index) ? "" : String.format(HEAD, DecisionSourceMapping.getLocalSource(codeDecision.getId())) + "\n";
     }
 
     private String addTailIfNeeded(int index) {
-        return isNextDifferent(index) ? "" : "\n" + String.format(TAIL, seDecision.getSource());
+        return isNextDifferent(index) ? "" : "\n" + String.format(TAIL, DecisionSourceMapping.getRemoteSource(seDecision.getId()));
     }
 
     private boolean isPreviousDifferent(int index) {

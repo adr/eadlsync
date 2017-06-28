@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
+import com.eadlsync.model.decision.DecisionSourceMapping;
 import com.eadlsync.util.OS;
 import com.eadlsync.util.YStatementConstants;
 import com.eadlsync.util.YStatementJustificationComparator;
@@ -50,10 +51,11 @@ public class JavaDecisionParserTest {
 
     @Before
     public void setUp() throws IOException {
-        initialDecision = new YStatementJustificationWrapperBuilder("my_sample_id", sampleFilePath.toString()).
+        DecisionSourceMapping.putLocalSource("my_sample_id", sampleFilePath.toString());
+        initialDecision = new YStatementJustificationWrapperBuilder("my_sample_id").
                 context("my_context").
                 build();
-        sampleDecision = new YStatementJustificationWrapperBuilder("my_sample_id", sampleFilePath.toString()).
+        sampleDecision = new YStatementJustificationWrapperBuilder("my_sample_id").
                 context("my_modified_context").
                 chosen("my_new_chosen").
                 build();
