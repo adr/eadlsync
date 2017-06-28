@@ -58,20 +58,12 @@ public class CodeRepo implements IRepo {
 
     private List<YStatementJustificationWrapper> loadLocalDecisions() throws IOException {
         List<YStatementJustificationWrapper> localYStatements = new ArrayList<>();
-        URLClassLoader finalUrlClassLoader = getUrlClassLoader();
         Files.walk(repositoryPath, FileVisitOption.FOLLOW_LINKS).forEach(path -> {
             if (isPathToJavaFile(path)) {
-                String classPath = convertToClassPath(path);
                 try {
-                    Class clazz = finalUrlClassLoader.loadClass(classPath);
-                    for (Annotation annotation : clazz.getAnnotationsByType(YStatementJustification
-                            .class)) {
-                        YStatementJustification yStatementJustification = (YStatementJustification)
-                                annotation;
-                        localYStatements.add(new YStatementJustificationWrapperBuilder(yStatementJustification, path.toString()).build());
-                    }
-                } catch (ClassNotFoundException e) {
-                    LOG.debug("Could not instantiate class.", e);
+                    localYStatements.add(JavaDecisionParser.readYStatementFromFile(path));
+                } catch (IOException e) {
+                    LOG.debug("Error reading the java class", e);
                 }
             }
         });
@@ -97,24 +89,8 @@ public class CodeRepo implements IRepo {
         JavaDecisionParser.removeYStatementFromFile(yStatementJustification);
     }
 
-    private URLClassLoader getUrlClassLoader() throws MalformedURLException {
-        URLClassLoader urlClassLoader;
-        urlClassLoader = new URLClassLoader(new URL[]{repositoryPath.toUri().toURL()});
-        return urlClassLoader;
-    }
-
     private boolean isPathToJavaFile(Path path) {
         return path.toString().endsWith(".java") && !Files.isDirectory(path);
-    }
-
-    private String convertToClassPath(Path path) {
-        if (OS.IS_WINDOWS) {
-            return repositoryPath.relativize(path).toString().replace(".java", "").
-                    replaceAll("\\\\", ".");
-        } else {
-            return repositoryPath.relativize(path).toString().replace(".java", "").
-                    replaceAll(OS.FS, ".");
-        }
     }
 
     @Override
