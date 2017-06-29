@@ -14,13 +14,13 @@ import org.slf4j.LoggerFactory;
  */
 public class MainOption {
 
-    @Parameter(names = "--help", description = "Show the usage of this program", help = true)
+    @Parameter(names = {"-h", "--help"}, description = "Show the usage of this program", help = true)
     private boolean help = false;
 
-    @Parameter(names = "--debug", description = "Debug mode")
+    @Parameter(names = {"-d", "--debug"}, description = "Debug mode")
     private boolean debug = false;
 
-    @Parameter(names = "--stacktrace", description = "Print stacktrace")
+    @Parameter(names = {"-s", "--stacktrace"}, description = "Print stacktrace")
     private boolean stacktrace = false;
 
     private static void setLoggingLevel(Level level) {
