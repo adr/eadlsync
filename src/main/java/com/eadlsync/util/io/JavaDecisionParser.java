@@ -9,10 +9,13 @@ import java.nio.file.Paths;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
 import com.eadlsync.model.decision.DecisionSourceMapping;
-import com.eadlsync.util.YStatementConstants;
+import com.eadlsync.util.ystatement.YStatementConstants;
+import com.eadlsync.util.ystatement.YStatementJustificationComparator;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import radar.ad.annotations.YStatementJustification;
 
 /**
@@ -20,22 +23,29 @@ import radar.ad.annotations.YStatementJustification;
  */
 public class JavaDecisionParser {
 
-    public static YStatementJustificationWrapper readYStatementFromFile(Path path) throws
-            IOException {
-        // TODO: evaluate if roaster is better option for parsing java classes than the java class loader
+    private static final Logger LOG = LoggerFactory.getLogger(JavaDecisionParser.class);
+
+    public static YStatementJustificationWrapper readYStatementFromFile(Path path) throws IOException {
         final JavaClassSource javaClass = (JavaClassSource) Roaster.parse(Files.newInputStream(path));
+        LOG.debug("Read YStatementJustification from {}", path);
         AnnotationSource annotation = javaClass.getAnnotation(YStatementJustification.class);
         if (annotation == null) {
             return null;
         }
-        String id = annotation.getStringValue(YStatementConstants.ID);
-        String context = annotation.getStringValue(YStatementConstants.CONTEXT);
-        String facing = annotation.getStringValue(YStatementConstants.FACING);
-        String chosen = annotation.getStringValue(YStatementConstants.CHOSEN);
-        String neglected = annotation.getStringValue(YStatementConstants.NEGLECTED);
-        String achieving = annotation.getStringValue(YStatementConstants.ACHIEVING);
-        String accepting = annotation.getStringValue(YStatementConstants.ACCEPTING);
-        DecisionSourceMapping.putLocalSource(id, path.toString());
+
+        YStatementJustificationWrapper decision = createYStatementJustificationFromAnnotationSource(annotation);
+        DecisionSourceMapping.putLocalSource(decision.getId(), path.toString());
+        return decision;
+    }
+
+    private static YStatementJustificationWrapper createYStatementJustificationFromAnnotationSource(AnnotationSource source) {
+        String id = source.getStringValue(YStatementConstants.ID);
+        String context = source.getStringValue(YStatementConstants.CONTEXT);
+        String facing = source.getStringValue(YStatementConstants.FACING);
+        String chosen = source.getStringValue(YStatementConstants.CHOSEN);
+        String neglected = source.getStringValue(YStatementConstants.NEGLECTED);
+        String achieving = source.getStringValue(YStatementConstants.ACHIEVING);
+        String accepting = source.getStringValue(YStatementConstants.ACCEPTING);
         return new YStatementJustificationWrapperBuilder(id).context(context).facing
                 (facing).chosen(chosen).neglected(neglected).achieving(achieving).accepting(accepting)
                 .build();
@@ -43,11 +53,10 @@ public class JavaDecisionParser {
 
     public static void writeModifiedYStatementToFile(YStatementJustificationWrapper yStatement) throws IOException {
         Path path = Paths.get(DecisionSourceMapping.getLocalSource(yStatement.getId()));
+        LOG.debug("Modify YStatementJustification {} from {}", yStatement.getId(), path);
         final JavaClassSource javaClass = (JavaClassSource) Roaster.parse(Files.newInputStream(path));
         AnnotationSource annotation = javaClass.getAnnotation(YStatementJustification.class);
-        if (annotation.getStringValue(YStatementConstants.ID).equals(yStatement.getId())) {
-            // TODO: check if annotation soure has same fields and values as yStatement
-            //YStatementJustificationComparator.equals(annotation, yStatement);
+        if (YStatementJustificationComparator.isSameButNotEqual(yStatement, createYStatementJustificationFromAnnotationSource(annotation))) {
             javaClass.removeAnnotation(annotation);
             addYStatementToClassSource(yStatement, javaClass);
             Files.write(path, javaClass.toString().getBytes(Charset.defaultCharset()));
@@ -56,6 +65,7 @@ public class JavaDecisionParser {
 
     public static void removeYStatementFromFile(YStatementJustificationWrapper yStatement) throws IOException {
         Path path = Paths.get(DecisionSourceMapping.getLocalSource(yStatement.getId()));
+        LOG.debug("Remove YStatementJustification {} from {}", yStatement.getId(), path);
         final JavaClassSource javaClass = (JavaClassSource) Roaster.parse(Files.newInputStream(path));
         AnnotationSource annotation = javaClass.getAnnotation(YStatementJustification.class);
         if (annotation.getStringValue(YStatementConstants.ID).equals(yStatement.getId())) {
@@ -66,6 +76,7 @@ public class JavaDecisionParser {
 
     private static void addYStatementToClassSource(YStatementJustificationWrapper yStatement,
                                                    JavaClassSource javaClass) {
+        LOG.debug("YStatementJustification values {}", yStatement);
         AnnotationSource newAnnotation = javaClass.addAnnotation(YStatementJustification.class);
         newAnnotation.setStringValue(YStatementConstants.ID, yStatement.getId());
         if (!yStatement.getContext().isEmpty())
@@ -80,7 +91,5 @@ public class JavaDecisionParser {
             newAnnotation.setStringValue(YStatementConstants.ACHIEVING, yStatement.getAchieving());
         if (!yStatement.getAccepting().isEmpty())
             newAnnotation.setStringValue(YStatementConstants.ACCEPTING, yStatement.getAccepting());
-        //        if (!yStatement.getMoreInformation().isEmpty())
-        //            newAnnotation.setStringValue(YStatementConstants.MORE_INFORMATION);
     }
 }
