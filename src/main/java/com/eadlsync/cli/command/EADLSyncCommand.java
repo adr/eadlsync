@@ -1,5 +1,6 @@
 package com.eadlsync.cli.command;
 
+import com.beust.jcommander.Parameter;
 import com.eadlsync.cli.CLI;
 import com.eadlsync.exception.EADLSyncException;
 import com.eadlsync.model.config.Config;
@@ -29,6 +30,9 @@ class EADLSyncCommand {
     static final Path EADL_REVISION = PROJECT_ROOT.resolve(".eadlsync-commitid");
     IRepo repo = null;
     Config config = null;
+
+    @Parameter(names = {"-h", "--help"}, description = "Show the usage of this program", help = true)
+    private boolean help = false;
 
     boolean readConfig() throws IOException {
         // we assume we only get called in the root directory of a project
@@ -137,6 +141,10 @@ class EADLSyncCommand {
                 CLI.println(execption.getMessage());
                 break;
         }
+    }
+
+    public boolean isHelp() {
+        return help;
     }
 
 }

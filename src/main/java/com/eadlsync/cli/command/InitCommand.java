@@ -31,9 +31,6 @@ public class InitCommand extends EADLSyncCommand {
     public static final String DESCRIPTION = "use 'eadlsync init -u <base-url> -p <project>' to initialize eadlsync in this directory";
     private static final Logger LOG = LoggerFactory.getLogger(InitCommand.class);
 
-    @Parameter(names = {"-h", "--help"}, description = "Show the usage of this command", help = true)
-    private boolean help = false;
-
     @Parameter(names = {"-u", "--url"}, required = true)
     private String baseUrl;
 
@@ -73,7 +70,4 @@ public class InitCommand extends EADLSyncCommand {
         return config;
     }
 
-    public boolean isHelp() {
-        return help;
-    }
 }

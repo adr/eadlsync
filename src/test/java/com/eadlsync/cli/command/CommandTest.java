@@ -38,7 +38,7 @@ public class CommandTest extends SeRepoServerTest {
                 addCommand(ResetCommand.NAME, RESET_COMMAND).
                 addCommand(SyncCommand.NAME, SYNC_COMMAND).
                 build();
-        commander.parse(InitCommand.NAME, String.format("-u=\"%s\"", LOCALHOST_SEREPO), String.format("-p=\"%s\"", TEST_REPO));
+        commander.parse(InitCommand.NAME, "-u", LOCALHOST_SEREPO, "-p", TEST_REPO);
         INIT_COMMAND.initialize();
     }
 

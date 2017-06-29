@@ -1,6 +1,5 @@
 package com.eadlsync.cli.command;
 
-import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.eadlsync.cli.CLI;
 import com.eadlsync.model.repo.RepoStatus;
@@ -12,17 +11,12 @@ import static com.eadlsync.cli.command.StatusCommand.DESCRIPTION;
 
 /**
  * Status command used to display the current status of the eadl-sync repository.
- *
- * @option help
  */
 @Parameters(commandDescription = DESCRIPTION)
 public class StatusCommand extends EADLSyncCommand {
 
     public static final String NAME = "status";
     public static final String DESCRIPTION = "use 'eadlsync status' to show the status of the eadlsync";
-
-    @Parameter(names = {"-h", "--help"}, description = "Show the usage of this command", help = true)
-    private boolean help = false;
 
     public void printStatus() throws IOException, UnirestException {
         if (readConfig()) {
@@ -61,7 +55,4 @@ public class StatusCommand extends EADLSyncCommand {
         }
     }
 
-    public boolean isHelp() {
-        return help;
-    }
 }

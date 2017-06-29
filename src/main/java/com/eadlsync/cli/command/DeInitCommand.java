@@ -1,6 +1,5 @@
 package com.eadlsync.cli.command;
 
-import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +11,6 @@ import static com.eadlsync.cli.command.DeInitCommand.DESCRIPTION;
 
 /**
  * DeInit command used to de-initialize an eadl-sync repository.
- *
- * @option help
  */
 @Parameters(commandDescription = DESCRIPTION)
 public class DeInitCommand extends EADLSyncCommand {
@@ -21,9 +18,6 @@ public class DeInitCommand extends EADLSyncCommand {
     public static final String NAME = "deinit";
     public static final String DESCRIPTION = "use 'eadlsync deinit' de-initialize eadlsync in this directory";
     private static final Logger LOG = LoggerFactory.getLogger(DeInitCommand.class);
-
-    @Parameter(names = {"-h", "--help"}, description = "Show the usage of this command", help = true)
-    private boolean help = false;
 
     public void deInit() throws IOException {
         if (Files.exists(EADL_ROOT)) {
@@ -45,7 +39,4 @@ public class DeInitCommand extends EADLSyncCommand {
         }
     }
 
-    public boolean isHelp() {
-        return help;
-    }
 }

@@ -6,7 +6,6 @@ import com.beust.jcommander.Parameters;
 /**
  * Commit command used to commit all decisions of the local code repository to the configured se-repo project.
  *
- * @option help
  * @option message the commit message
  * @option forceOption the option to force a commit
  */
@@ -15,9 +14,6 @@ public class CommitCommand extends SyncCommand {
 
     public static final String NAME = "commit";
     public static final String DESCRIPTION = "use 'eadlsync commit -m <message>' to update the decisions in the se-repo";
-
-    @Parameter(names = {"-h", "--help"}, description = "Show the usage of this command", help = true)
-    private boolean help = false;
 
     @Parameter(names = {"-m", "--message"}, required = true)
     private String message;
@@ -35,7 +31,4 @@ public class CommitCommand extends SyncCommand {
         }
     }
 
-    public boolean isHelp() {
-        return help;
-    }
 }

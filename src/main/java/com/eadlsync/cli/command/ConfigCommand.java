@@ -10,7 +10,6 @@ import static com.eadlsync.cli.command.ConfigCommand.DESCRIPTION;
 /**
  * Config command used to update the eadlsync configuration file.
  *
- * @option help
  * @option name with which the program commits
  * @option email with which the program commits
  * @option root specifies the project root on the local file system
@@ -22,9 +21,6 @@ public class ConfigCommand extends EADLSyncCommand {
 
     public static final String NAME = "config";
     public static final String DESCRIPTION = "use 'eadlsync config --[user|core].<key>=<value>' to update the decisions in the se-repo";
-
-    @Parameter(names = {"-h", "--help"}, description = "Show the usage of this command", help = true)
-    private boolean help = false;
 
     @Parameter(names = "--user.name")
     private String name;
@@ -58,7 +54,4 @@ public class ConfigCommand extends EADLSyncCommand {
         }
     }
 
-    public boolean isHelp() {
-        return help;
-    }
 }
