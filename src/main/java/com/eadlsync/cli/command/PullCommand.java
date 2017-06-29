@@ -2,7 +2,6 @@ package com.eadlsync.cli.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.eadlsync.exception.EADLSyncException;
 
 import static com.eadlsync.cli.command.PullCommand.DESCRIPTION;
 
@@ -12,7 +11,7 @@ import static com.eadlsync.cli.command.PullCommand.DESCRIPTION;
  * @option help
  */
 @Parameters(commandDescription = DESCRIPTION)
-public class PullCommand extends EADLSyncCommand {
+public class PullCommand extends SyncCommand {
 
     public static final String NAME = "pull";
     public static final String DESCRIPTION = "use 'eadlsync pull' to update the local decisions";
@@ -24,11 +23,7 @@ public class PullCommand extends EADLSyncCommand {
         if (readConfig()) {
             readDecisions();
 
-            try {
-                repo.pull();
-            } catch (EADLSyncException e) {
-                printEadlSyncException(e);
-            }
+            super.pull();
         }
     }
 

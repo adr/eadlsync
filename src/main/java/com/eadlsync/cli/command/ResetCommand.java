@@ -2,6 +2,7 @@ package com.eadlsync.cli.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.eadlsync.cli.CLI;
 import com.eadlsync.exception.EADLSyncException;
 
 import static com.eadlsync.cli.command.ResetCommand.DESCRIPTION;
@@ -30,7 +31,11 @@ public class ResetCommand extends EADLSyncCommand {
             readDecisions();
 
             try {
+                CLI.println(String.format("Reset to %s from se-repo", commitId));
+                CLI.println(String.format("\tproject '%s' at %s", config.getCore().getProjectName(), config.getCore().getBaseUrl()));
                 repo.reset(commitId);
+                updateCommitId(commitId);
+                CLI.println(String.format("\tsync id -> %s", commitId));
             } catch (EADLSyncException e) {
                 printEadlSyncException(e);
             }

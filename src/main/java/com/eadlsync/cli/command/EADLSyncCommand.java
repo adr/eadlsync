@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 /**
  * Super class for any eadl-sync commands. Provides methods to read/write the config and the last commit id.
  */
-public class EADLSyncCommand {
+class EADLSyncCommand {
 
     private static final Logger LOG = LoggerFactory.getLogger(EADLSyncCommand.class);
     static final Path PROJECT_ROOT = Paths.get(".").toAbsolutePath().normalize();
@@ -49,7 +49,7 @@ public class EADLSyncCommand {
         return true;
     }
 
-    private String readCommitId() throws IOException {
+    String readCommitId() throws IOException {
         if (!Files.exists(EADL_REVISION)) {
             printNotInitialized();
             return "";

@@ -2,7 +2,6 @@ package com.eadlsync.cli.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.eadlsync.exception.EADLSyncException;
 
 /**
  * Commit command used to commit all decisions of the local code repository to the configured se-repo project.
@@ -12,7 +11,7 @@ import com.eadlsync.exception.EADLSyncException;
  * @option forceOption the option to force a commit
  */
 @Parameters(commandDescription = CommitCommand.DESCRIPTION)
-public class CommitCommand extends EADLSyncCommand {
+public class CommitCommand extends SyncCommand {
 
     public static final String NAME = "commit";
     public static final String DESCRIPTION = "use 'eadlsync commit -m <message>' to update the decisions in the se-repo";
@@ -32,11 +31,7 @@ public class CommitCommand extends EADLSyncCommand {
 
             readDecisions();
 
-            try {
-                updateCommitId(repo.commit(config.getUser(), message, forceOption));
-            } catch (EADLSyncException eadlSyncException) {
-                printEadlSyncException(eadlSyncException);
-            }
+            super.commit(this.message, this.forceOption);
         }
     }
 

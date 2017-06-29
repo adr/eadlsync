@@ -2,6 +2,7 @@ package com.eadlsync.cli.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.eadlsync.cli.CLI;
 import com.eadlsync.exception.EADLSyncException;
 
 import static com.eadlsync.cli.command.MergeCommand.DESCRIPTION;
@@ -29,7 +30,10 @@ public class MergeCommand extends EADLSyncCommand {
             readDecisions();
 
             try {
+                CLI.println("Merge with se-repo");
+                CLI.println(String.format("\tproject '%s' at %s", config.getCore().getProjectName(), config.getCore().getBaseUrl()));
                 repo.merge(commitId);
+                CLI.println(String.format("\tsync id -> %s", readCommitId()));
             } catch (EADLSyncException e) {
                 printEadlSyncException(e);
             }

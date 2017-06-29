@@ -2,6 +2,7 @@ package com.eadlsync.cli.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.eadlsync.cli.CLI;
 import com.eadlsync.exception.EADLSyncException;
 
 import java.text.SimpleDateFormat;
@@ -29,16 +30,32 @@ public class SyncCommand extends EADLSyncCommand {
         if (readConfig()) {
             readDecisions();
 
-            try {
-                repo.pull();
-            } catch (EADLSyncException eadlSyncException) {
-                printEadlSyncException(eadlSyncException);
-            }
-            try {
-                updateCommitId(repo.commit(config.getUser(), SYNC_MESSAGE, false));
-            } catch (EADLSyncException eadlSyncException) {
-                printEadlSyncException(eadlSyncException);
-            }
+            pull();
+            commit(SYNC_MESSAGE, false);
+        }
+    }
+
+    void pull() throws Exception {
+        try {
+            CLI.println("Pull to from se-repo");
+            CLI.println(String.format("\tproject '%s' at %s", config.getCore().getProjectName(), config.getCore().getBaseUrl()));
+            String pullId = repo.pull();
+            updateCommitId(pullId);
+            CLI.println(String.format("\tsync id -> %s", pullId));
+        } catch (EADLSyncException eadlSyncException) {
+            printEadlSyncException(eadlSyncException);
+        }
+    }
+
+    void commit(String message, boolean forceOption) throws Exception {
+        try {
+            CLI.println("Commit to se-repo");
+            CLI.println(String.format("\tproject '%s' at %s", config.getCore().getProjectName(), config.getCore().getBaseUrl()));
+            String newId = repo.commit(config.getUser(), message, forceOption);
+            updateCommitId(newId);
+            CLI.println(String.format("\tsync id -> %s", newId));
+        } catch (EADLSyncException eadlSyncException) {
+            printEadlSyncException(eadlSyncException);
         }
     }
 

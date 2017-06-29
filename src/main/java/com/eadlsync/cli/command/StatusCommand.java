@@ -34,7 +34,8 @@ public class StatusCommand extends EADLSyncCommand {
     }
 
     private void printStatusMessage(RepoStatus status) {
-        CLI.println(String.format("Working with se-repo %s.", config.getCore().getProjectName()));
+        CLI.println(String.format("Status of eadl-sync %s.", config.getCore().getProjectRoot()));
+        CLI.println(String.format("\tproject '%s' at %s", config.getCore().getProjectName(), config.getCore().getBaseUrl()));
         if (!status.isLocalChanged()) {
             if (!status.isRemoteChanged()) {
                 printUpToDate();
