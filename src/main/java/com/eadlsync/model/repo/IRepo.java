@@ -1,10 +1,6 @@
 package com.eadlsync.model.repo;
 
-import com.eadlsync.EADLSyncExecption;
-import com.mashape.unirest.http.exceptions.UnirestException;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import ch.hsr.isf.serepo.data.restinterface.common.User;
 
 /**
  * Created by tobias on 07/03/2017.
@@ -18,12 +14,13 @@ public interface IRepo {
      * Commits and pushes the local changes to the se-repo
      * Use the isForcing option to commit local changes even if there are changes in the se-repo.
      *
+     * @param user
      * @param message
      * @param isForcing
      * @return the commit id
      * @throws Exception
      */
-    String commit(String message, boolean isForcing) throws Exception;
+    String commit(User user, String message, boolean isForcing) throws Exception;
 
     /**
      * Pulls the changes of the latest commit of the se-repo and applies it to the local decisions.

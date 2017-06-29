@@ -10,7 +10,7 @@ import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
 import com.eadlsync.model.decision.DecisionSourceMapping;
 import com.eadlsync.model.serepo.data.SeItemWithContent;
-import com.eadlsync.util.YStatementConstants;
+import com.eadlsync.util.ystatement.YStatementConstants;
 import com.eadlsync.util.net.MetadataFactory.OptionState;
 import com.google.common.net.UrlEscapers;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -26,8 +26,8 @@ import java.net.URLDecoder;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.eadlsync.util.SeItemContentParser.parseForContent;
-import static com.eadlsync.util.YStatementConstants.DELIMITER;
+import static com.eadlsync.util.ystatement.SeItemContentParser.parseForContent;
+import static com.eadlsync.util.ystatement.YStatementConstants.DELIMITER;
 import static com.eadlsync.util.net.MetadataFactory.GeneralMetadata.STEREOTYPE;
 import static com.eadlsync.util.net.MetadataFactory.GeneralMetadata.TAGGED_VALUES;
 import static com.eadlsync.util.net.MetadataFactory.OptionState.CHOSEN;
@@ -168,13 +168,13 @@ public class YStatementAPI {
             doc = Jsoup.connect(decodedURL).get();
             body = doc.body();
         } catch (IOException e) {
-            LOG.debug("Error parsing se-item '{}'", item);
+            LOG.debug("Failed to parse se-item '{}'", item);
         }
         return body;
     }
 
-    public String commitYStatement(List<YStatementJustificationWrapper> yStatementJustificationWrappers,
-                                   String message) throws UnirestException, UnsupportedEncodingException {
+    public String commitYStatement(User user, String message, List<YStatementJustificationWrapper> yStatementJustificationWrappers)
+            throws UnsupportedEncodingException {
         Set<SeItemWithContent> allSeItems = new HashSet<>();
 
         for (YStatementJustificationWrapper wrapper : yStatementJustificationWrappers) {
@@ -207,8 +207,7 @@ public class YStatementAPI {
             // add the problem to the set
             allSeItems.add(problem);
         }
-
-        User user = new User("EadlSynchronizer", "eadl@sync.com");
+        
         return commit(message, new ArrayList<>(allSeItems), user, CommitMode.ADD_UPDATE_DELETE, seRepoUrlObject.SEREPO_BASE_URL, seRepoUrlObject.SEREPO_PROJECT);
     }
 

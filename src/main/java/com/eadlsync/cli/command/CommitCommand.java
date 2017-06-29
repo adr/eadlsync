@@ -2,7 +2,8 @@ package com.eadlsync.cli.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.eadlsync.EADLSyncExecption;
+import com.eadlsync.EADLSyncException;
+import com.eadlsync.cli.CLI;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import java.io.IOException;
@@ -23,12 +24,17 @@ public class CommitCommand extends EADLSyncCommand {
     private boolean forceOption;
 
 
-    public String commit() throws EADLSyncExecption, IOException, UnirestException {
-        readConfig();
-        readDecisions();
-        String newCommitId = repo.commit(message, forceOption);
-        updateCommitId(newCommitId);
-        return newCommitId;
+    public void commit() throws IOException, UnirestException {
+        if (readConfig()) {
+
+            readDecisions();
+
+            try {
+                updateCommitId(repo.commit(config.getUser(), message, forceOption));
+            } catch (EADLSyncException eadlSyncException) {
+                printEadlSyncException(eadlSyncException);
+            }
+        }
     }
 
 }

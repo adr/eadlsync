@@ -2,10 +2,6 @@ package com.eadlsync.model.repo;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.annotation.Annotation;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,19 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.eadlsync.EADLSyncExecption;
+import ch.hsr.isf.serepo.data.restinterface.common.User;
+import com.eadlsync.EADLSyncException;
 import com.eadlsync.gui.ConflictManagerView;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
-import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
 import com.eadlsync.model.diff.DiffManager;
-import com.eadlsync.util.OS;
 import com.eadlsync.util.io.JavaDecisionParser;
 import com.eadlsync.util.net.SeRepoUrlObject;
 import com.eadlsync.util.net.YStatementAPI;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import radar.ad.annotations.YStatementJustification;
 
 /**
  * Created by tobias on 07/03/2017.
@@ -63,7 +57,7 @@ public class CodeRepo implements IRepo {
                 try {
                     localYStatements.add(JavaDecisionParser.readYStatementFromFile(path));
                 } catch (IOException e) {
-                    LOG.debug("Error reading the java class", e);
+                    LOG.debug("Failed to read annotations, skipping file {}", path);
                 }
             }
         });
@@ -94,21 +88,21 @@ public class CodeRepo implements IRepo {
     }
 
     @Override
-    public String commit(String message, boolean isForcing) throws EADLSyncExecption, UnsupportedEncodingException, UnirestException {
+    public String commit(User user, String message, boolean isForcing) throws EADLSyncException, UnsupportedEncodingException {
         if (!diffManager.hasRemoteDiff() || isForcing) {
             if (diffManager.hasLocalDiff()) {
                 diffManager.applyLocalDiff();
-                return connector.commitYStatement(diffManager.getCurrentDecisions(), message);
+                return connector.commitYStatement(user, message, diffManager.getCurrentDecisions());
             } else {
-                throw EADLSyncExecption.ofState(EADLSyncExecption.EADLSyncOperationState.NOTHING_TO_COMMIT);
+                throw EADLSyncException.ofState(EADLSyncException.EADLSyncOperationState.SYNCED);
             }
         } else {
-            throw EADLSyncExecption.ofState(EADLSyncExecption.EADLSyncOperationState.NON_FORWARD);
+            throw EADLSyncException.ofState(EADLSyncException.EADLSyncOperationState.PULL_FIRST);
         }
     }
 
     @Override
-    public void pull() throws EADLSyncExecption, IOException {
+    public void pull() throws EADLSyncException, IOException {
         if (diffManager.hasRemoteDiff()) {
             if (diffManager.hasLocalDiff()) {
                 if (!diffManager.canAutoMerge()) {
@@ -126,19 +120,19 @@ public class CodeRepo implements IRepo {
                 writeEadsToDisk();
             }
         } else {
-            throw EADLSyncExecption.ofState(EADLSyncExecption.EADLSyncOperationState.UP_TO_DATE);
+            throw EADLSyncException.ofState(EADLSyncException.EADLSyncOperationState.UP_TO_DATE);
         }
     }
 
     @Override
-    public void merge(String commitId) throws IOException, UnirestException, EADLSyncExecption {
+    public void merge(String commitId) throws IOException, UnirestException, EADLSyncException {
         connector.changeToCommit(commitId);
         initDecisions();
         pull();
     }
 
     @Override
-    public void reset(String commitId) throws EADLSyncExecption, IOException, UnirestException {
+    public void reset(String commitId) throws EADLSyncException, IOException, UnirestException {
         connector.changeToCommit(commitId);
         initDecisions();
         diffManager.applyRemoteDiff();
