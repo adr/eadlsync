@@ -1,6 +1,6 @@
 package com.eadlsync.util.net;
 
-import com.eadlsync.util.YStatementConstants;
+import com.eadlsync.util.ystatement.YStatementConstants;
 
 /**
  * Created by Tobias on 29.05.2017.

@@ -6,20 +6,20 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
-import com.eadlsync.util.YStatementField;
-import com.eadlsync.util.YStatementJustificationComparator;
+import com.eadlsync.util.ystatement.YStatementField;
+import com.eadlsync.util.ystatement.YStatementJustificationComparator;
 
 import static com.eadlsync.model.decision.YStatementJustificationWrapper.deleted;
-import static com.eadlsync.util.YStatementField.ACCEPTING;
-import static com.eadlsync.util.YStatementField.ACHIEVING;
-import static com.eadlsync.util.YStatementField.CHOSEN;
-import static com.eadlsync.util.YStatementField.CONTEXT;
-import static com.eadlsync.util.YStatementField.FACING;
-import static com.eadlsync.util.YStatementField.MORE_INFORMATION;
-import static com.eadlsync.util.YStatementField.NEGLECTED;
+import static com.eadlsync.util.ystatement.YStatementField.ACCEPTING;
+import static com.eadlsync.util.ystatement.YStatementField.ACHIEVING;
+import static com.eadlsync.util.ystatement.YStatementField.CHOSEN;
+import static com.eadlsync.util.ystatement.YStatementField.CONTEXT;
+import static com.eadlsync.util.ystatement.YStatementField.FACING;
+import static com.eadlsync.util.ystatement.YStatementField.MORE_INFORMATION;
+import static com.eadlsync.util.ystatement.YStatementField.NEGLECTED;
 
 /**
- *
+ * Holds a diff for a {@link YStatementJustificationWrapper} object based on their fields.
  */
 public class YStatementDiff {
 

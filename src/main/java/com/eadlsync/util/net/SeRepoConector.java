@@ -12,7 +12,7 @@ import ch.hsr.isf.serepo.data.restinterface.seitem.RelationEntry;
 import ch.hsr.isf.serepo.data.restinterface.seitem.SeItem;
 import ch.hsr.isf.serepo.data.restinterface.seitem.SeItemContainer;
 import com.eadlsync.model.serepo.data.SeItemWithContent;
-import com.eadlsync.util.YStatementConstants;
+import com.eadlsync.util.ystatement.YStatementConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.net.UrlEscapers;
 import com.mashape.unirest.http.HttpResponse;
@@ -20,6 +20,8 @@ import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -39,6 +41,8 @@ import static com.eadlsync.util.net.MetadataFactory.ProblemState.SOLVED;
  * Provides utility methods to communicate with the se-repo rest api
  */
 public class SeRepoConector {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SeRepoConector.class);
 
     static {
         Unirest.setObjectMapper(new ObjectMapper() {
@@ -63,27 +67,33 @@ public class SeRepoConector {
         });
     }
 
+    private static HttpResponse loggedUnirestCall(String url, Class clazz) throws UnirestException {
+        LOG.debug("Accessing the se-repo on {} for {}.", url, clazz.getClass().getName());
+        try {
+            return Unirest.get(url).asObject(clazz);
+        } catch (UnirestException e) {
+            LOG.error("Error occurred on object mapping.", e);
+            throw e;
+        }
+    }
+
     public static List<SeItem> getSeItemsByUrl(String seItemsUrl) throws UnirestException {
-        HttpResponse<SeItemContainer> seItemContainerResponse = Unirest.get(seItemsUrl).asObject
-                (SeItemContainer.class);
+        HttpResponse<SeItemContainer> seItemContainerResponse = loggedUnirestCall(seItemsUrl, SeItemContainer.class);
         return seItemContainerResponse.getBody().getSeItems();
     }
 
     public static RelationEntry getRelationEntryForUrl(String relationUrl) throws UnirestException {
-        HttpResponse<RelationContainer> relationsContainerResponse = Unirest.get(relationUrl).
-                asObject(RelationContainer.class);
+        HttpResponse<RelationContainer> relationsContainerResponse = loggedUnirestCall(relationUrl, RelationContainer.class);
         return relationsContainerResponse.getBody().getEntry();
     }
 
     public static MetadataEntry getMetadataEntryForUrl(String relationUrl) throws UnirestException {
-        HttpResponse<MetadataContainer> metadataContainerResponse = Unirest.get(relationUrl).
-                asObject(MetadataContainer.class);
+        HttpResponse<MetadataContainer> metadataContainerResponse = loggedUnirestCall(relationUrl, MetadataContainer.class);
         return metadataContainerResponse.getBody().getMetadata();
     }
 
     public static List<Commit> getCommitsByUrl(String commitsUrl) throws UnirestException {
-        HttpResponse<CommitContainer> seItemContainerResponse = Unirest.get(commitsUrl).asObject
-                (CommitContainer.class);
+        HttpResponse<CommitContainer> seItemContainerResponse = loggedUnirestCall(commitsUrl, CommitContainer.class);
         return seItemContainerResponse.getBody().getCommits();
     }
 
@@ -118,7 +128,7 @@ public class SeRepoConector {
      *
      * @return
      */
-    public static SeItemWithContent createSeOptionItem(String id, String achieve, String accepting, MetadataFactory.OptionState state) throws UnirestException, UnsupportedEncodingException {
+    public static SeItemWithContent createSeOptionItem(String id, String achieve, String accepting, MetadataFactory.OptionState state) throws UnsupportedEncodingException {
         SeItemWithContent createSeItem = new SeItemWithContent();
         String name = getNameFromId(id);
         createSeItem.setName(name);
@@ -140,7 +150,7 @@ public class SeRepoConector {
      *
      * @return
      */
-    public static SeItemWithContent createSeProblemItem(String id, String context, String facing, MetadataFactory.ProblemState state) throws UnirestException, UnsupportedEncodingException {
+    public static SeItemWithContent createSeProblemItem(String id, String context, String facing, MetadataFactory.ProblemState state) throws UnsupportedEncodingException {
         SeItemWithContent createSeItem = new SeItemWithContent();
         String name = getNameFromId(id);
         createSeItem.setName(name);

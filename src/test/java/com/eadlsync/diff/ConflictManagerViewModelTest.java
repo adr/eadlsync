@@ -2,7 +2,7 @@ package com.eadlsync.diff;
 
 import com.eadlsync.model.diff.ConflictManagerViewModel;
 import com.eadlsync.model.diff.DiffManager;
-import com.eadlsync.util.YStatementJustificationComparator;
+import com.eadlsync.util.ystatement.YStatementJustificationComparator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -3,7 +3,7 @@ package com.eadlsync.model.decision;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.eadlsync.util.YStatementJustificationComparator;
+import com.eadlsync.util.ystatement.YStatementJustificationComparator;
 
 /**
  * Created by Tobias on 13.05.2017.

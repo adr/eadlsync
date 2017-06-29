@@ -1,4 +1,4 @@
-package com.eadlsync.util;
+package com.eadlsync.util.ystatement;
 
 import java.util.regex.Pattern;
 

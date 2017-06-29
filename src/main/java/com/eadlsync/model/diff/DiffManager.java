@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.eadlsync.EADLSyncExecption;
+import com.eadlsync.exception.EADLSyncException;
 import com.eadlsync.model.decision.YStatementJustificationComparisionObject;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
-import com.eadlsync.util.YStatementJustificationComparator;
+import com.eadlsync.util.ystatement.YStatementJustificationComparator;
 
-import static com.eadlsync.EADLSyncExecption.EADLSyncOperationState.CONFLICT;
+import static com.eadlsync.exception.EADLSyncException.EADLSyncOperationState.CONFLICT;
 
 /**
  *
@@ -127,9 +127,9 @@ public class DiffManager {
      * Applies the diff of the local-repo to the base decisions.
      *
      * @return the decisions of the local repo
-     * @throws EADLSyncExecption if automatic merge can not be performed
+     * @throws EADLSyncException if automatic merge can not be performed
      */
-    public List<YStatementJustificationWrapper> applyLocalDiff() throws EADLSyncExecption {
+    public List<YStatementJustificationWrapper> applyLocalDiff() throws EADLSyncException {
         for (YStatementDiff diff : localDiff) {
             diff.applyDiff(currentDecisions);
         }
@@ -140,9 +140,9 @@ public class DiffManager {
      * Applies the diff of the se-repo to the base decisions.
      *
      * @return the decisions of the remote repo
-     * @throws EADLSyncExecption if automatic merge can not be performed
+     * @throws EADLSyncException if automatic merge can not be performed
      */
-    public List<YStatementJustificationWrapper> applyRemoteDiff() throws EADLSyncExecption {
+    public List<YStatementJustificationWrapper> applyRemoteDiff() throws EADLSyncException {
         for (YStatementDiff diff : remoteDiff) {
             diff.applyDiff(currentDecisions);
         }
@@ -153,9 +153,9 @@ public class DiffManager {
      * Applies the local diff and afterwards the remote one without checking for merge conflicts.
      *
      * @return a list with all yStatementJustifications merged
-     * @throws EADLSyncExecption if at least one decision can not be automatically merged
+     * @throws EADLSyncException if at least one decision can not be automatically merged
      */
-    public List<YStatementJustificationWrapper> applyLocalAndRemoteDiff() throws EADLSyncExecption {
+    public List<YStatementJustificationWrapper> applyLocalAndRemoteDiff() throws EADLSyncException {
         if (canAutoMerge()) {
             if (hasLocalDiff()) {
                 applyLocalDiff();
@@ -164,7 +164,7 @@ public class DiffManager {
                 applyRemoteDiff();
             }
         } else {
-            throw EADLSyncExecption.ofState(CONFLICT);
+            throw EADLSyncException.ofState(CONFLICT);
         }
         return this.currentDecisions;
     }

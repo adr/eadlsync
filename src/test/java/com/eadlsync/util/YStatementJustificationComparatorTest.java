@@ -1,6 +1,7 @@
 package com.eadlsync.util;
 
 import com.eadlsync.data.YStatementTestData;
+import com.eadlsync.util.ystatement.YStatementJustificationComparator;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

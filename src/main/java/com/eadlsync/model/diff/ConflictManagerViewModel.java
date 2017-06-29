@@ -18,8 +18,8 @@ import javafx.collections.FXCollections;
 
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
-import com.eadlsync.util.YStatementField;
-import com.eadlsync.util.YStatementJustificationComparator;
+import com.eadlsync.util.ystatement.YStatementField;
+import com.eadlsync.util.ystatement.YStatementJustificationComparator;
 
 import static com.eadlsync.model.decision.YStatementJustificationWrapper.deleted;
 

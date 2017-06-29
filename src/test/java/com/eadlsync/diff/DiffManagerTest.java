@@ -1,12 +1,7 @@
 package com.eadlsync.diff;
 
-import java.util.Arrays;
-
-import com.eadlsync.EADLSyncExecption;
-import com.eadlsync.data.YStatementTestData;
-import com.eadlsync.model.decision.YStatementJustificationWrapper;
-import com.eadlsync.model.diff.DiffManager;
-import com.eadlsync.util.YStatementJustificationComparator;
+import com.eadlsync.exception.EADLSyncException;
+import com.eadlsync.util.ystatement.YStatementJustificationComparator;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,7 +26,7 @@ public class DiffManagerTest extends DiffTest {
     }
 
     @Test
-    public void testLocalDiffFieldsOnlyApplyChanges() throws EADLSyncExecption {
+    public void testLocalDiffFieldsOnlyApplyChanges() throws EADLSyncException {
         Assert.assertTrue(YStatementJustificationComparator.isEqual(mergedBaseAndSomeDecision,
                 decisionsOfOnlyLocalChanges().applyLocalDiff().get(0)));
     }
@@ -52,7 +47,7 @@ public class DiffManagerTest extends DiffTest {
     }
 
     @Test
-    public void testRemoteDiffFieldsOnlyApplyChanges() throws EADLSyncExecption {
+    public void testRemoteDiffFieldsOnlyApplyChanges() throws EADLSyncException {
         Assert.assertTrue(YStatementJustificationComparator.isEqual(mergedBaseAndSomeDecision,
                 decisionsOfOnlyRemoteChanges().applyRemoteDiff().get(0)));
     }
@@ -73,7 +68,7 @@ public class DiffManagerTest extends DiffTest {
     }
 
     @Test
-    public void testLocalAndRemoteDiffNoConflictsApplyChanges() throws EADLSyncExecption {
+    public void testLocalAndRemoteDiffNoConflictsApplyChanges() throws EADLSyncException {
         Assert.assertTrue(YStatementJustificationComparator.isEqual
                 (mergedBaseAndSomeAndSomeNonConflictingDecision,
                         decisionsOfLocalAndRemoteChangesNoConflict().applyLocalAndRemoteDiff().get(0)));
@@ -94,9 +89,9 @@ public class DiffManagerTest extends DiffTest {
         Assert.assertFalse(decisionsOfLocalAndRemoteChangesConflict().canAutoMerge());
     }
 
-    @Test(expected = EADLSyncExecption.class)
+    @Test(expected = EADLSyncException.class)
     public void testLocalAndRemoteConflictDiffFieldsApplyChangesThrowsException() throws
-            EADLSyncExecption {
+            EADLSyncException {
         Assert.assertTrue(YStatementJustificationComparator.isEqual
                 (mergedBaseAndSomeAndSomeNonConflictingDecision,
                         decisionsOfLocalAndRemoteChangesConflict().applyLocalAndRemoteDiff().get(0)));

@@ -1,4 +1,4 @@
-package com.eadlsync.util;
+package com.eadlsync.util.ystatement;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,8 +6,6 @@ import java.util.stream.Stream;
 
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import org.apache.commons.collections4.CollectionUtils;
-
-import static com.eadlsync.util.YStatementConstants.DELIMITER;
 
 /**
  * Created by Tobias on 28.05.2017.
@@ -50,7 +48,7 @@ public class YStatementJustificationComparator {
     }
 
     private static List<String> trimmedArrayOfString(String input) {
-        return Stream.of(input.split(DELIMITER)).sorted().map(String::trim).collect(Collectors.toList());
+        return Stream.of(input.split(YStatementConstants.DELIMITER)).sorted().map(String::trim).collect(Collectors.toList());
     }
 
     public static boolean isAchievingEqual(YStatementJustificationWrapper codeDecision, YStatementJustificationWrapper seDecision) {
