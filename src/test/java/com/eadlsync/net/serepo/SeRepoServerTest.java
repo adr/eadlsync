@@ -78,7 +78,7 @@ public class SeRepoServerTest extends SeRepoTestData {
     public static void classSetUp() throws Exception {
         server = SeRepoServer.create(PORT);
         server.start();
-        LOG.debug("Server successfully started on with Port {}", PORT);
+        LOG.debug("Server successfully started with Port {}", PORT);
     }
 
     @Before

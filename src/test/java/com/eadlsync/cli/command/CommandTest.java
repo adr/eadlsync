@@ -3,6 +3,7 @@ package com.eadlsync.cli.command;
 import java.io.IOException;
 
 import com.beust.jcommander.JCommander;
+import com.eadlsync.cli.option.MainOption;
 import com.eadlsync.net.serepo.SeRepoServerTest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.junit.After;
@@ -27,7 +28,8 @@ public class CommandTest extends SeRepoServerTest {
 
     @Before
     public void initializeEadlSync() throws IOException, UnirestException {
-        commander = JCommander.newBuilder().
+        MainOption option = new MainOption();
+        commander = JCommander.newBuilder().addObject(option).
                 addCommand(InitCommand.NAME, INIT_COMMAND).
                 addCommand(DeInitCommand.NAME, DE_INIT_COMMAND).
                 addCommand(ConfigCommand.NAME, CONFIG_COMMAND).

@@ -40,7 +40,8 @@ public class EADLSyncMain extends Application {
     }
 
     private static void printStacktraceInfo() {
-        println("\t(use --stacktrace to get more information)");
+        println("\t(use --stacktrace to get stacktrace information about an error)");
+        println("\t(use --debug to get stacktrace information and additional debug output)");
     }
 
     @Override
@@ -63,8 +64,7 @@ public class EADLSyncMain extends Application {
 
             if (option.isHelp()) commander.usage();
 
-            option.evaluateDebugMode();
-            option.evaluateStacktraceMode();
+            option.evaluateOptions();
 
             try {
                 String commandName = commander.getParsedCommand();

@@ -5,9 +5,8 @@
         </encoder>
     </appender>
 
-    <logger name="com.eadlsync" level="INFO"/>
+    <logger name="com.eadlsync" Level="DEBUG">
+            <appender-ref ref="STDOUT"/>
+    </logger>
 
-    <root level="ERROR">
-        <appender-ref ref="STDOUT"/>
-    </root>
 </configuration>

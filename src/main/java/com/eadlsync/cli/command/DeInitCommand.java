@@ -25,7 +25,7 @@ public class DeInitCommand extends EADLSyncCommand {
                 try {
                     Files.delete(path);
                 } catch (IOException e) {
-                    LOG.debug("Unable to delete file or directory", e);
+                    LOG.error("Unable to delete file or directory", e);
                 }
             });
             Files.delete(EADL_ROOT);
