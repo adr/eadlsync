@@ -1,7 +1,7 @@
 package com.eadlsync.model.repo;
 
 import com.eadlsync.model.diff.DiffManager;
-import com.eadlsync.util.YStatementJustificationComparator;
+import com.eadlsync.util.ystatement.YStatementJustificationComparator;
 
 import java.util.ArrayList;
 import java.util.List;

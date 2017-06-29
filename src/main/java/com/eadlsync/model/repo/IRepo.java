@@ -44,4 +44,10 @@ public interface IRepo {
      */
     void reset(String commitId) throws Exception;
 
+    /**
+     * Provides all necessary information about the status of the repository.
+     *
+     * @return a RepoStatus object
+     */
+    RepoStatus status();
 }

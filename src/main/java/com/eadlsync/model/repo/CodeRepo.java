@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import ch.hsr.isf.serepo.data.restinterface.common.User;
-import com.eadlsync.EADLSyncException;
+import com.eadlsync.exception.EADLSyncException;
 import com.eadlsync.gui.ConflictManagerView;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.diff.DiffManager;
@@ -139,7 +139,7 @@ public class CodeRepo implements IRepo {
         writeEadsToDisk();
     }
 
-    public RepoStatus getStatus() {
+    public RepoStatus status() {
         return new RepoStatus(diffManager);
     }
 
