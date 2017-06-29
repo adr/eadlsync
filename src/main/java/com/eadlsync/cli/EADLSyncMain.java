@@ -137,6 +137,7 @@ public class EADLSyncMain extends Application {
                 }
                 CLI.println("done");
             } catch (IOException ioException) {
+                LOG.error("Error", ioException);
                 println("An error occurred when accessing some file on the local file system.");
                 printStacktraceInfo();
             } catch (UnirestException uniRestException) {

@@ -3,6 +3,8 @@ package com.eadlsync.model.serepo.data;
 import ch.hsr.isf.serepo.data.restinterface.seitem.CreateSeItem;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.Arrays;
+
 /**
  * Created by Tobias on 30.05.2017.
  */
@@ -38,4 +40,10 @@ public class SeItemWithContent extends CreateSeItem {
         this.mimeType = mimeType;
     }
 
+    @Override
+    public String toString() {
+        return "SeItemWithContent{" +
+                "content=" + content.toString() +
+                '}';
+    }
 }

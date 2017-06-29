@@ -1,6 +1,7 @@
 package com.eadlsync.cli.command;
 
 import com.beust.jcommander.Parameters;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,14 +22,7 @@ public class DeInitCommand extends EADLSyncCommand {
 
     public void deInit() throws IOException {
         if (Files.exists(EADL_ROOT)) {
-            Files.walk(EADL_ROOT).forEach(path -> {
-                try {
-                    Files.delete(path);
-                } catch (IOException e) {
-                    LOG.error("Unable to delete file or directory", e);
-                }
-            });
-            Files.delete(EADL_ROOT);
+            FileUtils.deleteDirectory(EADL_ROOT.toFile());
         } else {
             LOG.debug("EadlSync directory doesn't exist - make sure to call this in the project root");
         }

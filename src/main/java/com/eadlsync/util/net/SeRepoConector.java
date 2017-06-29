@@ -7,10 +7,7 @@ import ch.hsr.isf.serepo.data.restinterface.commit.CreateCommit;
 import ch.hsr.isf.serepo.data.restinterface.common.User;
 import ch.hsr.isf.serepo.data.restinterface.metadata.MetadataContainer;
 import ch.hsr.isf.serepo.data.restinterface.metadata.MetadataEntry;
-import ch.hsr.isf.serepo.data.restinterface.seitem.RelationContainer;
-import ch.hsr.isf.serepo.data.restinterface.seitem.RelationEntry;
-import ch.hsr.isf.serepo.data.restinterface.seitem.SeItem;
-import ch.hsr.isf.serepo.data.restinterface.seitem.SeItemContainer;
+import ch.hsr.isf.serepo.data.restinterface.seitem.*;
 import com.eadlsync.model.serepo.data.SeItemWithContent;
 import com.eadlsync.util.ystatement.YStatementConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -33,6 +30,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.eadlsync.util.net.MetadataFactory.OptionState.CHOSEN;
 import static com.eadlsync.util.net.MetadataFactory.ProblemState.SOLVED;
@@ -68,7 +66,6 @@ public class SeRepoConector {
     }
 
     private static HttpResponse loggedUnirestCall(String url, Class clazz) throws UnirestException {
-        LOG.debug("Accessing the se-repo on {} for {}.", url, clazz.getClass().getName());
         try {
             return Unirest.get(url).asObject(clazz);
         } catch (UnirestException e) {
@@ -196,6 +193,8 @@ public class SeRepoConector {
             commitId = "";
         }
         response.close();
+        LOG.debug("Committed {} items - {}", items.size(), commitId);
+        items.stream().map(se -> "Item " + se.getName() + " in " + se.getFolder() + " related to " + se.getRelations().stream().map(Relation::getTarget).collect(Collectors.joining(", "))).forEach(LOG::debug);
         return commitId;
     }
 
@@ -220,7 +219,6 @@ public class SeRepoConector {
 
         return multipart;
     }
-
 
 
 }

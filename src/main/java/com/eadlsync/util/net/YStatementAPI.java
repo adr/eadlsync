@@ -123,6 +123,8 @@ public class YStatementAPI {
 
         }
 
+        LOG.debug("Fetched YStatements from {}", commit);
+        yStatementJustifications.stream().map(YStatementJustificationWrapper::toString).forEach(LOG::debug);
         return yStatementJustifications;
     }
 
@@ -179,6 +181,9 @@ public class YStatementAPI {
 
     public String commitYStatement(User user, String message, List<YStatementJustificationWrapper> yStatementJustificationWrappers)
             throws UnsupportedEncodingException {
+        LOG.debug("Prepare YStatements for commit");
+        yStatementJustificationWrappers.stream().map(YStatementJustificationWrapper::toString).forEach(LOG::debug);
+
         Set<SeItemWithContent> allSeItems = new HashSet<>();
 
         for (YStatementJustificationWrapper wrapper : yStatementJustificationWrappers) {
@@ -211,7 +216,7 @@ public class YStatementAPI {
             // add the problem to the set
             allSeItems.add(problem);
         }
-        
+
         return commit(message, new ArrayList<>(allSeItems), user, CommitMode.ADD_UPDATE_DELETE, seRepoUrlObject.SEREPO_BASE_URL, seRepoUrlObject.SEREPO_PROJECT);
     }
 
