@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
 import com.eadlsync.model.decision.DecisionSourceMapping;
-import com.eadlsync.util.OS;
 import com.eadlsync.util.YStatementConstants;
 import com.eadlsync.util.YStatementJustificationComparator;
 import com.eadlsync.util.io.JavaDecisionParser;
@@ -98,7 +97,7 @@ public class JavaDecisionParserTest {
 
     private String readFromFile(Path path) throws IOException {
         BufferedReader reader = Files.newBufferedReader(path, Charset.defaultCharset());
-        String content = reader.lines().collect(Collectors.joining(OS.LS));
+        String content = reader.lines().collect(Collectors.joining(System.getProperty("line.separator")));
         reader.close();
         return content;
     }
