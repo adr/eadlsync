@@ -6,18 +6,21 @@ import com.beust.jcommander.Parameter;
 import org.slf4j.LoggerFactory;
 
 /**
- * Cli options that are know to the program
+ * This class contains cli options that are know to the program.
+ *
+ * @option help
+ * @option debug
+ * @option stacktrace
  */
-
 public class MainOption {
 
-    @Parameter(names = "--help", help = true)
+    @Parameter(names = "--help", description = "Show the usage of this program", help = true)
     private boolean help = false;
 
     @Parameter(names = "--debug", description = "Debug mode")
     private boolean debug = false;
 
-    @Parameter(names = "--stacktrace", description = "print stacktrace")
+    @Parameter(names = "--stacktrace", description = "Print stacktrace")
     private boolean stacktrace = false;
 
     private static void setLoggingLevel(Level level) {
@@ -33,4 +36,7 @@ public class MainOption {
         setLoggingLevel(stacktrace ? Level.ERROR : Level.INFO);
     }
 
+    public boolean isHelp() {
+        return help;
+    }
 }

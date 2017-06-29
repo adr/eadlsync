@@ -1,21 +1,30 @@
 package com.eadlsync.cli.command;
 
-import java.io.IOException;
-
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
 
 import static com.eadlsync.cli.command.ConfigCommand.DESCRIPTION;
 
 /**
- * Created by tobias on 01/06/2017.
+ * Config command used to update the eadlsync configuration file.
+ *
+ * @option help
+ * @option name with which the program commits
+ * @option email with which the program commits
+ * @option root specifies the project root on the local file system
+ * @option baseUrl of the se-repo, has to end with /serepo
+ * @option project name of the se-repo project
  */
 @Parameters(separators = "=", commandDescription = DESCRIPTION)
 public class ConfigCommand extends EADLSyncCommand {
 
     public static final String NAME = "config";
-    public static final String DESCRIPTION = "use 'eadlsync config --[user|core]=<value>' to update the decisions in the se-repo";
+    public static final String DESCRIPTION = "use 'eadlsync config --[user|core].<key>=<value>' to update the decisions in the se-repo";
+
+    @Parameter(names = {"-h", "--help"}, description = "Show the usage of this command", help = true)
+    private boolean help = false;
 
     @Parameter(names = "--user.name")
     private String name;
@@ -23,7 +32,7 @@ public class ConfigCommand extends EADLSyncCommand {
     @Parameter(names = "--user.email")
     private String email;
 
-    @Parameter(names = "--core.root", description = "Set the root directory of the code base",  hidden = true)
+    @Parameter(names = "--core.root", description = "Set the root directory of the code base", hidden = true)
     private String root;
 
     @Parameter(names = "--core.url", description = "Set the base url for the se-repo, the url shall be in a format of '<host>/serepo'")
@@ -33,24 +42,23 @@ public class ConfigCommand extends EADLSyncCommand {
     private String project;
 
     public void configure() throws IOException {
-        readConfig();
-        if (notBlank(name)) {
-            config.getUser().setName(this.name);
-        } else if (notBlank(email)) {
-            config.getUser().setName(this.email);
-        } else if (notBlank(root)) {
-            config.getCore().setProjectRoot(this.root);
-        } else if (notBlank(baseUrl)) {
-            config.getCore().setBaseUrl(this.baseUrl);
-        } else if (notBlank(project)) {
-            config.getCore().setProjectName(this.project);
+        if (readConfig()) {
+            if (notBlank(name)) {
+                config.getUserConfig().setName(this.name);
+            } else if (notBlank(email)) {
+                config.getUserConfig().setName(this.email);
+            } else if (notBlank(root)) {
+                config.getCore().setProjectRoot(this.root);
+            } else if (notBlank(baseUrl)) {
+                config.getCore().setBaseUrl(this.baseUrl);
+            } else if (notBlank(project)) {
+                config.getCore().setProjectName(this.project);
+            }
+            updateConfig();
         }
-        createConfigFile();
     }
 
-    private void createConfigFile() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(EADL_CONFIG.toFile(), this.config);
+    public boolean isHelp() {
+        return help;
     }
-
 }

@@ -1,9 +1,5 @@
 package com.eadlsync.cli.command;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.eadlsync.model.config.Config;
@@ -14,23 +10,34 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import static com.eadlsync.cli.command.InitCommand.DESCRIPTION;
-import static com.eadlsync.util.YStatementConstants.SEREPO_URL_COMMITS;
+import static com.eadlsync.util.ystatement.YStatementConstants.SEREPO_URL_COMMITS;
 
 /**
- * Created by tobias on 01/06/2017.
+ * Init command used to initialize an eadl-sync repository.
+ *
+ * @option help
+ * @option baseUrl for the se-repo
+ * @option name of the se-repo project
  */
-@Parameters(separators = "=", commandDescription = DESCRIPTION)
+@Parameters(commandDescription = DESCRIPTION)
 public class InitCommand extends EADLSyncCommand {
 
     public static final String NAME = "init";
-    public static final String DESCRIPTION = "use 'eadlsync init -u=<base-url> -p=<project>' to initialize eadlsync in this directory";
+    public static final String DESCRIPTION = "use 'eadlsync init -u <base-url> -p <project>' to initialize eadlsync in this directory";
     private static final Logger LOG = LoggerFactory.getLogger(InitCommand.class);
 
-    @Parameter(names = "-u", required = true)
+    @Parameter(names = {"-h", "--help"}, description = "Show the usage of this command", help = true)
+    private boolean help = false;
+
+    @Parameter(names = {"-u", "--url"}, required = true)
     private String baseUrl;
 
-    @Parameter(names = "-p", required = true)
+    @Parameter(names = {"-p", "--project"}, required = true)
     private String name;
 
     public void initialize() throws IOException, UnirestException {
@@ -66,4 +73,7 @@ public class InitCommand extends EADLSyncCommand {
         return config;
     }
 
+    public boolean isHelp() {
+        return help;
+    }
 }

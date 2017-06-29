@@ -2,29 +2,42 @@ package com.eadlsync.cli.command;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.eadlsync.EADLSyncExecption;
-import com.mashape.unirest.http.exceptions.UnirestException;
-
-import java.io.IOException;
+import com.eadlsync.exception.EADLSyncException;
 
 import static com.eadlsync.cli.command.ResetCommand.DESCRIPTION;
 
 /**
- * Created by tobias on 01/06/2017.
+ * Reset command used to reset all decisions of the local code repository to the decisions of the configured se-repo project.
+ *
+ * @option help
+ * @option commitId of the commit to reset to
  */
-@Parameters(separators = "=", commandDescription = DESCRIPTION)
+@Parameters(commandDescription = DESCRIPTION)
 public class ResetCommand extends EADLSyncCommand {
 
     public static final String NAME = "reset";
     public static final String DESCRIPTION = "use 'eadlsync reset <commit-id>' to reset the local decisions to the decisions of the selected commit from the se-repo";
 
+    @Parameter(names = {"-h", "--help"}, description = "Show the usage of this command", help = true)
+    private boolean help = false;
+
     @Parameter(required = true)
     private String commitId;
 
-    public void resetLocalChanges() throws IOException, UnirestException, EADLSyncExecption {
-        readConfig();
-        readDecisions();
-        repo.reset(commitId);
+    public void resetLocalChanges() throws Exception {
+        if (readConfig()) {
+
+            readDecisions();
+
+            try {
+                repo.reset(commitId);
+            } catch (EADLSyncException e) {
+                printEadlSyncException(e);
+            }
+        }
     }
 
+    public boolean isHelp() {
+        return help;
+    }
 }

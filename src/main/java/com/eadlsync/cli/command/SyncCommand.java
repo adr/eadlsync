@@ -1,30 +1,31 @@
 package com.eadlsync.cli.command;
 
-import java.io.IOException;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+import com.eadlsync.exception.EADLSyncException;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import com.beust.jcommander.Parameters;
-import com.eadlsync.EADLSyncException;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.eadlsync.cli.command.SyncCommand.DESCRIPTION;
 
 /**
- * Created by tobias on 01/06/2017.
+ * Sync command used to sync the decisions of the local code repository with the decisions of the configured se-repo project.
+ * This essentially performs a pull and afterwards a commit operation.
+ *
+ * @option help
  */
-@Parameters(separators = "=", commandDescription = DESCRIPTION)
+@Parameters(commandDescription = DESCRIPTION)
 public class SyncCommand extends EADLSyncCommand {
 
     public static final String NAME = "sync";
     public static final String DESCRIPTION = "use 'eadlsync sync' to update the local decisions and afterwards update the decisions of the se-repo";
-    private static final Logger LOG = LoggerFactory.getLogger(SyncCommand.class);
+    private static final String SYNC_MESSAGE = "Automatic sync message" + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
 
-    private final String SYNC_MESSAGE = "Automatic sync " + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
+    @Parameter(names = {"-h", "--help"}, description = "Show the usage of this command", help = true)
+    private boolean help = false;
 
-    public void sync() throws IOException, UnirestException {
+    public void sync() throws Exception {
         if (readConfig()) {
             readDecisions();
 
@@ -41,4 +42,7 @@ public class SyncCommand extends EADLSyncCommand {
         }
     }
 
+    public boolean isHelp() {
+        return help;
+    }
 }

@@ -1,7 +1,9 @@
 package com.eadlsync.model.config;
 
+import ch.hsr.isf.serepo.data.restinterface.common.User;
+
 /**
- * Created by tobias on 02/06/2017.
+ * Config model
  */
 public class Config {
 
@@ -17,8 +19,12 @@ public class Config {
         this.core = core;
     }
 
-    public ConfigUser getUser() {
+    public ConfigUser getUserConfig() {
         return user;
+    }
+
+    public User getUser() {
+        return new User(user.getName(), user.getEmail());
     }
 
     public void setUser(ConfigUser user) {

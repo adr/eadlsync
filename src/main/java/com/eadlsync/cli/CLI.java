@@ -3,13 +3,14 @@ package com.eadlsync.cli;
 import com.eadlsync.cli.command.CommitCommand;
 import com.eadlsync.cli.command.ConfigCommand;
 
+
 /**
- * Created by tobias on 27/06/2017.
+ * Helper class display information on the console.
  */
 public class CLI {
 
     public static void println(String message) {
-        println(message);
+        System.out.println(message);
     }
 
     public static void println(Class command) {

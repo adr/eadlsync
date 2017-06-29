@@ -1,6 +1,7 @@
 package com.eadlsync.cli;
 
 import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
 import com.eadlsync.cli.command.*;
 import com.eadlsync.cli.option.MainOption;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -57,50 +58,106 @@ public class EADLSyncMain extends Application {
                 addCommand(SyncCommand.NAME, SYNC_COMMAND).
                 build();
 
-        commander.parse(args);
-
-        option.evaluateDebugMode();
-        option.evaluateStacktraceMode();
-
         try {
-            switch (commander.getParsedCommand()) {
-                case InitCommand.NAME:
-                    INIT_COMMAND.initialize();
-                    break;
-                case StatusCommand.NAME:
-                    STATUS_COMMAND.printStatus();
-                    break;
-                case PullCommand.NAME:
-                    PULL_COMMAND.pull();
-                    break;
-                case CommitCommand.NAME:
-                    COMMIT_COMMAND.commit();
-                    break;
-                case MergeCommand.NAME:
-                    MERGE_COMMAND.merge();
-                    break;
-                case ResetCommand.NAME:
-                    RESET_COMMAND.resetLocalChanges();
-                    break;
-                case SyncCommand.NAME:
-                    SYNC_COMMAND.sync();
-                    break;
-                case DeInitCommand.NAME:
-                    DE_INIT_COMMAND.deInit();
-                    break;
-                default:
-                    LOG.debug("Command not found {}", commander.getParsedCommand());
+            commander.parse(args);
+
+            if (option.isHelp()) commander.usage();
+
+            option.evaluateDebugMode();
+            option.evaluateStacktraceMode();
+
+            try {
+                String commandName = commander.getParsedCommand();
+                switch (commandName) {
+                    case InitCommand.NAME:
+                        if (INIT_COMMAND.isHelp()) {
+                            commander.usage(commandName);
+                        } else {
+                            INIT_COMMAND.initialize();
+                        }
+                        break;
+                    case ConfigCommand.NAME:
+                        if (CONFIG_COMMAND.isHelp()) {
+                            commander.usage(commandName);
+                        } else {
+                            CONFIG_COMMAND.configure();
+                        }
+                        break;
+                    case StatusCommand.NAME:
+                        if (STATUS_COMMAND.isHelp()) {
+                            commander.usage(commandName);
+                        } else {
+                            STATUS_COMMAND.printStatus();
+                        }
+                        break;
+                    case PullCommand.NAME:
+                        if (PULL_COMMAND.isHelp()) {
+                            commander.usage(commandName);
+                        } else {
+                            PULL_COMMAND.pull();
+                        }
+                        break;
+                    case CommitCommand.NAME:
+                        if (COMMIT_COMMAND.isHelp()) {
+                            commander.usage(commandName);
+                        } else {
+                            COMMIT_COMMAND.commit();
+                        }
+                        break;
+                    case MergeCommand.NAME:
+                        if (MERGE_COMMAND.isHelp()) {
+                            commander.usage(commandName);
+                        } else {
+                            MERGE_COMMAND.merge();
+                        }
+                        break;
+                    case ResetCommand.NAME:
+                        if (RESET_COMMAND.isHelp()) {
+                            commander.usage(commandName);
+                        } else {
+                            RESET_COMMAND.resetLocalChanges();
+                        }
+                        break;
+                    case SyncCommand.NAME:
+                        if (SYNC_COMMAND.isHelp()) {
+                            commander.usage(commandName);
+                        } else {
+                            SYNC_COMMAND.sync();
+                        }
+                        break;
+                    case DeInitCommand.NAME:
+                        if (DE_INIT_COMMAND.isHelp()) {
+                            commander.usage(commandName);
+                        } else {
+                            DE_INIT_COMMAND.deInit();
+                        }
+                        break;
+                    default:
+                        LOG.debug("Command not found {}", commander.getParsedCommand());
+                }
+                CLI.println("done");
+            } catch (IOException ioException) {
+                println("An error occurred when accessing some file on the local file system.");
+                printStacktraceInfo();
+            } catch (UnirestException uniRestException) {
+                println("An error occurred when accessing the se-repo, please check your connection to the se-repo.");
+                printStacktraceInfo();
+            } catch (Exception e) {
+                LOG.error("Error", e);
+                println("An unexpected error occurred while the program was running.");
+                printStacktraceInfo();
             }
-        } catch (IOException ioException) {
-            println("An error occurred when accessing some file on the local file system.");
-            printStacktraceInfo();
-        } catch (UnirestException uniRestException) {
-            println("An error occurred when accessing the se-repo, please check your connection to the se-repo.");
-            printStacktraceInfo();
-        } catch (Exception e) {
-            LOG.error("Error", e);
-            println("An unexpected error occurred while the program was running.");
-            printStacktraceInfo();
+
+        } catch (ParameterException e) {
+            println(e.getMessage());
+            String commandName = commander.getParsedCommand();
+            if (commandName == null) {
+                commander.usage();
+            } else {
+                commander.usage(commandName);
+            }
+
         }
+
     }
 }
