@@ -1,14 +1,5 @@
 package com.eadlsync.model.repo;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.file.FileVisitOption;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import ch.hsr.isf.serepo.data.restinterface.common.User;
 import com.eadlsync.exception.EADLSyncException;
 import com.eadlsync.gui.ConflictManagerView;
@@ -20,6 +11,15 @@ import com.eadlsync.util.net.YStatementAPI;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by tobias on 07/03/2017.
@@ -102,7 +102,7 @@ public class CodeRepo implements IRepo {
     }
 
     @Override
-    public void pull() throws EADLSyncException, IOException {
+    public String pull() throws EADLSyncException, IOException, UnirestException {
         if (diffManager.hasRemoteDiff()) {
             if (diffManager.hasLocalDiff()) {
                 if (!diffManager.canAutoMerge()) {
@@ -122,21 +122,24 @@ public class CodeRepo implements IRepo {
         } else {
             throw EADLSyncException.ofState(EADLSyncException.EADLSyncOperationState.UP_TO_DATE);
         }
+        return connector.getLatestCommitId();
     }
 
     @Override
-    public void merge(String commitId) throws IOException, UnirestException, EADLSyncException {
-        connector.changeToCommit(commitId);
+    public String merge(String mergeCommitId) throws IOException, UnirestException, EADLSyncException {
+        connector.changeToCommit(mergeCommitId);
         initDecisions();
         pull();
+        return mergeCommitId;
     }
 
     @Override
-    public void reset(String commitId) throws EADLSyncException, IOException, UnirestException {
-        connector.changeToCommit(commitId);
+    public String reset(String resetCommitId) throws EADLSyncException, IOException, UnirestException {
+        connector.changeToCommit(resetCommitId);
         initDecisions();
         diffManager.applyRemoteDiff();
         writeEadsToDisk();
+        return resetCommitId;
     }
 
     public RepoStatus status() {

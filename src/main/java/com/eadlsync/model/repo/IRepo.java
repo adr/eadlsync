@@ -25,24 +25,28 @@ public interface IRepo {
     /**
      * Pulls the changes of the latest commit of the se-repo and applies it to the local decisions.
      *
+     * @return the latest commit id
      * @throws Exception
      */
-    void pull() throws Exception;
+    String pull() throws Exception;
 
     /**
      * Merges the local decisions with the decisions of the se-repo with the given commit id.
      *
+     * @param commitId
+     * @return the merge id
      * @throws Exception
      */
-    void merge(String commitId) throws Exception;
+    String merge(String commitId) throws Exception;
 
     /**
      * Resets the local decisions to the decisions of the se-repo with the given commit id.
      *
      * @param commitId
+     * @return the reset id
      * @throws Exception
      */
-    void reset(String commitId) throws Exception;
+    String reset(String commitId) throws Exception;
 
     /**
      * Provides all necessary information about the status of the repository.

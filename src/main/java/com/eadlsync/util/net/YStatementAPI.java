@@ -6,12 +6,12 @@ import ch.hsr.isf.serepo.data.restinterface.common.User;
 import ch.hsr.isf.serepo.data.restinterface.metadata.MetadataEntry;
 import ch.hsr.isf.serepo.data.restinterface.seitem.RelationEntry;
 import ch.hsr.isf.serepo.data.restinterface.seitem.SeItem;
+import com.eadlsync.model.decision.DecisionSourceMapping;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
-import com.eadlsync.model.decision.DecisionSourceMapping;
 import com.eadlsync.model.serepo.data.SeItemWithContent;
-import com.eadlsync.util.ystatement.YStatementConstants;
 import com.eadlsync.util.net.MetadataFactory.OptionState;
+import com.eadlsync.util.ystatement.YStatementConstants;
 import com.google.common.net.UrlEscapers;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.jsoup.Jsoup;
@@ -26,8 +26,6 @@ import java.net.URLDecoder;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.eadlsync.util.ystatement.SeItemContentParser.parseForContent;
-import static com.eadlsync.util.ystatement.YStatementConstants.DELIMITER;
 import static com.eadlsync.util.net.MetadataFactory.GeneralMetadata.STEREOTYPE;
 import static com.eadlsync.util.net.MetadataFactory.GeneralMetadata.TAGGED_VALUES;
 import static com.eadlsync.util.net.MetadataFactory.OptionState.CHOSEN;
@@ -37,6 +35,8 @@ import static com.eadlsync.util.net.MetadataFactory.TaggedValues.OPTION_STATE;
 import static com.eadlsync.util.net.MetadataFactory.TaggedValues.PROBLEM_STATE;
 import static com.eadlsync.util.net.RelationFactory.ADMentorRelationType.ADDRESSED_BY;
 import static com.eadlsync.util.net.SeRepoConector.*;
+import static com.eadlsync.util.ystatement.SeItemContentParser.parseForContent;
+import static com.eadlsync.util.ystatement.YStatementConstants.DELIMITER;
 
 /**
  * A helper class that converts se-items to ystatements and the other way round
@@ -127,7 +127,11 @@ public class YStatementAPI {
     }
 
     public List<YStatementJustificationWrapper> getLatestYStatementJustifications() throws UnirestException {
-        return getYStatementJustifications(getLatestCommit(SeRepoConector.getLatestCommit(seRepoUrlObject.SEREPO_URL_COMMITS)));
+        return getYStatementJustifications(getLatestCommit(getLatestCommitId()));
+    }
+
+    public String getLatestCommitId() throws UnirestException {
+        return SeRepoConector.getLatestCommit(seRepoUrlObject.SEREPO_URL_COMMITS);
     }
 
     public List<YStatementJustificationWrapper> getYStatementJustifications() throws UnirestException {
