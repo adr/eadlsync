@@ -1,9 +1,30 @@
 apply plugin: 'java'
 apply plugin: 'jacoco'
+apply plugin: 'javafx-gradle-plugin'
 
 version = '1.0-SNAPSHOT'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+buildscript {
+    dependencies {
+        classpath 'de.dynamicfiles.projects.gradle.plugins:javafx-gradle-plugin:8.8.2'
+    }
+    repositories {
+        mavenCentral()
+    }
+}
+
+jfx {
+    mainClass = 'com.eadlsync.cli.EADLSyncMain'
+    vendor = 'Tobias Boceck'
+    additionalAppResources = 'src/main/resources'
+    bundleArguments = [
+            runtime: null,
+    ]
+
+    bundler = "All"
+}
 
 repositories {
     mavenCentral()
