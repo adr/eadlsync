@@ -6,6 +6,7 @@ import com.eadlsync.cli.command.*;
 import com.eadlsync.cli.option.MainOption;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,76 +69,77 @@ public class EADLSyncMain extends Application {
 
             try {
                 String commandName = commander.getParsedCommand();
-                switch (commandName) {
-                    case InitCommand.NAME:
-                        if (INIT_COMMAND.isHelp()) {
-                            commander.usage(commandName);
-                        } else {
-                            INIT_COMMAND.initialize();
-                        }
-                        break;
-                    case ConfigCommand.NAME:
-                        if (CONFIG_COMMAND.isHelp()) {
-                            commander.usage(commandName);
-                        } else {
-                            CONFIG_COMMAND.configure();
-                        }
-                        break;
-                    case StatusCommand.NAME:
-                        if (STATUS_COMMAND.isHelp()) {
-                            commander.usage(commandName);
-                        } else {
-                            STATUS_COMMAND.printStatus();
-                        }
-                        break;
-                    case PullCommand.NAME:
-                        if (PULL_COMMAND.isHelp()) {
-                            commander.usage(commandName);
-                        } else {
-                            PULL_COMMAND.pull();
-                        }
-                        break;
-                    case CommitCommand.NAME:
-                        if (COMMIT_COMMAND.isHelp()) {
-                            commander.usage(commandName);
-                        } else {
-                            COMMIT_COMMAND.commit();
-                        }
-                        break;
-                    case MergeCommand.NAME:
-                        if (MERGE_COMMAND.isHelp()) {
-                            commander.usage(commandName);
-                        } else {
-                            MERGE_COMMAND.merge();
-                        }
-                        break;
-                    case ResetCommand.NAME:
-                        if (RESET_COMMAND.isHelp()) {
-                            commander.usage(commandName);
-                        } else {
-                            RESET_COMMAND.resetLocalChanges();
-                        }
-                        break;
-                    case SyncCommand.NAME:
-                        if (SYNC_COMMAND.isHelp()) {
-                            commander.usage(commandName);
-                        } else {
-                            SYNC_COMMAND.sync();
-                        }
-                        break;
-                    case DeInitCommand.NAME:
-                        if (DE_INIT_COMMAND.isHelp()) {
-                            commander.usage(commandName);
-                        } else {
-                            DE_INIT_COMMAND.deInit();
-                        }
-                        break;
-                    default:
-                        LOG.debug("Command not found {}", commander.getParsedCommand());
+                if (commandName != null) {
+                    switch (commandName) {
+                        case InitCommand.NAME:
+                            if (INIT_COMMAND.isHelp()) {
+                                commander.usage(commandName);
+                            } else {
+                                INIT_COMMAND.initialize();
+                            }
+                            break;
+                        case ConfigCommand.NAME:
+                            if (CONFIG_COMMAND.isHelp()) {
+                                commander.usage(commandName);
+                            } else {
+                                CONFIG_COMMAND.configure();
+                            }
+                            break;
+                        case StatusCommand.NAME:
+                            if (STATUS_COMMAND.isHelp()) {
+                                commander.usage(commandName);
+                            } else {
+                                STATUS_COMMAND.printStatus();
+                            }
+                            break;
+                        case PullCommand.NAME:
+                            if (PULL_COMMAND.isHelp()) {
+                                commander.usage(commandName);
+                            } else {
+                                PULL_COMMAND.pull();
+                            }
+                            break;
+                        case CommitCommand.NAME:
+                            if (COMMIT_COMMAND.isHelp()) {
+                                commander.usage(commandName);
+                            } else {
+                                COMMIT_COMMAND.commit();
+                            }
+                            break;
+                        case MergeCommand.NAME:
+                            if (MERGE_COMMAND.isHelp()) {
+                                commander.usage(commandName);
+                            } else {
+                                MERGE_COMMAND.merge();
+                            }
+                            break;
+                        case ResetCommand.NAME:
+                            if (RESET_COMMAND.isHelp()) {
+                                commander.usage(commandName);
+                            } else {
+                                RESET_COMMAND.resetLocalChanges();
+                            }
+                            break;
+                        case SyncCommand.NAME:
+                            if (SYNC_COMMAND.isHelp()) {
+                                commander.usage(commandName);
+                            } else {
+                                SYNC_COMMAND.sync();
+                            }
+                            break;
+                        case DeInitCommand.NAME:
+                            if (DE_INIT_COMMAND.isHelp()) {
+                                commander.usage(commandName);
+                            } else {
+                                DE_INIT_COMMAND.deInit();
+                            }
+                            break;
+                        default:
+                            LOG.debug("Command not found {}", commander.getParsedCommand());
+                    }
                 }
                 CLI.println("done");
             } catch (IOException ioException) {
-                LOG.error("Error", ioException);
                 println("An error occurred when accessing some file on the local file system.");
                 printStacktraceInfo();
             } catch (UnirestException uniRestException) {
@@ -160,5 +162,6 @@ public class EADLSyncMain extends Application {
 
         }
 
+        Platform.exit();
     }
 }
