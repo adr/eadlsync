@@ -2,7 +2,7 @@ package com.eadlsync.suite;
 
 import com.eadlsync.cli.command.CommandTest;
 import com.eadlsync.cli.command.InitCommandTest;
-import com.eadlsync.net.serepo.SeRepoServerTest;
+import com.eadlsync.net.serepo.SeRepoTestServer;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -12,7 +12,7 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        SeRepoServerTest.class,
+        SeRepoTestServer.class,
         CommandTest.class,
         InitCommandTest.class
 })
