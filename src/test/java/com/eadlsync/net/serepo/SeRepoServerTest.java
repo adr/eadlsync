@@ -15,7 +15,6 @@ import ch.hsr.isf.serepo.data.restinterface.repository.CreateRepository;
 import ch.hsr.isf.serepo.data.restinterface.repository.Repository;
 import ch.hsr.isf.serepo.data.restinterface.repository.RepositoryContainer;
 import ch.hsr.isf.serepo.server.SeRepoServer;
-import com.eadlsync.data.SeRepoTestData;
 import com.eadlsync.model.serepo.data.SeItemWithContent;
 import com.eadlsync.util.net.SeRepoConector;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,18 +31,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static ch.hsr.isf.serepo.data.restinterface.commit.CommitMode.ADD_UPDATE_DELETE;
+import static com.eadlsync.data.TestDataProvider.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Tobias on 03.06.2017.
  */
-public class SeRepoServerTest extends SeRepoTestData {
+public class SeRepoServerTest {
 
     private static final int PORT = 8080;
     protected static final String LOCALHOST_SEREPO = String.format("http://localhost:%s/serepo", PORT);
     private static final String LOCALHOST_REPOS = String.format("%s/repos", LOCALHOST_SEREPO);
-    private static final String LOCALHOST_COMMITS = String.format("%s/%s/commits", LOCALHOST_REPOS, TEST_REPO);
     private static final User TEST_USER = new User(SeRepoServerTest.class.getName(), String.format("%s@test.com", SeRepoServerTest.class.getName()));
     private static final Logger LOG = LoggerFactory.getLogger(SeRepoServerTest.class);
     private static SeRepoServer server;
@@ -84,7 +83,7 @@ public class SeRepoServerTest extends SeRepoTestData {
     @Before
     public void methodSetUp() throws UnsupportedEncodingException, UnirestException {
         createRepository();
-        lastCommit = createCommit(createTestData());
+        createCommit(createTestSeItemsWithContent());
     }
 
     @After
