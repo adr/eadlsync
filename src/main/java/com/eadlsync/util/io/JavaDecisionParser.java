@@ -92,4 +92,12 @@ public class JavaDecisionParser {
         if (!yStatement.getAccepting().isEmpty())
             newAnnotation.setStringValue(YStatementConstants.ACCEPTING, yStatement.getAccepting());
     }
+
+    public static void addYStatementToFile(YStatementJustificationWrapper yStatement) throws IOException {
+        Path path = Paths.get(DecisionSourceMapping.getLocalSource(yStatement.getId()));
+        LOG.debug("Add YStatementJustification {} to {}", yStatement.getId(), path);
+        final JavaClassSource javaClass = (JavaClassSource) Roaster.parse(Files.newInputStream(path));
+        addYStatementToClassSource(yStatement, javaClass);
+        Files.write(path, javaClass.toString().getBytes(Charset.defaultCharset()));
+    }
 }
