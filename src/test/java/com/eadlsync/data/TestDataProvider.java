@@ -68,6 +68,15 @@ public class TestDataProvider {
     public static final String ACCEPTING = "accepting";
 
 
+    public static List<SeItemWithContent> getBasicDecisionsAsSeItemsWithContent() throws UnsupportedEncodingException, UnirestException {
+        List<SeItemWithContent> basics = new ArrayList<>();
+        basics.addAll(createTestSeItemsWithContent());
+        basics.addAll(createSameTestSeItemsWithContent());
+        basics.addAll(createOtherTestSeItemsWithContent());
+        basics.addAll(createChangedTestSeItemsWithContent());
+        return basics;
+    }
+
     public static List<SeItemWithContent> createTestSeItemsWithContent() throws UnsupportedEncodingException, UnirestException {
         return getSeItemsWithContent(TEST_DATA_FOLDER + TEST_PROBLEM_NAME, RelationFactory.addressedBy(TEST_OPTION_NAME), RelationFactory.addressedBy(TEST_SOME_OPTION_NAME), RelationFactory.addressedBy(TEST_DIFF_OPTION_NAME), TEST_DATA_FOLDER + TEST_OPTION_NAME, TEST_DATA_FOLDER + TEST_SOME_OPTION_NAME, TEST_DATA_FOLDER + TEST_DIFF_OPTION_NAME);
     }
@@ -101,6 +110,15 @@ public class TestDataProvider {
         SeItemWithContent seSomeOption = SeRepoConector.createSeOptionItem(neglectedId1, "some achieving", "some accepting", MetadataFactory.OptionState.NEGLECTED);
         SeItemWithContent seOtherOption = SeRepoConector.createSeOptionItem(neglectedId2, "other achieving", "other accepting", MetadataFactory.OptionState.NEGLECTED);
         return new ArrayList<>(Arrays.asList(seProblemItem, seChosenOption, seSomeOption, seOtherOption));
+    }
+
+    public static List<YStatementJustificationWrapper> getBasicDecisionsAsEadl() {
+        List<YStatementJustificationWrapper> basics = new ArrayList<>();
+        basics.add(createTestYStatementJustificationWrapper());
+        basics.add(createTestSameYStatementJustificationWrapper());
+        basics.add(createTestOtherYStatementJustificationWrapper());
+        basics.add(createTestChangedYStatementJustificationWrapper());
+        return basics;
     }
 
     public static YStatementJustificationWrapper createTestYStatementJustificationWrapper() {
