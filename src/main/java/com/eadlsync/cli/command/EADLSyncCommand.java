@@ -89,7 +89,7 @@ class EADLSyncCommand {
     }
 
     void readDecisions() throws IOException, UnirestException {
-        repo = new CodeRepo(PROJECT_ROOT, config.getCore().getBaseUrl(), config.getCore()
+        repo = new CodeRepo(PROJECT_ROOT, config.getConfigCore().getBaseUrl(), config.getConfigCore()
                 .getProjectName(), readCommitId());
 
     }

@@ -28,7 +28,7 @@ public class ResetCommand extends EADLSyncCommand {
 
             try {
                 CLI.println(String.format("Reset to %s from se-repo", commitId));
-                CLI.println(String.format("\tproject '%s' at %s", config.getCore().getProjectName(), config.getCore().getBaseUrl()));
+                CLI.println(String.format("\tproject '%s' at %s", config.getConfigCore().getProjectName(), config.getConfigCore().getBaseUrl()));
                 repo.reset(commitId);
                 updateCommitId(commitId);
                 CLI.println(String.format("\tsync id -> %s", commitId));

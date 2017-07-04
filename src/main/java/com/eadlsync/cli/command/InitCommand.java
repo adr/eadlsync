@@ -65,8 +65,8 @@ public class InitCommand extends EADLSyncCommand {
         core.setProjectName(name);
 
         Config config = new Config();
-        config.setCore(core);
-        config.setUser(user);
+        config.setConfigCore(core);
+        config.setConfigUser(user);
         return config;
     }
 

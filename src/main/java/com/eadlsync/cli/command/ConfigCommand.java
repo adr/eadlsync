@@ -40,15 +40,15 @@ public class ConfigCommand extends EADLSyncCommand {
     public void configure() throws IOException {
         if (readConfig()) {
             if (notBlank(name)) {
-                config.getUserConfig().setName(this.name);
+                config.getConfigUser().setName(this.name);
             } else if (notBlank(email)) {
-                config.getUserConfig().setName(this.email);
+                config.getConfigUser().setName(this.email);
             } else if (notBlank(root)) {
-                config.getCore().setProjectRoot(this.root);
+                config.getConfigCore().setProjectRoot(this.root);
             } else if (notBlank(baseUrl)) {
-                config.getCore().setBaseUrl(this.baseUrl);
+                config.getConfigCore().setBaseUrl(this.baseUrl);
             } else if (notBlank(project)) {
-                config.getCore().setProjectName(this.project);
+                config.getConfigCore().setProjectName(this.project);
             }
             updateConfig();
         }

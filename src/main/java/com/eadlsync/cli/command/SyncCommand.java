@@ -1,6 +1,6 @@
 package com.eadlsync.cli.command;
 
-import com.beust.jcommander.Parameter;
+import ch.hsr.isf.serepo.data.restinterface.common.User;
 import com.beust.jcommander.Parameters;
 import com.eadlsync.cli.CLI;
 import com.eadlsync.exception.EADLSyncException;
@@ -33,7 +33,7 @@ public class SyncCommand extends EADLSyncCommand {
     void pull() throws Exception {
         try {
             CLI.println("Pull to from se-repo");
-            CLI.println(String.format("\tproject '%s' at %s", config.getCore().getProjectName(), config.getCore().getBaseUrl()));
+            CLI.println(String.format("\tproject '%s' at %s", config.getConfigCore().getProjectName(), config.getConfigCore().getBaseUrl()));
             String pullId = repo.pull();
             updateCommitId(pullId);
             CLI.println(String.format("\tsync id -> %s", pullId));
@@ -45,8 +45,9 @@ public class SyncCommand extends EADLSyncCommand {
     void commit(String message, boolean forceOption) throws Exception {
         try {
             CLI.println("Commit to se-repo");
-            CLI.println(String.format("\tproject '%s' at %s", config.getCore().getProjectName(), config.getCore().getBaseUrl()));
-            String newId = repo.commit(config.getUser(), message, forceOption);
+            CLI.println(String.format("\tproject '%s' at %s", config.getConfigCore().getProjectName(), config.getConfigCore().getBaseUrl()));
+            User user = new User(config.getConfigUser().getName(), config.getConfigUser().getEmail());
+            String newId = repo.commit(user, message, forceOption);
             updateCommitId(newId);
             CLI.println(String.format("\tsync id -> %s", newId));
         } catch (EADLSyncException eadlSyncException) {
