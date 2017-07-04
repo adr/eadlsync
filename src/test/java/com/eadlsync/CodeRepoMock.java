@@ -1,25 +1,25 @@
 package com.eadlsync;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import com.eadlsync.data.YStatementTestData;
 import com.eadlsync.model.decision.DecisionSourceMapping;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.util.io.JavaDecisionParser;
 import org.apache.commons.io.FileUtils;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
 /**
- *
+ * Mocks a code repository and provides easy access methods to get a clean working state
  */
 public class CodeRepoMock extends YStatementTestData {
 
     private final Path ROOT = Paths.get("").resolve("test-project");
-    private final String CLASS_TEMPLATE = "public class %s {\n}";
 
     public void createCodeRepo() throws IOException {
         Files.createDirectory(ROOT);
@@ -29,10 +29,18 @@ public class CodeRepoMock extends YStatementTestData {
         FileUtils.deleteDirectory(ROOT.toFile());
     }
 
-    public void createClassWithEadl(String javaClassName, YStatementJustificationWrapper eadl)
+    public void createClassesForEadls(List<YStatementJustificationWrapper> eadls)
+            throws IOException {
+        for (int i = 0; i < eadls.size(); i++) {
+            YStatementJustificationWrapper yStatementJustificationWrapper = eadls.get(i);
+            createClassWithEadl("DecisionClass" + i, yStatementJustificationWrapper);
+        }
+    }
+
+    private void createClassWithEadl(String javaClassName, YStatementJustificationWrapper eadl)
             throws IOException {
         Path path = ROOT.resolve(String.format("%s.java", javaClassName));
-        writeToFile(String.format(CLASS_TEMPLATE, javaClassName), path);
+        writeToFile(String.format("public class %s {\n}", javaClassName), path);
         DecisionSourceMapping.putLocalSource(eadl.getId(), path.toString());
         JavaDecisionParser.addYStatementToFile(eadl);
     }
@@ -42,5 +50,9 @@ public class CodeRepoMock extends YStatementTestData {
         writer.write(content);
         writer.flush();
         writer.close();
+    }
+
+    public void cleanCodeRepo() throws IOException {
+        FileUtils.cleanDirectory(ROOT.toFile());
     }
 }
