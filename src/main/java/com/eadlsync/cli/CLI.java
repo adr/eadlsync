@@ -4,7 +4,6 @@ import com.eadlsync.cli.command.CommitCommand;
 import com.eadlsync.cli.command.ConfigCommand;
 import com.eadlsync.cli.command.DeInitCommand;
 import com.eadlsync.cli.command.InitCommand;
-import com.eadlsync.cli.command.MergeCommand;
 import com.eadlsync.cli.command.PullCommand;
 import com.eadlsync.cli.command.ResetCommand;
 import com.eadlsync.cli.command.StatusCommand;
@@ -30,7 +29,7 @@ public class CLI {
             description = DeInitCommand.DESCRIPTION;
         } else if (command.equals(InitCommand.class)) {
             description = InitCommand.DESCRIPTION;
-        } else if (command.equals(MergeCommand.class)) {
+        } else if (command.equals(PullCommand.class)) {
             description = PullCommand.DESCRIPTION;
         } else if (command.equals(ResetCommand.class)) {
             description = ResetCommand.DESCRIPTION;
