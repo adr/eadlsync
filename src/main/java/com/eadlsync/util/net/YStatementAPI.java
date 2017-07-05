@@ -1,5 +1,15 @@
 package com.eadlsync.util.net;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import ch.hsr.isf.serepo.data.restinterface.commit.CommitMode;
 import ch.hsr.isf.serepo.data.restinterface.common.Link;
 import ch.hsr.isf.serepo.data.restinterface.common.User;
@@ -20,12 +30,6 @@ import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import static com.eadlsync.util.net.MetadataFactory.GeneralMetadata.STEREOTYPE;
 import static com.eadlsync.util.net.MetadataFactory.GeneralMetadata.TAGGED_VALUES;
 import static com.eadlsync.util.net.MetadataFactory.OptionState.CHOSEN;
@@ -34,7 +38,12 @@ import static com.eadlsync.util.net.MetadataFactory.Stereotype.PROBLEM_OCCURRENC
 import static com.eadlsync.util.net.MetadataFactory.TaggedValues.OPTION_STATE;
 import static com.eadlsync.util.net.MetadataFactory.TaggedValues.PROBLEM_STATE;
 import static com.eadlsync.util.net.RelationFactory.ADMentorRelationType.ADDRESSED_BY;
-import static com.eadlsync.util.net.SeRepoConector.*;
+import static com.eadlsync.util.net.SeRepoConector.commit;
+import static com.eadlsync.util.net.SeRepoConector.createSeOptionItem;
+import static com.eadlsync.util.net.SeRepoConector.createSeProblemItem;
+import static com.eadlsync.util.net.SeRepoConector.getIdFromFolderAndName;
+import static com.eadlsync.util.net.SeRepoConector.getMetadataEntryForUrl;
+import static com.eadlsync.util.net.SeRepoConector.getRelationEntryForUrl;
 import static com.eadlsync.util.ystatement.SeItemContentParser.parseForContent;
 import static com.eadlsync.util.ystatement.YStatementConstants.DELIMITER;
 
@@ -129,7 +138,7 @@ public class YStatementAPI {
     }
 
     public List<YStatementJustificationWrapper> getLatestYStatementJustifications() throws UnirestException {
-        return getYStatementJustifications(getLatestCommit(getLatestCommitId()));
+        return getYStatementJustifications(getLatestCommitId());
     }
 
     public String getLatestCommitId() throws UnirestException {
