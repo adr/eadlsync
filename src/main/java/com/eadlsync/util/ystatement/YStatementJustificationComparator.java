@@ -8,7 +8,8 @@ import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import org.apache.commons.collections4.CollectionUtils;
 
 /**
- * Created by Tobias on 28.05.2017.
+ * Utility class to compare {@link YStatementJustificationWrapper} and their fields.
+ * Should always used instead of equals.
  */
 public class YStatementJustificationComparator {
 
@@ -78,8 +79,8 @@ public class YStatementJustificationComparator {
     /**
      * Checks if the id of the given objects are the same.
      *
-     * @param codeDecision
-     * @param seDecision
+     * @param codeDecision as first decision
+     * @param seDecision as second decision
      * @return true if both objects have the same id and field values
      */
     public static boolean isEqual(YStatementJustificationWrapper codeDecision, YStatementJustificationWrapper seDecision) {
@@ -92,19 +93,27 @@ public class YStatementJustificationComparator {
     /**
      * Checks if the id of the given objects are the same.
      *
-     * @param codeDecision
-     * @param seDecision
+     * @param codeDecision as first decision
+     * @param seDecision as second decision
      * @return true if both objects have the same id
      */
     public static boolean isSame(YStatementJustificationWrapper codeDecision, YStatementJustificationWrapper seDecision) {
+        if (codeDecision == null) {
+            return seDecision == null;
+        } else {
+            if (seDecision == null) {
+                return false;
+            }
+        }
         return codeDecision.getId().equals(seDecision.getId());
+
     }
 
     /**
      * Checks whether the two objects have the same id but different field values.
      *
-     * @param codeDecision
-     * @param seDecision
+     * @param codeDecision as first decision
+     * @param seDecision as second decision
      * @return true if both objects have the same id but different field values
      */
     public static boolean isSameButNotEqual(YStatementJustificationWrapper codeDecision, YStatementJustificationWrapper seDecision) {
