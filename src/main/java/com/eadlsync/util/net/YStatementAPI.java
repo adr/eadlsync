@@ -64,18 +64,29 @@ public class YStatementAPI {
     }
 
     public List<SeItem> getSeItemsByCommit(String commit) throws UnirestException {
+        final String lastCommit = seRepoUrlObject.SEREPO_COMMIT_ID;
         seRepoUrlObject.changeToCommit(commit);
-        return SeRepoConector.getSeItemsByUrl(seRepoUrlObject.SEREPO_SEITEMS);
+        List<SeItem> items = SeRepoConector.getSeItemsByUrl(seRepoUrlObject.SEREPO_SEITEMS);
+        seRepoUrlObject.changeToCommit(lastCommit);
+        return items;
     }
 
-    public MetadataEntry getMetadataEntry(SeItem item) throws UnirestException {
+    public MetadataEntry getMetadataEntry(SeItem item, String commitId) throws UnirestException {
+        final String lastCommit = seRepoUrlObject.SEREPO_COMMIT_ID;
+        seRepoUrlObject.changeToCommit(commitId);
         String id = getIdFromFolderAndName(item.getFolder(), item.getName());
-        return getMetadataEntryForUrl(seRepoUrlObject.generateMetadataUrl(id));
+        MetadataEntry metadataEntry = getMetadataEntryForUrl(seRepoUrlObject.generateMetadataUrl(id));
+        seRepoUrlObject.changeToCommit(lastCommit);
+        return metadataEntry;
     }
 
-    public RelationEntry getRelationEntry(SeItem item) throws UnirestException {
+    public RelationEntry getRelationEntry(SeItem item, String commitId) throws UnirestException {
+        final String lastCommit = seRepoUrlObject.SEREPO_COMMIT_ID;
+        seRepoUrlObject.changeToCommit(commitId);
         String id = getIdFromFolderAndName(item.getFolder(), item.getName());
-        return getRelationEntryForUrl(seRepoUrlObject.generateRelationsUrl(id));
+        RelationEntry relationEntry = getRelationEntryForUrl(seRepoUrlObject.generateRelationsUrl(id));
+        seRepoUrlObject.changeToCommit(lastCommit);
+        return relationEntry;
     }
 
     private List<YStatementJustificationWrapper> getYStatementJustifications(String commit) throws UnirestException {
@@ -84,7 +95,7 @@ public class YStatementAPI {
         // find all se-items that are problem occurrences
         List<SeItem> problemItems = new ArrayList<>();
         for (SeItem item : seItems) {
-            MetadataEntry metadata = getMetadataEntry(item);
+            MetadataEntry metadata = getMetadataEntry(item, commit);
             Object state = metadata.getMap().get(STEREOTYPE.getName());
             if (PROBLEM_OCCURRENCE.getName().equals(state)) {
                 state = metadata.getMap().get(TAGGED_VALUES.getName());
@@ -101,7 +112,7 @@ public class YStatementAPI {
 
         // iterate over the problem occurrences
         for (SeItem problemItem : problemItems) {
-            RelationEntry relation = getRelationEntry(problemItem);
+            RelationEntry relation = getRelationEntry(problemItem, commit);
             List<Link> relationLinks = relation.getLinks().stream().filter(link -> ADDRESSED_BY.getName()
                     .equals(link.getTitle())).collect(Collectors.toList());
 
@@ -112,7 +123,7 @@ public class YStatementAPI {
                 SeItem relationSeItem = seItems.stream().filter(seItem -> seItem.getId().
                         toString().equals(link.getHref())).collect(Collectors.toList()).get(0);
 
-                MetadataEntry entry = getMetadataEntry(relationSeItem);
+                MetadataEntry entry = getMetadataEntry(relationSeItem, commit);
                 Map<String, String> taggedValues = (Map<String, String>) entry.getMap().get(TAGGED_VALUES.getName());
                 Object state = taggedValues.get(OPTION_STATE.getName());
                 if (CHOSEN.getName().equals(state)) {
