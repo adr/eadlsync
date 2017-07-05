@@ -85,9 +85,9 @@ task testSeRepoServerTests(type: Test) {
 
 task initSubmodules(type: Exec) {
     if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
-        commandLine "cmd", "/c", "git", "submodule", "update", "--init", "--recursive"
+        commandLine "cmd", "/c", "git", "submodule", "update", "--init", "--recursive", "--remote"
     } else {
-        commandLine "git", "submodule", "update", "--init", "--recursive"
+        commandLine "git", "submodule", "update", "--init", "--recursive", "--remote"
     }
 }
 
