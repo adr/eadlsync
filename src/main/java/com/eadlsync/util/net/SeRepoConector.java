@@ -138,7 +138,7 @@ public class SeRepoConector {
         createSeItem.setFolder(folder);
         createSeItem.getMetadata().putAll(MetadataFactory.getOptionMap(state));
 
-        String html = "";
+        String html = "<html><body></body></html>";
         if (state == CHOSEN) {
             html = String.format("<html><body><b>%s</b><br>%s<br><b>%s</b><br>%s<br></body></html>", YStatementConstants.SEITEM_ACHIEVING, achieve, YStatementConstants.SEITEM_ACCEPTING, accepting);
         }
@@ -160,7 +160,7 @@ public class SeRepoConector {
         createSeItem.setFolder(folder);
         createSeItem.getMetadata().putAll(MetadataFactory.getProblemMap(state));
 
-        String html = "";
+        String html = "<html><body></body></html>";
         if (state == SOLVED) {
             html = String.format("<html><body><b>%s</b><br>%s<br><b>%s</b><br>%s<br></body></html>", YStatementConstants.SEITEM_CONTEXT, context, YStatementConstants.SEITEM_FACING, facing);
         }
@@ -174,7 +174,7 @@ public class SeRepoConector {
     }
 
     private static String getFolderFromId(String id) {
-        return id.trim().substring(0, id.lastIndexOf("/") + 1);
+        return id.substring(0, id.lastIndexOf("/") + 1).trim();
     }
 
     public static String getIdFromFolderAndName(String folder, String name) {
