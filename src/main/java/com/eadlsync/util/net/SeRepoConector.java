@@ -1,5 +1,18 @@
 package com.eadlsync.util.net;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import ch.hsr.isf.serepo.data.restinterface.commit.Commit;
 import ch.hsr.isf.serepo.data.restinterface.commit.CommitContainer;
 import ch.hsr.isf.serepo.data.restinterface.commit.CommitMode;
@@ -7,7 +20,11 @@ import ch.hsr.isf.serepo.data.restinterface.commit.CreateCommit;
 import ch.hsr.isf.serepo.data.restinterface.common.User;
 import ch.hsr.isf.serepo.data.restinterface.metadata.MetadataContainer;
 import ch.hsr.isf.serepo.data.restinterface.metadata.MetadataEntry;
-import ch.hsr.isf.serepo.data.restinterface.seitem.*;
+import ch.hsr.isf.serepo.data.restinterface.seitem.Relation;
+import ch.hsr.isf.serepo.data.restinterface.seitem.RelationContainer;
+import ch.hsr.isf.serepo.data.restinterface.seitem.RelationEntry;
+import ch.hsr.isf.serepo.data.restinterface.seitem.SeItem;
+import ch.hsr.isf.serepo.data.restinterface.seitem.SeItemContainer;
 import com.eadlsync.model.serepo.data.SeItemWithContent;
 import com.eadlsync.util.ystatement.YStatementConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,18 +36,6 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.eadlsync.util.net.MetadataFactory.OptionState.CHOSEN;
 import static com.eadlsync.util.net.MetadataFactory.ProblemState.SOLVED;
@@ -133,12 +138,12 @@ public class SeRepoConector {
         createSeItem.setFolder(folder);
         createSeItem.getMetadata().putAll(MetadataFactory.getOptionMap(state));
 
-        String markdown = "";
+        String html = "";
         if (state == CHOSEN) {
-            markdown = String.format("#%s\n%s\n\n#%s\n%s", YStatementConstants.SEITEM_ACHIEVING, achieve, YStatementConstants.SEITEM_ACCEPTING, accepting);
+            html = String.format("<html><body><b>%s</b><br>%s<br><b>%s</b><br>%s<br></body></html>", YStatementConstants.SEITEM_ACHIEVING, achieve, YStatementConstants.SEITEM_ACCEPTING, accepting);
         }
-        createSeItem.setContent(markdown.getBytes());
-        createSeItem.setMimeType("text/markdown");
+        createSeItem.setContent(html.getBytes());
+        createSeItem.setMimeType("text/html");
         return createSeItem;
     }
 
@@ -155,12 +160,12 @@ public class SeRepoConector {
         createSeItem.setFolder(folder);
         createSeItem.getMetadata().putAll(MetadataFactory.getProblemMap(state));
 
-        String markdown = "";
+        String html = "";
         if (state == SOLVED) {
-            markdown = String.format("#%s\n%s\n\n#%s\n%s", YStatementConstants.SEITEM_CONTEXT, context, YStatementConstants.SEITEM_FACING, facing);
+            html = String.format("<html><body><b>%s</b><br>%s<br><b>%s</b><br>%s<br></body></html>", YStatementConstants.SEITEM_CONTEXT, context, YStatementConstants.SEITEM_FACING, facing);
         }
-        createSeItem.setContent(markdown.getBytes());
-        createSeItem.setMimeType("text/markdown");
+        createSeItem.setContent(html.getBytes());
+        createSeItem.setMimeType("text/html");
         return createSeItem;
     }
 
