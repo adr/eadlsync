@@ -30,10 +30,11 @@ public class CodeRepo implements IRepo {
     private final Path repositoryPath;
     private final YStatementAPI connector;
     private DiffManager diffManager;
+    private SeRepoUrlObject seRepoUrlObject;
 
     public CodeRepo(Path path, String baseUrl, String project, String baseRevision) throws IOException, UnirestException {
         this.repositoryPath = path;
-        SeRepoUrlObject seRepoUrlObject = new SeRepoUrlObject(baseUrl, project, baseRevision);
+        seRepoUrlObject = new SeRepoUrlObject(baseUrl, project, baseRevision);
         this.connector = YStatementAPI.withSeRepoUrl(seRepoUrlObject);
         initDecisions();
     }
@@ -109,6 +110,8 @@ public class CodeRepo implements IRepo {
                     diffManager.applyNonConflictingLocalAndRemoteDiff();
                     if (new ConflictManagerView(diffManager).showDialog()) {
                         writeEadsToDisk();
+                    } else {
+                        return seRepoUrlObject.SEREPO_COMMIT_ID;
                     }
                 } else {
                     diffManager.applyLocalDiff();
@@ -133,8 +136,7 @@ public class CodeRepo implements IRepo {
     public String merge(String mergeCommitId) throws IOException, UnirestException, EADLSyncException {
         connector.changeToCommit(mergeCommitId);
         initDecisions();
-        pull();
-        return mergeCommitId;
+        return pull();
     }
 
     @Override

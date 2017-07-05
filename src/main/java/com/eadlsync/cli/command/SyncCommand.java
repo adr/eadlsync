@@ -1,12 +1,12 @@
 package com.eadlsync.cli.command;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import ch.hsr.isf.serepo.data.restinterface.common.User;
 import com.beust.jcommander.Parameters;
 import com.eadlsync.cli.CLI;
 import com.eadlsync.exception.EADLSyncException;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import static com.eadlsync.cli.command.SyncCommand.DESCRIPTION;
 
@@ -32,7 +32,7 @@ public class SyncCommand extends EADLSyncCommand {
 
     void pull() throws Exception {
         try {
-            CLI.println("Pull to from se-repo");
+            CLI.println("Pull from se-repo");
             CLI.println(String.format("\tproject '%s' at %s", config.getConfigCore().getProjectName(), config.getConfigCore().getBaseUrl()));
             String pullId = repo.pull();
             updateCommitId(pullId);
