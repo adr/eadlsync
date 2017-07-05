@@ -1,10 +1,10 @@
 package com.eadlsync.model.repo;
 
-import com.eadlsync.model.diff.DiffManager;
-import com.eadlsync.util.ystatement.YStatementJustificationComparator;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.eadlsync.model.diff.DiffManager;
+import com.eadlsync.util.ystatement.YStatementJustificationComparator;
 
 import static com.eadlsync.model.decision.YStatementJustificationWrapper.deleted;
 
@@ -20,8 +20,8 @@ public class RepoStatus {
     private List<String> changedDecisionsIds = new ArrayList<>();
 
     public RepoStatus(DiffManager decisions) {
-        localChanged = decisions.getLocalDiff().isEmpty();
-        remoteChanged = decisions.getRemoteDiff().isEmpty();
+        localChanged = !decisions.getLocalDiff().isEmpty();
+        remoteChanged = !decisions.getRemoteDiff().isEmpty();
         autoMerge = decisions.canAutoMerge();
         decisions.getLocalDiff().forEach(yStatementDiff -> {
             String id = yStatementDiff.getId();
