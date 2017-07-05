@@ -1,5 +1,12 @@
 package com.eadlsync.cli.command;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.stream.Collectors;
+
 import com.beust.jcommander.Parameter;
 import com.eadlsync.cli.CLI;
 import com.eadlsync.exception.EADLSyncException;
@@ -10,13 +17,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.stream.Collectors;
 
 /**
  * Super class for any eadl-sync commands. Provides methods to read/write the config and the last commit id.
@@ -118,6 +118,11 @@ class EADLSyncCommand {
         CLI.println(PullCommand.class);
     }
 
+    void printHasToCommit() {
+        CLI.println("The local decisions have changed.");
+        CLI.println(CommitCommand.class);
+    }
+
     void printUpToDate() {
         CLI.println("The local decisions are in sync with the decisions of the se-repo.");
     }
@@ -126,6 +131,9 @@ class EADLSyncCommand {
         switch (execption.getState()) {
             case CONFLICT:
                 printHasToSyncConflict();
+                break;
+            case COMMIT:
+                printHasToCommit();
                 break;
             case PULL_FIRST:
                 printHasToPull();

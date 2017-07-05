@@ -13,6 +13,7 @@ public class EADLSyncException extends Exception {
 
     public enum EADLSyncOperationState {
         PULL_FIRST,
+        COMMIT,
         CONFLICT,
         UP_TO_DATE,
         SYNCED,

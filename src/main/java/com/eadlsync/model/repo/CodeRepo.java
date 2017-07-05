@@ -1,5 +1,14 @@
 package com.eadlsync.model.repo;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import ch.hsr.isf.serepo.data.restinterface.common.User;
 import com.eadlsync.exception.EADLSyncException;
 import com.eadlsync.gui.ConflictManagerView;
@@ -11,15 +20,6 @@ import com.eadlsync.util.net.YStatementAPI;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.file.FileVisitOption;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by tobias on 07/03/2017.
@@ -120,7 +120,11 @@ public class CodeRepo implements IRepo {
                 writeEadsToDisk();
             }
         } else {
-            throw EADLSyncException.ofState(EADLSyncException.EADLSyncOperationState.UP_TO_DATE);
+            if (diffManager.hasLocalDiff()) {
+                throw EADLSyncException.ofState(EADLSyncException.EADLSyncOperationState.COMMIT);
+            } else {
+                throw EADLSyncException.ofState(EADLSyncException.EADLSyncOperationState.UP_TO_DATE);
+            }
         }
         return connector.getLatestCommitId();
     }
