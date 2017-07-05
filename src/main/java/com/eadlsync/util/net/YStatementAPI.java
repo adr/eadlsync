@@ -64,9 +64,8 @@ public class YStatementAPI {
     }
 
     public List<SeItem> getSeItemsByCommit(String commit) throws UnirestException {
-        SeRepoUrlObject newUrlObject = new SeRepoUrlObject(
-                seRepoUrlObject.SEREPO_BASE_URL, seRepoUrlObject.SEREPO_PROJECT, commit);
-        return SeRepoConector.getSeItemsByUrl(newUrlObject.SEREPO_SEITEMS);
+        seRepoUrlObject.changeToCommit(commit);
+        return SeRepoConector.getSeItemsByUrl(seRepoUrlObject.SEREPO_SEITEMS);
     }
 
     public MetadataEntry getMetadataEntry(SeItem item) throws UnirestException {
