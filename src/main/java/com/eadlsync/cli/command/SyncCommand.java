@@ -25,8 +25,11 @@ public class SyncCommand extends EADLSyncCommand {
         if (readConfig()) {
             readDecisions();
 
+            final String oldCommitId= readCommitId();
             pull();
-            commit(SYNC_MESSAGE, false);
+
+            boolean forceNeeded = !oldCommitId.equals(readCommitId());
+            commit(SYNC_MESSAGE, forceNeeded);
         }
     }
 
