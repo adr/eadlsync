@@ -65,7 +65,6 @@ public class CommandTest extends SeRepoTestServer {
     @After
     public void methodTearDown() throws IOException {
         seRepoTestServer.deleteRepository();
-        codeRepoMock.cleanCodeRepo();
 
         commander.parse(DeInitCommand.NAME);
         DE_INIT_COMMAND.deInit();

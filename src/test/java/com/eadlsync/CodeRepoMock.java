@@ -39,10 +39,16 @@ public class CodeRepoMock extends YStatementTestData {
 
     private void createClassWithEadl(String javaClassName, YStatementJustificationWrapper eadl)
             throws IOException {
-        Path path = ROOT.resolve(String.format("%s.java", javaClassName));
-        writeToFile(String.format("public class %s {\n}", javaClassName), path);
-        DecisionSourceMapping.putLocalSource(eadl.getId(), path.toString());
-        JavaDecisionParser.addYStatementToFile(eadl);
+        String existingPath = DecisionSourceMapping.getLocalSource(eadl.getId());
+        Path path;
+        if (existingPath == null) {
+            path = ROOT.resolve(String.format("%s.java", javaClassName));
+            writeToFile(String.format("public class %s {\n}", javaClassName), path);
+            DecisionSourceMapping.putLocalSource(eadl.getId(), path.toString());
+            JavaDecisionParser.addYStatementToFile(eadl);
+        } else {
+            JavaDecisionParser.writeModifiedYStatementToFile(eadl);
+        }
     }
 
     private void writeToFile(String content, Path path) throws IOException {
@@ -50,9 +56,5 @@ public class CodeRepoMock extends YStatementTestData {
         writer.write(content);
         writer.flush();
         writer.close();
-    }
-
-    public void cleanCodeRepo() throws IOException {
-        FileUtils.cleanDirectory(ROOT.toFile());
     }
 }
