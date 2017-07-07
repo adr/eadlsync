@@ -3,6 +3,8 @@ package com.eadlsync.cli.option;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import com.beust.jcommander.Parameter;
+import com.eadlsync.cli.CLI;
+import com.eadlsync.util.BuildInfo;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -13,6 +15,9 @@ import org.slf4j.LoggerFactory;
  * --log value will will be used or Level.OFF if not specified.
  *
  * @option help
+ * @option version
+ * @option authors
+ * @option copyright
  * @option debug
  * @option stacktrace
  * @option log
@@ -21,6 +26,15 @@ public class MainOption {
 
     @Parameter(names = {"-h", "--help"}, description = "Show the usage of this program", help = true)
     private boolean help = false;
+
+    @Parameter(names = {"-v", "--version"}, description = "Show version information of this program", help = true)
+    private boolean version = false;
+
+    @Parameter(names = {"-a", "--author", "--authors", "-dev", "--developers"}, description = "List the authors of this program", help = true)
+    private boolean authors = false;
+
+    @Parameter(names = {"-c", "--copyright", "--license"}, description = "Show copyright information of this program", help = true)
+    private boolean copyright = false;
 
     @Parameter(names = {"-d", "--debug"}, description = "Debug mode")
     private boolean debug = false;
@@ -36,6 +50,15 @@ public class MainOption {
         root.setLevel(level);
     }
     public void evaluateOptions() {
+        if (version) {
+            displayVersionInformation();
+        }
+        if (authors) {
+            displayAuthors();
+        }
+        if (copyright) {
+            displayCopyright();
+        }
         if (!level.equals(Level.ALL)) {
             if (debug) {
                 setLoggingLevel(Level.DEBUG);
@@ -45,6 +68,24 @@ public class MainOption {
                 setLoggingLevel(level);
             }
         }
+    }
+
+    private void displayCopyright() {
+        BuildInfo buildInfo = new BuildInfo();
+        String year = buildInfo.getYear();
+        String author = buildInfo.getAuthors();
+        CLI.println(String.format("Copyright © 2016-%s %s", year, author));
+    }
+
+    private void displayAuthors() {
+        String authors = new BuildInfo().getAuthors();
+        CLI.println("developed by " + authors);
+    }
+
+    private void displayVersionInformation() {
+        String version = new BuildInfo().getVersion();
+        version = ("${version}".equals(version)) ? "dev" : version;
+        CLI.println("eadlsync " + version);
     }
 
     public boolean isHelp() {
