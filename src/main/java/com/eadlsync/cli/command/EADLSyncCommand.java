@@ -31,7 +31,7 @@ class EADLSyncCommand {
     IRepo repo = null;
     Config config = null;
 
-    @Parameter(names = {"-h", "--help"}, description = "Show the usage of this program", help = true)
+    @Parameter(names = {"-h", "--help"}, description = "Show the usage of this command", help = true)
     private boolean help = false;
 
     boolean readConfig() throws IOException {
@@ -89,7 +89,9 @@ class EADLSyncCommand {
     }
 
     void readDecisions() throws IOException, UnirestException {
-        repo = new CodeRepo(PROJECT_ROOT, config.getConfigCore().getBaseUrl(), config.getConfigCore()
+        if (config == null) readConfig();
+        Path src = Paths.get(config.getConfigCore().getProjectRoot());
+        repo = new CodeRepo(src, config.getConfigCore().getBaseUrl(), config.getConfigCore()
                 .getProjectName(), readCommitId());
 
     }

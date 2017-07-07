@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static com.eadlsync.cli.command.InitCommand.DESCRIPTION;
 import static com.eadlsync.util.ystatement.YStatementConstants.SEREPO_URL_COMMITS;
@@ -31,13 +32,19 @@ public class InitCommand extends EADLSyncCommand {
     public static final String DESCRIPTION = "use 'eadlsync init -u <base-url> -p <project>' to initialize eadlsync in this directory";
     private static final Logger LOG = LoggerFactory.getLogger(InitCommand.class);
 
-    @Parameter(names = {"-u", "--url"}, required = true)
+    @Parameter(names = {"-u", "--url"}, required = true, description = "url of the se-repo, has to end with '/se-repo'")
     private String baseUrl;
 
-    @Parameter(names = {"-p", "--project"}, required = true)
+    @Parameter(names = {"-p", "--project"}, required = true, description = "name of the project in the se-repo")
     private String name;
 
+    @Parameter(names = {"-s", "--source"}, description = "specify the source directory of the project as relative or absolute path")
+    private String source = PROJECT_ROOT.toString();
+
     public void initialize() throws IOException, UnirestException {
+        Path absolute = Paths.get(source);
+        if (!absolute.isAbsolute()) source = PROJECT_ROOT.resolve(source).toString();
+        System.out.println(source);
         if (Files.exists(EADL_ROOT)) {
             LOG.debug("EadlSync directory already exists for this project");
         } else {
@@ -60,7 +67,7 @@ public class InitCommand extends EADLSyncCommand {
         user.setEmail("eadl@sync.com");
 
         ConfigCore core = new ConfigCore();
-        core.setProjectRoot(PROJECT_ROOT.toString());
+        core.setProjectRoot(source);
         core.setBaseUrl(baseUrl);
         core.setProjectName(name);
 
