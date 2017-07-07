@@ -4,7 +4,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import com.beust.jcommander.Parameter;
 import com.eadlsync.cli.CLI;
-import com.eadlsync.util.BuildInfo;
+import com.eadlsync.util.common.BuildInfo;
 import org.slf4j.LoggerFactory;
 
 /**

@@ -30,6 +30,7 @@ public class EADLSyncMain extends Application {
     private static final MergeCommand MERGE_COMMAND = new MergeCommand();
     private static final ResetCommand RESET_COMMAND = new ResetCommand();
     private static final SyncCommand SYNC_COMMAND = new SyncCommand();
+    private static final StatisticCommand STATISTIC_COMMAND = new StatisticCommand();
     private static String[] args;
 
     public static void main(String[] args) {
@@ -58,6 +59,7 @@ public class EADLSyncMain extends Application {
                 addCommand(MergeCommand.NAME, MERGE_COMMAND).
                 addCommand(ResetCommand.NAME, RESET_COMMAND).
                 addCommand(SyncCommand.NAME, SYNC_COMMAND).
+                addCommand(StatisticCommand.NAME, STATISTIC_COMMAND).
                 build();
 
         try {
@@ -132,6 +134,13 @@ public class EADLSyncMain extends Application {
                                 commander.usage(commandName);
                             } else {
                                 DE_INIT_COMMAND.deInit();
+                            }
+                            break;
+                        case StatisticCommand.NAME:
+                            if (STATISTIC_COMMAND.isHelp()) {
+                                commander.usage(commandName);
+                            } else {
+                                STATISTIC_COMMAND.showStatistic();
                             }
                             break;
                         default:
