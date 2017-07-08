@@ -1,5 +1,10 @@
 package com.eadlsync.cli.command;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.eadlsync.model.config.Config;
@@ -9,11 +14,6 @@ import com.eadlsync.util.net.SeRepoConector;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static com.eadlsync.cli.command.InitCommand.DESCRIPTION;
 import static com.eadlsync.util.ystatement.YStatementConstants.SEREPO_URL_COMMITS;
@@ -44,7 +44,6 @@ public class InitCommand extends EADLSyncCommand {
     public void initialize() throws IOException, UnirestException {
         Path absolute = Paths.get(source);
         if (!absolute.isAbsolute()) source = PROJECT_ROOT.resolve(source).toString();
-        System.out.println(source);
         if (Files.exists(EADL_ROOT)) {
             LOG.debug("EadlSync directory already exists for this project");
         } else {
