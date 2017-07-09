@@ -15,7 +15,7 @@ import com.eadlsync.util.net.SeRepoConector;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 /**
- * Created by tobias on 15/06/2017.
+ * Provides basic test data for testing the sync of eadls with se-items.
  */
 public class TestDataProvider {
 
@@ -93,6 +93,10 @@ public class TestDataProvider {
         return getSeItemsWithContent(TEST_CHANGED_DATA_FOLDER + TEST_CHANGED_PROBLEM_NAME, RelationFactory.addressedBy(TEST_CHANGED_OPTION_NAME), RelationFactory.addressedBy(TEST_CHANGED_SOME_OPTION_NAME), RelationFactory.addressedBy(TEST_CHANGED_OTHER_OPTION_NAME), TEST_CHANGED_DATA_FOLDER + TEST_CHANGED_OPTION_NAME, TEST_CHANGED_DATA_FOLDER + TEST_CHANGED_SOME_OPTION_NAME, TEST_CHANGED_DATA_FOLDER + TEST_CHANGED_OTHER_OPTION_NAME);
     }
 
+    public static List<SeItemWithContent> createChangedTestSeItemsWithContentModified() throws UnsupportedEncodingException, UnirestException {
+        return getSeItemsWithContent(TEST_CHANGED_DATA_FOLDER + TEST_CHANGED_PROBLEM_NAME, RelationFactory.addressedBy(TEST_CHANGED_OPTION_NAME), RelationFactory.addressedBy(TEST_CHANGED_SOME_OPTION_NAME), RelationFactory.addressedBy(TEST_CHANGED_OTHER_OPTION_NAME), TEST_CHANGED_DATA_FOLDER + TEST_CHANGED_OTHER_OPTION_NAME, TEST_CHANGED_DATA_FOLDER + TEST_CHANGED_OPTION_NAME, TEST_CHANGED_DATA_FOLDER + TEST_CHANGED_SOME_OPTION_NAME);
+    }
+
     public static List<SeItemWithContent> createRemovedTestSeItemsWithContent() throws UnsupportedEncodingException, UnirestException {
         return getSeItemsWithContent(TEST_REMOVED_DATA_FOLDER + TEST_REMOVED_PROBLEM_NAME, RelationFactory.addressedBy(TEST_REMOVED_OPTION_NAME), RelationFactory.addressedBy(TEST_REMOVED_SOME_OPTION_NAME), RelationFactory.addressedBy(TEST_REMOVED_OTHER_OPTION_NAME), TEST_REMOVED_DATA_FOLDER + TEST_REMOVED_OPTION_NAME, TEST_REMOVED_DATA_FOLDER + TEST_REMOVED_SOME_OPTION_NAME, TEST_REMOVED_DATA_FOLDER + TEST_REMOVED_OTHER_OPTION_NAME);
     }
@@ -135,6 +139,10 @@ public class TestDataProvider {
 
     public static YStatementJustificationWrapper createTestChangedYStatementJustificationWrapper() {
         return createYStatementJustificationWrapper(TEST_CHANGED_DATA_FOLDER, TEST_CHANGED_PROBLEM_NAME, TEST_CHANGED_OPTION_NAME,TEST_CHANGED_SOME_OPTION_NAME, TEST_CHANGED_OTHER_OPTION_NAME);
+    }
+
+    public static YStatementJustificationWrapper createTestChangedModifiedYStatementJustificationWrapper() {
+        return createYStatementJustificationWrapper(TEST_CHANGED_DATA_FOLDER, TEST_CHANGED_PROBLEM_NAME, TEST_CHANGED_OTHER_OPTION_NAME, TEST_CHANGED_OPTION_NAME,TEST_CHANGED_SOME_OPTION_NAME);
     }
 
     public static YStatementJustificationWrapper createTestRemovedYStatementJustificationWrapper() {
