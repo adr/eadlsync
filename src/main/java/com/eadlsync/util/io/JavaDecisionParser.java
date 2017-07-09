@@ -1,6 +1,7 @@
 package com.eadlsync.util.io;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,9 +28,12 @@ public class JavaDecisionParser {
     private static final Logger LOG = LoggerFactory.getLogger(JavaDecisionParser.class);
 
     public static YStatementJustificationWrapper readYStatementFromFile(Path path) throws IOException {
-        final JavaSource javaSource = (JavaSource) Roaster.parse(Files.newInputStream(path));
-        LOG.debug("Read YStatementJustification from {}", path);
-        AnnotationSource annotation = javaSource.getAnnotation(YStatementJustification.class);
+        AnnotationSource annotation;
+        try (InputStream stream = Files.newInputStream(path)) {
+            final JavaSource javaSource = (JavaSource) Roaster.parse(stream);
+            LOG.debug("Read YStatementJustification from {}", path);
+            annotation = javaSource.getAnnotation(YStatementJustification.class);
+        }
         if (annotation == null) {
             return null;
         }
@@ -57,13 +61,15 @@ public class JavaDecisionParser {
             IOException {
         Path path = Paths.get(DecisionSourceMapping.getLocalSource(yStatement.getId()));
         LOG.debug("Modify YStatementJustification {} from {}", yStatement.getId(), path);
-        final JavaSource javaSource = (JavaSource) Roaster.parse(Files.newInputStream(path));
-        AnnotationSource annotation = javaSource.getAnnotation(YStatementJustification.class);
-        if (YStatementJustificationComparator.isSameButNotEqual(yStatement,
-                createYStatementJustificationFromAnnotationSource(annotation))) {
-            javaSource.removeAnnotation(annotation);
-            addYStatementToClassSource(yStatement, javaSource);
-            Files.write(path, javaSource.toString().getBytes(Charset.defaultCharset()));
+        try (InputStream stream = Files.newInputStream(path)) {
+            final JavaSource javaSource = (JavaSource) Roaster.parse(stream);
+            AnnotationSource annotation = javaSource.getAnnotation(YStatementJustification.class);
+            if (YStatementJustificationComparator.isSameButNotEqual(yStatement,
+                    createYStatementJustificationFromAnnotationSource(annotation))) {
+                javaSource.removeAnnotation(annotation);
+                addYStatementToClassSource(yStatement, javaSource);
+                Files.write(path, javaSource.toString().getBytes(Charset.defaultCharset()));
+            }
         }
     }
 
@@ -71,11 +77,14 @@ public class JavaDecisionParser {
             IOException {
         Path path = Paths.get(DecisionSourceMapping.getLocalSource(yStatement.getId()));
         LOG.debug("Remove YStatementJustification {} from {}", yStatement.getId(), path);
-        final JavaSource javaSource = (JavaSource) Roaster.parse(Files.newInputStream(path));
-        AnnotationSource annotation = javaSource.getAnnotation(YStatementJustification.class);
-        if (annotation.getStringValue(YStatementConstants.ID).equals(yStatement.getId())) {
-            javaSource.removeAnnotation(annotation);
-            Files.write(path, javaSource.toString().getBytes(Charset.defaultCharset()));
+        try (InputStream stream = Files.newInputStream(path)) {
+            final JavaSource javaSource = (JavaSource) Roaster.parse(stream);
+            AnnotationSource annotation = javaSource.getAnnotation(YStatementJustification.class);
+            if (YStatementJustificationComparator.isSame(yStatement,
+                    createYStatementJustificationFromAnnotationSource(annotation))) {
+                javaSource.removeAnnotation(annotation);
+                Files.write(path, javaSource.toString().getBytes(Charset.defaultCharset()));
+            }
         }
     }
 
@@ -102,8 +111,10 @@ public class JavaDecisionParser {
             IOException {
         Path path = Paths.get(DecisionSourceMapping.getLocalSource(yStatement.getId()));
         LOG.debug("Add YStatementJustification {} to {}", yStatement.getId(), path);
-        final JavaSource javaSource = (JavaSource) Roaster.parse(Files.newInputStream(path));
-        addYStatementToClassSource(yStatement, javaSource);
-        Files.write(path, javaSource.toString().getBytes(Charset.defaultCharset()));
+        try (InputStream stream = Files.newInputStream(path)) {
+            final JavaSource javaSource = (JavaSource) Roaster.parse(stream);
+            addYStatementToClassSource(yStatement, javaSource);
+            Files.write(path, javaSource.toString().getBytes(Charset.defaultCharset()));
+        }
     }
 }
