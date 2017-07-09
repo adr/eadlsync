@@ -1,12 +1,13 @@
 package com.eadlsync.model.decision;
 
+import com.eadlsync.util.ystatement.YStatementJustificationComparator;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.eadlsync.util.ystatement.YStatementJustificationComparator;
-
 /**
- * Created by Tobias on 13.05.2017.
+ * Holds two {@link YStatementJustificationWrapper} and provides a unified diff view.
+ * This class has to be used with one decision not being {@code null}.
  */
 public class YStatementJustificationComparisionObject {
 
@@ -20,6 +21,12 @@ public class YStatementJustificationComparisionObject {
 
     public YStatementJustificationComparisionObject(YStatementJustificationWrapper codeDecision,
                                                     YStatementJustificationWrapper seDecision) {
+        if (codeDecision == null) {
+            codeDecision = new YStatementJustificationWrapperBuilder(seDecision.getId()).build();
+        }
+        if (seDecision == null) {
+            seDecision= new YStatementJustificationWrapperBuilder(codeDecision.getId()).build();
+        }
         this.codeDecision = codeDecision;
         this.seDecision = seDecision;
         this.differences = new boolean[]{!isContextEqual(), !isFacingEqual(), !isChosenEqual(),
@@ -68,12 +75,12 @@ public class YStatementJustificationComparisionObject {
             return "";
         } else {
             lastWrittenFields.add(differentField);
-            String sepAndDiff;
-            sepAndDiff = "\n" + SEPARATOR;
+            StringBuilder sepAndDiff;
+            sepAndDiff = new StringBuilder("\n" + SEPARATOR);
             for (String field : lastWrittenFields) {
-                sepAndDiff += "\n" + field;
+                sepAndDiff.append("\n").append(field);
             }
-            return sepAndDiff;
+            return sepAndDiff.toString();
         }
     }
 
@@ -86,17 +93,11 @@ public class YStatementJustificationComparisionObject {
     }
 
     private boolean isPreviousDifferent(int index) {
-        if (index - 1 < 0) {
-            return false;
-        }
-        return differences[index - 1];
+        return index - 1 >= 0 && differences[index - 1];
     }
 
     private boolean isNextDifferent(int index) {
-        if (index + 1 >= differences.length) {
-            return false;
-        }
-        return differences[index + 1];
+        return index + 1 < differences.length && differences[index + 1];
     }
 
     private String getContextComparisionString() {
@@ -180,20 +181,6 @@ public class YStatementJustificationComparisionObject {
         return comp;
     }
 
-    private String getMoreInformationComparisionString() {
-        String comp;
-        if (isMoreInformationEqual()) {
-            comp = "moreInformation='" + codeDecision.getMoreInformation() + "'";
-        } else {
-            comp = addHeadIfNeeded(6);
-            comp += "moreInformation='" + codeDecision.getMoreInformation() + "'";
-            comp += addSeparatorAndDifferencesIfNeeded(6, "moreInformation='" + seDecision
-                    .getMoreInformation() + "'");
-            comp += addTailIfNeeded(6);
-        }
-        return comp;
-    }
-
     public YStatementJustificationWrapper getCodeDecision() {
         return codeDecision;
     }
@@ -204,15 +191,13 @@ public class YStatementJustificationComparisionObject {
 
     @Override
     public String toString() {
-        String compare = "Compare View{\n";
-        compare += "\tid='" + codeDecision.getId() + "'\n";
+        String compare = String.format("Compare View %s {\n", codeDecision.getId());
         compare += "\t" + getContextComparisionString().replaceAll("\n", "\n\t") + "\n";
         compare += "\t" + getFacingComparisionString().replaceAll("\n", "\n\t") + "\n";
         compare += "\t" + getChosenComparisionString().replaceAll("\n", "\n\t") + "\n";
         compare += "\t" + getNeglectedComparisionString().replaceAll("\n", "\n\t") + "\n";
         compare += "\t" + getAchievingComparisionString().replaceAll("\n", "\n\t") + "\n";
         compare += "\t" + getAcceptingComparisionString().replaceAll("\n", "\n\t") + "\n";
-        compare += "\t" + getMoreInformationComparisionString().replaceAll("\n", "\n\t") + "\n";
         compare += "}";
         return compare;
     }
