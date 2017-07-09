@@ -52,17 +52,7 @@ public class CodeRepo implements IRepo {
     }
 
     private List<YStatementJustificationWrapper> loadLocalDecisions() throws IOException {
-        List<YStatementJustificationWrapper> localYStatements = new ArrayList<>();
-        Files.walk(repositoryPath, FileVisitOption.FOLLOW_LINKS).forEach(path -> {
-            if (isPathToJavaFile(path)) {
-                try {
-                    localYStatements.add(JavaDecisionParser.readYStatementFromFile(path));
-                } catch (IOException e) {
-                    LOG.debug("Failed to read annotations, skipping file {}", path);
-                }
-            }
-        });
-        return localYStatements;
+        return JavaDecisionParser.readYStatementsFromDirectory(repositoryPath);
     }
 
     private void writeEadsToDisk() throws IOException {
@@ -82,10 +72,6 @@ public class CodeRepo implements IRepo {
 
     private void removeEadFromClass(YStatementJustificationWrapper yStatementJustification) throws IOException {
         JavaDecisionParser.removeYStatementFromFile(yStatementJustification);
-    }
-
-    private boolean isPathToJavaFile(Path path) {
-        return path.toString().endsWith(".java") && !Files.isDirectory(path);
     }
 
     @Override

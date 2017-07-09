@@ -3,9 +3,12 @@ package com.eadlsync.util.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.eadlsync.model.decision.DecisionSourceMapping;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
@@ -116,5 +119,23 @@ public class JavaDecisionParser {
             addYStatementToClassSource(yStatement, javaSource);
             Files.write(path, javaSource.toString().getBytes(Charset.defaultCharset()));
         }
+    }
+
+    public static List<YStatementJustificationWrapper> readYStatementsFromDirectory(Path srcPath) throws IOException {
+        List<YStatementJustificationWrapper> localYStatements = new ArrayList<>();
+        Files.walk(srcPath, FileVisitOption.FOLLOW_LINKS).forEach(path -> {
+            if (isPathToJavaFile(path)) {
+                try {
+                    localYStatements.add(JavaDecisionParser.readYStatementFromFile(path));
+                } catch (IOException e) {
+                    LOG.debug("Failed to read annotations, skipping file {}", path);
+                }
+            }
+        });
+        return localYStatements;
+    }
+
+    private static boolean isPathToJavaFile(Path path) {
+        return path.toString().endsWith(".java") && !Files.isDirectory(path);
     }
 }
