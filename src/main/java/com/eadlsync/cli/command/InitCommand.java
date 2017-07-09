@@ -32,7 +32,7 @@ public class InitCommand extends EADLSyncCommand {
     public static final String DESCRIPTION = "use 'eadlsync init -u <base-url> -p <project>' to initialize eadlsync in this directory";
     private static final Logger LOG = LoggerFactory.getLogger(InitCommand.class);
 
-    @Parameter(names = {"-u", "--url"}, required = true, description = "url of the se-repo, has to end with '/se-repo'")
+    @Parameter(names = {"-u", "--url"}, required = true, description = "url of the se-repo, has to end with '/se-repo' except if localhost is specified")
     private String baseUrl;
 
     @Parameter(names = {"-p", "--project"}, required = true, description = "name of the project in the se-repo")
@@ -42,6 +42,7 @@ public class InitCommand extends EADLSyncCommand {
     private String source = PROJECT_ROOT.toString();
 
     public void initialize() throws IOException, UnirestException {
+        baseUrl = baseUrl.contains("localhost") ? "http://localhost:8080/serepo" : baseUrl;
         Path absolute = Paths.get(source);
         if (!absolute.isAbsolute()) source = PROJECT_ROOT.resolve(source).toString();
         if (Files.exists(EADL_ROOT)) {
