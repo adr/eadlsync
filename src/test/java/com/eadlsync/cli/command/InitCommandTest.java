@@ -36,6 +36,6 @@ public class InitCommandTest extends CommandTest {
     public void testCommitIdFileHasLatestCommit() throws IOException {
         String commitId = Files.readAllLines(EADLSyncCommand.EADL_REVISION).stream().collect
                 (Collectors.joining());
-        Assert.assertEquals(lastCommit, commitId);
+        Assert.assertEquals(seRepoTestServer.lastCommit, commitId);
     }
 }

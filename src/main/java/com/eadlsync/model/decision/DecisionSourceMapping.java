@@ -3,7 +3,8 @@ package com.eadlsync.model.decision;
 import java.util.HashMap;
 
 /**
- * Created by tobias on 28/06/2017.
+ * Used to map the decisions source so we know where the decision belongs to when writing it out to a
+ * file.
  */
 public abstract class DecisionSourceMapping {
 
@@ -26,5 +27,9 @@ public abstract class DecisionSourceMapping {
         return remoteSource.get(id);
     }
 
+    public static void clear() {
+        localSource.clear();
+        remoteSource.clear();
+    }
 
 }

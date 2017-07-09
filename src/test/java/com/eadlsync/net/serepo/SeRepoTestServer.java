@@ -1,5 +1,14 @@
 package com.eadlsync.net.serepo;
 
+import java.io.IOException;
+import java.util.List;
+
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+
+import ch.hsr.isf.serepo.data.restinterface.commit.CommitMode;
 import ch.hsr.isf.serepo.data.restinterface.common.User;
 import ch.hsr.isf.serepo.data.restinterface.repository.CreateRepository;
 import ch.hsr.isf.serepo.server.SeRepoServer;
@@ -11,28 +20,20 @@ import com.mashape.unirest.http.Unirest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import java.io.IOException;
-import java.util.List;
-
-import static ch.hsr.isf.serepo.data.restinterface.commit.CommitMode.ADD_UPDATE_DELETE;
 import static com.eadlsync.data.TestDataProvider.TEST_REPO;
 
 /**
- * Created by Tobias on 03.06.2017.
+ * Mocks a se-repo server and needs to be started before testing using the se-repo rest interface.
  */
 public class SeRepoTestServer {
 
-    private static final int PORT = 8080;
-    protected static final String LOCALHOST_SEREPO = String.format("http://localhost:%s/serepo", PORT);
-    protected static final String LOCALHOST_REPOS = String.format("%s/repos", LOCALHOST_SEREPO);
-    protected static String lastCommit;
-    private static final User TEST_USER = new User(SeRepoTestServer.class.getName(), String.format("%s@test.com", SeRepoTestServer.class.getName()));
-    private static final Logger LOG = LoggerFactory.getLogger(SeRepoTestServer.class);
-    private static SeRepoServer server;
+    private final int PORT = 8080;
+    public final String LOCALHOST_SEREPO = String.format("http://localhost:%s/serepo", PORT);
+    protected final String LOCALHOST_REPOS = String.format("%s/repos", LOCALHOST_SEREPO);
+    private final User TEST_USER = new User(SeRepoTestServer.class.getName(), String.format("%s@test.com", SeRepoTestServer.class.getName()));
+    private final Logger LOG = LoggerFactory.getLogger(SeRepoTestServer.class);
+    private SeRepoServer server;
+    public String lastCommit;
 
 
     static {
@@ -86,8 +87,8 @@ public class SeRepoTestServer {
         LOG.debug("Deleting repository {} ({})", TEST_REPO, status);
     }
 
-    public String createCommit(List<SeItemWithContent> testData) {
-        lastCommit = SeRepoConector.commit("test commit " + testData.hashCode(), testData, TEST_USER, ADD_UPDATE_DELETE, LOCALHOST_SEREPO, TEST_REPO);
+    public String createCommit(List<SeItemWithContent> testData, CommitMode mode) {
+        lastCommit = SeRepoConector.commit("test commit " + testData.hashCode(), testData, TEST_USER, mode, LOCALHOST_SEREPO, TEST_REPO);
         return lastCommit;
     }
 

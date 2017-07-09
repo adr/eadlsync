@@ -1,24 +1,37 @@
 package com.eadlsync.cli.command;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import ch.hsr.isf.serepo.data.restinterface.commit.CommitMode;
 import com.beust.jcommander.JCommander;
 import com.eadlsync.CodeRepoMock;
 import com.eadlsync.cli.option.MainOption;
+import com.eadlsync.model.decision.DecisionSourceMapping;
+import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.net.serepo.SeRepoTestServer;
+import com.eadlsync.util.ystatement.YStatementJustificationComparator;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 
-import java.io.IOException;
-
-import static com.eadlsync.data.TestDataProvider.*;
+import static com.eadlsync.data.TestDataProvider.TEST_REPO;
+import static com.eadlsync.data.TestDataProvider.getBasicDecisionsAsEadl;
+import static com.eadlsync.data.TestDataProvider.getBasicDecisionsAsSeItemsWithContent;
 
 /**
  *
  */
-public class CommandTest extends SeRepoTestServer {
+public class CommandTest {
 
+    static final SeRepoTestServer seRepoTestServer = new SeRepoTestServer();
     final InitCommand INIT_COMMAND = new InitCommand();
     final DeInitCommand DE_INIT_COMMAND = new DeInitCommand();
     final ConfigCommand CONFIG_COMMAND = new ConfigCommand();
@@ -41,24 +54,38 @@ public class CommandTest extends SeRepoTestServer {
             addCommand(SyncCommand.NAME, SYNC_COMMAND).
             build();
 
-    static final CodeRepoMock codeRepoMock = new CodeRepoMock();
-    static final SeRepoTestServer seRepoTestServer = new SeRepoTestServer();
+    @ClassRule
+    public static TemporaryFolder tempRoot = new TemporaryFolder();
+
+    @Rule
+    public TemporaryFolder codeBase = new TemporaryFolder(tempRoot.getRoot());
+
+    CodeRepoMock codeRepoMock;
 
     @BeforeClass
     public static void classSetUp() throws Exception {
         seRepoTestServer.start();
-        codeRepoMock.createCodeRepo();
+    }
+
+    @AfterClass
+    public static void classTearDown() throws Exception {
+        seRepoTestServer.stop();
     }
 
     @Before
     public void methodSetUp() throws IOException, UnirestException {
-        // one commit with four decisions is always available and we have the same decisions as eadls in our code repo
+        // one commit with four decisions is always available and we have the same decisions as eadls
+        // in our code repo
         seRepoTestServer.createRepository();
-        seRepoTestServer.createCommit(getBasicDecisionsAsSeItemsWithContent());
+        seRepoTestServer.createCommit(getBasicDecisionsAsSeItemsWithContent(), CommitMode.ADD_UPDATE);
 
+        DecisionSourceMapping.clear();
+        Path code = codeBase.getRoot().toPath();
+        codeRepoMock = new CodeRepoMock(code);
         codeRepoMock.createClassesForEadls(getBasicDecisionsAsEadl());
 
-        commander.parse(InitCommand.NAME, "-u", LOCALHOST_SEREPO, "-p", TEST_REPO);
+        commander.parse(InitCommand.NAME, "-u", seRepoTestServer.LOCALHOST_SEREPO, "-p", TEST_REPO,
+                "-s", code.toString());
         INIT_COMMAND.initialize();
     }
 
@@ -70,11 +97,13 @@ public class CommandTest extends SeRepoTestServer {
         DE_INIT_COMMAND.deInit();
     }
 
-    @AfterClass
-    public static void classTearDown() throws Exception {
-        seRepoTestServer.stop();
-        codeRepoMock.deleteCodeRepo();
+    public boolean assertYStatementJustificationListAreEqualIgnoringOrder(List<YStatementJustificationWrapper> base, List<YStatementJustificationWrapper> toBeChecked) {
+        for (YStatementJustificationWrapper y1 : base) {
+            if (toBeChecked.stream().filter(y2 -> YStatementJustificationComparator.isEqual(y1, y2)).collect(Collectors.toList()).isEmpty()) {
+                return false;
+            }
+        }
+        return true;
     }
-
 
 }
