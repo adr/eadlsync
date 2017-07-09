@@ -22,11 +22,11 @@ public class ConflictManagerView {
     }
 
     public boolean showDialog() {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/resolve-conflicts-view.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/gui/conflict/resolve-conflicts-view.fxml"));
         try {
             loader.setController(conflictManagerController);
             DialogPane root = loader.load();
-            root.getStylesheets().add(getClass().getResource("/resolve-conflicts-view.css").toExternalForm());
+            root.getStylesheets().add(getClass().getResource("/gui/conflict/resolve-conflicts-view.css").toExternalForm());
 
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Resolve conflicts");
