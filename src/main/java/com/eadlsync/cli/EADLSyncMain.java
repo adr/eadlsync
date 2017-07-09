@@ -31,6 +31,7 @@ public class EADLSyncMain extends Application {
     private static final ResetCommand RESET_COMMAND = new ResetCommand();
     private static final SyncCommand SYNC_COMMAND = new SyncCommand();
     private static final StatisticCommand STATISTIC_COMMAND = new StatisticCommand();
+    private static final DiffCommand DIFF_COMMAND = new DiffCommand();
     private static String[] args;
 
     public static void main(String[] args) {
@@ -60,6 +61,7 @@ public class EADLSyncMain extends Application {
                 addCommand(ResetCommand.NAME, RESET_COMMAND).
                 addCommand(SyncCommand.NAME, SYNC_COMMAND).
                 addCommand(StatisticCommand.NAME, STATISTIC_COMMAND).
+                addCommand(DiffCommand.NAME, DIFF_COMMAND).
                 build();
 
         try {
@@ -141,6 +143,13 @@ public class EADLSyncMain extends Application {
                                 commander.usage(commandName);
                             } else {
                                 STATISTIC_COMMAND.showStatistic();
+                            }
+                            break;
+                        case DiffCommand.NAME:
+                            if (DIFF_COMMAND.isHelp()) {
+                                commander.usage(commandName);
+                            } else {
+                                DIFF_COMMAND.showDiff();
                             }
                             break;
                         default:

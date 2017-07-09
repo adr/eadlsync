@@ -1,0 +1,8 @@
+.select-all {
+    -fx-padding: 10 0 0 0;
+}
+
+.dialog-pane *.button-bar {
+    -fx-max-height: 0;
+    -fx-pref-height: 0;
+}
