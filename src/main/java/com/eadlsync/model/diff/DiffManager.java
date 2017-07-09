@@ -30,14 +30,14 @@ public class DiffManager {
 
     private ArrayList<YStatementDiff> initDiffYStatements(List<YStatementJustificationWrapper> base, List<YStatementJustificationWrapper> changed) {
         ArrayList<YStatementDiff> diff = new ArrayList<>();
-        initDifferentYStatements(base, changed).stream().forEach(y ->
+        initDifferentYStatements(base, changed).forEach(y ->
                 diff.add(YStatementDiff.of(y.getCodeDecision(), y.getSeDecision()))
         );
         /** so far no additional decisions are supported **/
 //        initAdditionalYStatements(base, changed).stream().forEach(y ->
 //                diff.add(YStatementDiff.of(null, y))
 //        );
-        initRemovedYStatements(base, changed).stream().forEach(y ->
+        initRemovedYStatements(base, changed).forEach(y ->
                 diff.add(YStatementDiff.of(y, null))
 
         );
