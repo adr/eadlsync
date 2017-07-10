@@ -1,9 +1,9 @@
 package com.eadlsync.cli.command;
 
+import java.io.IOException;
+
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-
-import java.io.IOException;
 
 import static com.eadlsync.cli.command.ConfigCommand.DESCRIPTION;
 
@@ -22,19 +22,19 @@ public class ConfigCommand extends EADLSyncCommand {
     public static final String NAME = "config";
     public static final String DESCRIPTION = "use 'eadlsync config --[user|core].<key>=<value>' to update the decisions in the se-repo";
 
-    @Parameter(names = "--user.name")
+    @Parameter(names = "--user.name", description = "change the commit name of this program")
     private String name;
 
-    @Parameter(names = "--user.email")
+    @Parameter(names = "--user.email", description = "change the commit email of this program")
     private String email;
 
-    @Parameter(names = "--core.root", description = "Set the root directory of the code base", hidden = true)
+    @Parameter(names = "--core.root", description = "set the root directory of the code base", hidden = true)
     private String root;
 
-    @Parameter(names = "--core.url", description = "Set the base url for the se-repo, the url shall be in a format of '<host>/serepo'")
+    @Parameter(names = "--core.url", description = "set the base url for the se-repo, the url shall be in a format of '<host>/serepo'")
     private String baseUrl;
 
-    @Parameter(names = "--core.project", description = "Set the project to work with, this shall match a se-repo repository name")
+    @Parameter(names = "--core.project", description = "set the project to work with, this shall match a se-repo repository name")
     private String project;
 
     public void configure() throws IOException {

@@ -1,5 +1,10 @@
 package com.eadlsync.cli.command;
 
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.eadlsync.cli.CLI;
@@ -11,11 +16,6 @@ import com.eadlsync.util.io.JavaDecisionParser;
 import com.eadlsync.util.net.SeRepoUrlObject;
 import com.eadlsync.util.net.YStatementAPI;
 import com.eadlsync.util.ystatement.YStatementJustificationComparator;
-
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.eadlsync.cli.command.DiffCommand.DESCRIPTION;
 
@@ -29,9 +29,10 @@ public class DiffCommand extends EADLSyncCommand {
     public static final String NAME = "diff";
     public static final String DESCRIPTION = "use 'eadlsync diff <commitId>' to view the diff of the specified decisions compared to the local decisions";
 
-    @Parameter(required = true)
+    @Parameter(required = true, description = "the commit id used to compare the local decisions against")
     private String commitId;
-    @Parameter(names = {"-g", "--gui"})
+
+    @Parameter(names = {"-g", "--gui"}, description = "display the diff in a JavaFX window")
     private boolean gui = false;
 
     private List<YStatementJustificationComparisionObject> createYStatementJustificationComparisionObjects() throws Exception {

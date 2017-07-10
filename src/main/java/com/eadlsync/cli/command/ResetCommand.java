@@ -18,7 +18,7 @@ public class ResetCommand extends EADLSyncCommand {
     public static final String NAME = "reset";
     public static final String DESCRIPTION = "use 'eadlsync reset <commit-id>' to reset the local decisions to the decisions of the selected commit from the se-repo";
 
-    @Parameter(required = true)
+    @Parameter(required = true, description = "the commit id used to reset the local decisions to")
     private String commitId;
 
     public void resetLocalChanges() throws Exception {

@@ -1,17 +1,29 @@
 package com.eadlsync.cli;
 
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.ParameterException;
-import com.eadlsync.cli.command.*;
-import com.eadlsync.cli.option.MainOption;
-import com.mashape.unirest.http.exceptions.UnirestException;
+import java.io.IOException;
+import java.util.Calendar;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
+
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
+import com.eadlsync.cli.command.CommitCommand;
+import com.eadlsync.cli.command.ConfigCommand;
+import com.eadlsync.cli.command.DeInitCommand;
+import com.eadlsync.cli.command.DiffCommand;
+import com.eadlsync.cli.command.InitCommand;
+import com.eadlsync.cli.command.MergeCommand;
+import com.eadlsync.cli.command.PullCommand;
+import com.eadlsync.cli.command.ResetCommand;
+import com.eadlsync.cli.command.StatisticCommand;
+import com.eadlsync.cli.command.StatusCommand;
+import com.eadlsync.cli.command.SyncCommand;
+import com.eadlsync.cli.option.MainOption;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 import static com.eadlsync.cli.CLI.println;
 
@@ -35,11 +47,13 @@ public class EADLSyncMain extends Application {
     private static String[] args;
 
     public static void main(String[] args) {
-
+        long startTime = Calendar.getInstance().getTimeInMillis();
         EADLSyncMain.args = args;
 
-        launch();
 
+        launch();
+        long executionTime = Calendar.getInstance().getTimeInMillis() - startTime;
+        LOG.info("Program finished in {} seconds", executionTime / 1000);
     }
 
     private static void printStacktraceInfo() {
