@@ -2,7 +2,6 @@ package com.eadlsync.util.net;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -189,8 +188,7 @@ public class YStatementAPI {
         Document doc;
         Element body = null;
         try {
-            String decodedURL = URLDecoder.decode(item.getId().toString(), "UTF-8");
-            doc = Jsoup.connect(decodedURL).get();
+            doc = Jsoup.connect(item.getId().toString()).get();
             body = doc.body();
         } catch (IOException e) {
             LOG.debug("Failed to parse se-item '{}'", item.getName());

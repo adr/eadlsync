@@ -126,7 +126,8 @@ public class JavaDecisionParser {
         Files.walk(srcPath, FileVisitOption.FOLLOW_LINKS).forEach(path -> {
             if (isPathToJavaFile(path)) {
                 try {
-                    localYStatements.add(JavaDecisionParser.readYStatementFromFile(path));
+                    YStatementJustificationWrapper decision = JavaDecisionParser.readYStatementFromFile(path);
+                    if (decision != null) localYStatements.add(decision);
                 } catch (IOException e) {
                     LOG.debug("Failed to read annotations, skipping file {}", path);
                 }
