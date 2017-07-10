@@ -1,11 +1,11 @@
 package com.eadlsync.cli.command;
 
+import java.io.IOException;
+
 import com.beust.jcommander.Parameters;
 import com.eadlsync.cli.CLI;
 import com.eadlsync.model.repo.RepoStatus;
 import com.mashape.unirest.http.exceptions.UnirestException;
-
-import java.io.IOException;
 
 import static com.eadlsync.cli.command.StatusCommand.DESCRIPTION;
 
@@ -28,7 +28,7 @@ public class StatusCommand extends EADLSyncCommand {
     }
 
     private void printStatusMessage(RepoStatus status) {
-        CLI.println(String.format("Status of eadl-sync %s.", config.getConfigCore().getProjectRoot()));
+        CLI.println(String.format("Status of the embedded architectural decisions at %s.", config.getConfigCore().getProjectRoot()));
         CLI.println(String.format("\tproject '%s' at %s", config.getConfigCore().getProjectName(), config.getConfigCore().getBaseUrl()));
         if (!status.isLocalChanged()) {
             if (!status.isRemoteChanged()) {
