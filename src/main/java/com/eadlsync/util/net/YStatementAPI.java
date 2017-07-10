@@ -193,7 +193,7 @@ public class YStatementAPI {
             doc = Jsoup.connect(decodedURL).get();
             body = doc.body();
         } catch (IOException e) {
-            LOG.debug("Failed to parse se-item '{}'", item);
+            LOG.debug("Failed to parse se-item '{}'", item.getName());
         }
         return body;
     }

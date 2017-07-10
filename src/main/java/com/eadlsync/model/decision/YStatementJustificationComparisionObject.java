@@ -1,9 +1,9 @@
 package com.eadlsync.model.decision;
 
-import com.eadlsync.util.ystatement.YStatementJustificationComparator;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.eadlsync.util.ystatement.YStatementJustificationComparator;
 
 /**
  * Holds two {@link YStatementJustificationWrapper} and provides a unified diff view.
@@ -12,7 +12,7 @@ import java.util.List;
 public class YStatementJustificationComparisionObject {
 
     private static final String HEAD = "<<<<<<< HEAD:%s";
-    private static final String TAIL = ">>>>>>> conflicts:%s";
+    private static final String TAIL = ">>>>>>> remote:%s";
     private static final String SEPARATOR = "=======";
     private YStatementJustificationWrapper codeDecision;
     private YStatementJustificationWrapper seDecision;
