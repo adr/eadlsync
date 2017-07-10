@@ -18,7 +18,7 @@ public class MergeCommand extends EADLSyncCommand {
     public static final String NAME = "merge";
     public static final String DESCRIPTION = "use 'eadlsync merge <commit-id>' to merge the local decisions with the decisions of the selected commit from the se-repo";
 
-    @Parameter(required = true, description = "the commit id used to merge the local decisions with")
+    @Parameter(required = true, description = "commit-id")
     private String commitId;
 
     public void merge() throws Exception {

@@ -27,9 +27,9 @@ import static com.eadlsync.cli.command.DiffCommand.DESCRIPTION;
 public class DiffCommand extends EADLSyncCommand {
 
     public static final String NAME = "diff";
-    public static final String DESCRIPTION = "use 'eadlsync diff <commitId>' to view the diff of the specified decisions compared to the local decisions";
+    public static final String DESCRIPTION = "use 'eadlsync diff <commit-id>' to view the diff of the specified decisions compared to the local decisions";
 
-    @Parameter(required = true, description = "the commit id used to compare the local decisions against")
+    @Parameter(required = true, description = "commit-id")
     private String commitId;
 
     @Parameter(names = {"-g", "--gui"}, description = "display the diff in a JavaFX window")
