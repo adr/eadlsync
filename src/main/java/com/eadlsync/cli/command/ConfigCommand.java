@@ -1,6 +1,8 @@
 package com.eadlsync.cli.command;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
@@ -28,10 +30,10 @@ public class ConfigCommand extends EADLSyncCommand {
     @Parameter(names = "--user.email", description = "change the commit email of this program")
     private String email;
 
-    @Parameter(names = "--core.root", description = "set the root directory of the code base", hidden = true)
+    @Parameter(names = "--core.root", description = "set the root directory of the code base")
     private String root;
 
-    @Parameter(names = "--core.url", description = "set the base url for the se-repo, the url shall be in a format of '<host>/serepo'")
+    @Parameter(names = "--core.url", description = "set the base url for the se-repo, the url shall be in a format of '<host>/serepo' or 'localhost'")
     private String baseUrl;
 
     @Parameter(names = "--core.project", description = "set the project to work with, this shall match a se-repo repository name")
@@ -44,8 +46,11 @@ public class ConfigCommand extends EADLSyncCommand {
             } else if (notBlank(email)) {
                 config.getConfigUser().setName(this.email);
             } else if (notBlank(root)) {
+                Path absolute = Paths.get(root);
+                if (!absolute.isAbsolute()) root = PROJECT_ROOT.resolve(root).toString();
                 config.getConfigCore().setProjectRoot(this.root);
             } else if (notBlank(baseUrl)) {
+                baseUrl = baseUrl.contains("localhost") ? "http://localhost:8080/serepo" : baseUrl;
                 config.getConfigCore().setBaseUrl(this.baseUrl);
             } else if (notBlank(project)) {
                 config.getConfigCore().setProjectName(this.project);
