@@ -43,58 +43,25 @@ import static com.eadlsync.util.net.SeRepoConector.createSeProblemItem;
 import static com.eadlsync.util.net.SeRepoConector.getIdFromFolderAndName;
 import static com.eadlsync.util.net.SeRepoConector.getMetadataEntryForUrl;
 import static com.eadlsync.util.net.SeRepoConector.getRelationEntryForUrl;
+import static com.eadlsync.util.net.SeRepoConector.getSeItemsByUrl;
 import static com.eadlsync.util.ystatement.SeItemContentParser.parseForContent;
 import static com.eadlsync.util.ystatement.YStatementConstants.DELIMITER;
 
 /**
  * A helper class that converts se-items to ystatements and the other way round
  */
-public class YStatementAPI {
+public class YStatementSeItemHelper {
 
-    private final Logger LOG = LoggerFactory.getLogger(YStatementAPI.class);
-    private final SeRepoUrlObject seRepoUrlObject;
+    private static final Logger LOG = LoggerFactory.getLogger(YStatementSeItemHelper.class);
 
-    private YStatementAPI(SeRepoUrlObject url) {
-        this.seRepoUrlObject = url;
-    }
-
-    public static YStatementAPI withSeRepoUrl(SeRepoUrlObject url) {
-        return new YStatementAPI(url);
-    }
-
-    public List<SeItem> getSeItemsByCommit(String commit) throws UnirestException {
-        final String lastCommit = seRepoUrlObject.SEREPO_COMMIT_ID;
-        seRepoUrlObject.changeToCommit(commit);
-        List<SeItem> items = SeRepoConector.getSeItemsByUrl(seRepoUrlObject.SEREPO_SEITEMS);
-        seRepoUrlObject.changeToCommit(lastCommit);
-        return items;
-    }
-
-    public MetadataEntry getMetadataEntry(SeItem item, String commitId) throws UnirestException {
-        final String lastCommit = seRepoUrlObject.SEREPO_COMMIT_ID;
-        seRepoUrlObject.changeToCommit(commitId);
-        String id = getIdFromFolderAndName(item.getFolder(), item.getName());
-        MetadataEntry metadataEntry = getMetadataEntryForUrl(seRepoUrlObject.generateMetadataUrl(id));
-        seRepoUrlObject.changeToCommit(lastCommit);
-        return metadataEntry;
-    }
-
-    public RelationEntry getRelationEntry(SeItem item, String commitId) throws UnirestException {
-        final String lastCommit = seRepoUrlObject.SEREPO_COMMIT_ID;
-        seRepoUrlObject.changeToCommit(commitId);
-        String id = getIdFromFolderAndName(item.getFolder(), item.getName());
-        RelationEntry relationEntry = getRelationEntryForUrl(seRepoUrlObject.generateRelationsUrl(id));
-        seRepoUrlObject.changeToCommit(lastCommit);
-        return relationEntry;
-    }
-
-    private List<YStatementJustificationWrapper> getYStatementJustifications(String commit) throws UnirestException {
-        List<SeItem> seItems = getSeItemsByCommit(commit);
+    public static List<YStatementJustificationWrapper> getYStatementJustifications(String url, String
+            project, String commit) throws UnirestException {
+        List<SeItem> seItems = getSeItemsByUrl(SeRepoLinkFactory.seItemsUrl(url, project, commit));
 
         // find all se-items that are problem occurrences
         List<SeItem> problemItems = new ArrayList<>();
         for (SeItem item : seItems) {
-            MetadataEntry metadata = getMetadataEntry(item, commit);
+            MetadataEntry metadata = getMetadataEntryForUrl(SeRepoLinkFactory.metadataUrl(item.getId().toString()));
             Object state = metadata.getMap().get(STEREOTYPE.getName());
             if (PROBLEM_OCCURRENCE.getName().equals(state)) {
                 state = metadata.getMap().get(TAGGED_VALUES.getName());
@@ -111,7 +78,7 @@ public class YStatementAPI {
 
         // iterate over the problem occurrences
         for (SeItem problemItem : problemItems) {
-            RelationEntry relation = getRelationEntry(problemItem, commit);
+            RelationEntry relation = getRelationEntryForUrl(SeRepoLinkFactory.relationsUrl(problemItem.getId().toString()));
             List<Link> relationLinks = relation.getLinks().stream().filter(link -> ADDRESSED_BY.getName()
                     .equals(link.getTitle())).collect(Collectors.toList());
 
@@ -122,7 +89,7 @@ public class YStatementAPI {
                 SeItem relationSeItem = seItems.stream().filter(seItem -> seItem.getId().
                         toString().equals(link.getHref())).collect(Collectors.toList()).get(0);
 
-                MetadataEntry entry = getMetadataEntry(relationSeItem, commit);
+                MetadataEntry entry = getMetadataEntryForUrl(SeRepoLinkFactory.metadataUrl(relationSeItem.getId().toString()));
                 Map<String, String> taggedValues = (Map<String, String>) entry.getMap().get(TAGGED_VALUES.getName());
                 Object state = taggedValues.get(OPTION_STATE.getName());
                 if (CHOSEN.getName().equals(state)) {
@@ -146,19 +113,7 @@ public class YStatementAPI {
         return yStatementJustifications;
     }
 
-    public List<YStatementJustificationWrapper> getLatestYStatementJustifications() throws UnirestException {
-        return getYStatementJustifications(getLatestCommitId());
-    }
-
-    public String getLatestCommitId() throws UnirestException {
-        return SeRepoConector.getLatestCommit(seRepoUrlObject.SEREPO_URL_COMMITS);
-    }
-
-    public List<YStatementJustificationWrapper> getYStatementJustifications() throws UnirestException {
-        return getYStatementJustifications(seRepoUrlObject.SEREPO_COMMIT_ID);
-    }
-
-    private YStatementJustificationWrapper createYStatementJustification(SeItem problemItem,
+    private static YStatementJustificationWrapper createYStatementJustification(SeItem problemItem,
                                                                          SeItem chosenOptionItem,
                                                                          List<String> neglected) {
         Element problemBody = getSeItemContentBody(problemItem);
@@ -184,7 +139,7 @@ public class YStatementAPI {
         }
     }
 
-    private Element getSeItemContentBody(SeItem item) {
+    private static Element getSeItemContentBody(SeItem item) {
         Document doc;
         Element body = null;
         try {
@@ -196,7 +151,9 @@ public class YStatementAPI {
         return body;
     }
 
-    public String commitYStatement(User user, String message, List<YStatementJustificationWrapper> yStatementJustificationWrappers)
+    public static String commitYStatement(User user, String message,
+                                          List<YStatementJustificationWrapper> yStatementJustificationWrappers,
+                                          String url, String project)
             throws UnsupportedEncodingException {
         LOG.debug("Prepare YStatements for commit");
         yStatementJustificationWrappers.stream().map(YStatementJustificationWrapper::toString).forEach(LOG::debug);
@@ -234,10 +191,7 @@ public class YStatementAPI {
             allSeItems.add(problem);
         }
 
-        return commit(message, new ArrayList<>(allSeItems), user, CommitMode.ADD_UPDATE_DELETE, seRepoUrlObject.SEREPO_BASE_URL, seRepoUrlObject.SEREPO_PROJECT);
+        return commit(message, new ArrayList<>(allSeItems), user, CommitMode.ADD_UPDATE_DELETE, url, project);
     }
 
-    public void changeToCommit(String commitId) {
-        seRepoUrlObject.changeToCommit(commitId);
-    }
 }

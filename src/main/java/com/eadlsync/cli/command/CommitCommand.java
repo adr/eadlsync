@@ -25,7 +25,7 @@ public class CommitCommand extends SyncCommand {
     public void commit() throws Exception {
         if (readConfig()) {
 
-            readDecisions();
+            initializeRepo();
 
             super.commit(this.message, this.forceOption);
         }

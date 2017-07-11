@@ -23,7 +23,7 @@ public class MergeCommand extends EADLSyncCommand {
 
     public void merge() throws Exception {
         if (readConfig()) {
-            readDecisions();
+            initializeRepo();
 
             try {
                 CLI.println("Merge with se-repo");

@@ -25,8 +25,8 @@ public class YStatementConstants {
 
     public static final String SEREPO_URL_COMMITS = "%s/repos/%s/commits";
     public static final String SEREPO_SEITEMS = "%s/repos/%s/commits/%s/seitems";
-    public static final String SEREPO_SEITEM_METADATA = "%s/repos/%s/commits/%s/seitems/%s?metadata";
-    public static final String SEREPO_SEITEM_RELATIONS = "%s/repos/%s/commits/%s/seitems/%s?relations";
+    public static final String SEREPO_SEITEM_METADATA_FROM_ID = "%s?metadata";
+    public static final String SEREPO_SEITEM_RELATIONS_FROM_ID = "%s?relations";
 
     public static final Pattern COMMIT_ID_PATTERN = Pattern.compile("[0-9a-f]{40}");
 

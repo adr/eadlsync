@@ -1,6 +1,9 @@
 package com.eadlsync.model.repo;
 
+import java.io.IOException;
+
 import ch.hsr.isf.serepo.data.restinterface.common.User;
+import com.mashape.unirest.http.exceptions.UnirestException;
 
 /**
  * Created by tobias on 07/03/2017.
@@ -53,5 +56,5 @@ public interface IRepo {
      *
      * @return a RepoStatus object
      */
-    RepoStatus status();
+    RepoStatus status() throws IOException, UnirestException;
 }

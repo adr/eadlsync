@@ -23,9 +23,9 @@ public class SyncCommand extends EADLSyncCommand {
 
     public void sync() throws Exception {
         if (readConfig()) {
-            readDecisions();
+            initializeRepo();
 
-            final String oldCommitId= readCommitId();
+            final String oldCommitId = readCommitId();
             pull();
 
             boolean forceNeeded = !oldCommitId.equals(readCommitId());

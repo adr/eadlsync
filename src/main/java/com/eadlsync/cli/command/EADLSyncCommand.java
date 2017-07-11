@@ -88,7 +88,7 @@ class EADLSyncCommand {
         }
     }
 
-    void readDecisions() throws IOException, UnirestException {
+    void initializeRepo() throws IOException, UnirestException {
         if (config == null) readConfig();
         Path src = Paths.get(config.getConfigCore().getProjectRoot());
         repo = new CodeRepo(src, config.getConfigCore().getBaseUrl(), config.getConfigCore()

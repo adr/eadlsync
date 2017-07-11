@@ -79,11 +79,6 @@ public class SeRepoConector {
         }
     }
 
-    public static List<SeItem> getSeItemsByUrl(String seItemsUrl) throws UnirestException {
-        HttpResponse<SeItemContainer> seItemContainerResponse = loggedUnirestCall(seItemsUrl, SeItemContainer.class);
-        return seItemContainerResponse.getBody().getSeItems();
-    }
-
     public static RelationEntry getRelationEntryForUrl(String relationUrl) throws UnirestException {
         HttpResponse<RelationContainer> relationsContainerResponse = loggedUnirestCall(relationUrl, RelationContainer.class);
         return relationsContainerResponse.getBody().getEntry();
@@ -93,6 +88,13 @@ public class SeRepoConector {
         HttpResponse<MetadataContainer> metadataContainerResponse = loggedUnirestCall(relationUrl, MetadataContainer.class);
         return metadataContainerResponse.getBody().getMetadata();
     }
+
+    public static List<SeItem> getSeItemsByUrl(String seItemsUrl) throws UnirestException {
+        HttpResponse<SeItemContainer> seItemContainerResponse = loggedUnirestCall(seItemsUrl, SeItemContainer.class);
+        return seItemContainerResponse.getBody().getSeItems();
+    }
+
+
 
     public static List<Commit> getCommitsByUrl(String commitsUrl) throws UnirestException {
         HttpResponse<CommitContainer> seItemContainerResponse = loggedUnirestCall(commitsUrl, CommitContainer.class);
@@ -226,4 +228,7 @@ public class SeRepoConector {
     }
 
 
+    public static String getLatestCommitId(String baseUrl, String project) throws UnirestException {
+        return getLatestCommit(SeRepoLinkFactory.commitsUrl(baseUrl, project));
+    }
 }

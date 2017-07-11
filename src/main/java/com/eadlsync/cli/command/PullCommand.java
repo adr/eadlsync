@@ -15,7 +15,7 @@ public class PullCommand extends SyncCommand {
 
     public void pull() throws Exception {
         if (readConfig()) {
-            readDecisions();
+            initializeRepo();
 
             super.pull();
         }

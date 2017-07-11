@@ -13,8 +13,8 @@ import com.eadlsync.model.config.ConfigCore;
 import com.eadlsync.model.decision.YStatementJustificationComparisionObject;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.util.io.JavaDecisionParser;
-import com.eadlsync.util.net.SeRepoUrlObject;
-import com.eadlsync.util.net.YStatementAPI;
+import com.eadlsync.util.net.SeRepoLinkFactory;
+import com.eadlsync.util.net.YStatementSeItemHelper;
 import com.eadlsync.util.ystatement.YStatementJustificationComparator;
 
 import static com.eadlsync.cli.command.DiffCommand.DESCRIPTION;
@@ -38,8 +38,7 @@ public class DiffCommand extends EADLSyncCommand {
     private List<YStatementJustificationComparisionObject> createYStatementJustificationComparisionObjects() throws Exception {
         List<YStatementJustificationWrapper> localDecisions = JavaDecisionParser.readYStatementsFromDirectory(Paths.get(config.getConfigCore().getProjectRoot()));
         ConfigCore core = config.getConfigCore();
-        SeRepoUrlObject seRepoUrlObject = new SeRepoUrlObject(core.getBaseUrl(), core.getProjectName(), commitId);
-        List<YStatementJustificationWrapper> remoteDecisions = YStatementAPI.withSeRepoUrl(seRepoUrlObject).getYStatementJustifications();
+        List<YStatementJustificationWrapper> remoteDecisions = YStatementSeItemHelper.getYStatementJustifications(core.getBaseUrl(), core.getProjectName(), commitId);
 
         List<YStatementJustificationComparisionObject> comparisionObjects = new ArrayList<>();
 

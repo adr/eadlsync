@@ -24,7 +24,7 @@ public class ResetCommand extends EADLSyncCommand {
     public void resetLocalChanges() throws Exception {
         if (readConfig()) {
 
-            readDecisions();
+            initializeRepo();
 
             try {
                 CLI.println(String.format("Reset to %s from se-repo", commitId));

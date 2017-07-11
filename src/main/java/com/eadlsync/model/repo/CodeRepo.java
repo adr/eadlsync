@@ -1,11 +1,7 @@
 package com.eadlsync.model.repo;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.file.FileVisitOption;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,40 +11,38 @@ import com.eadlsync.gui.ConflictManagerView;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.diff.DiffManager;
 import com.eadlsync.util.io.JavaDecisionParser;
-import com.eadlsync.util.net.SeRepoUrlObject;
-import com.eadlsync.util.net.YStatementAPI;
+import com.eadlsync.util.net.SeRepoConector;
+import com.eadlsync.util.net.YStatementSeItemHelper;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Created by tobias on 07/03/2017.
+ *
  */
 public class CodeRepo implements IRepo {
 
-    private final Logger LOG = LoggerFactory.getLogger(CodeRepo.class);
     private final Path repositoryPath;
-    private final YStatementAPI connector;
+    private final String baseUrl;
+    private final String project;
+    private final String lastSyncId;
     private DiffManager diffManager;
-    private SeRepoUrlObject seRepoUrlObject;
 
     public CodeRepo(Path path, String baseUrl, String project, String baseRevision) throws IOException, UnirestException {
         this.repositoryPath = path;
-        seRepoUrlObject = new SeRepoUrlObject(baseUrl, project, baseRevision);
-        this.connector = YStatementAPI.withSeRepoUrl(seRepoUrlObject);
-        initDecisions();
+        this.baseUrl = baseUrl;
+        this.project = project;
+        this.lastSyncId = baseRevision;
     }
 
-    private void initDecisions() throws UnirestException, IOException {
-        this.diffManager = new DiffManager(loadBaseRevision(), loadLocalDecisions(), loadRemoteDecisions());
+    private DiffManager initDiff(String commitIdToSyncWith) throws UnirestException, IOException {
+        return new DiffManager(loadBaseRevision(), loadLocalDecisions(), loadRemoteDecisions(commitIdToSyncWith));
     }
 
     private List<YStatementJustificationWrapper> loadBaseRevision() throws UnirestException {
-        return connector.getYStatementJustifications();
+        return YStatementSeItemHelper.getYStatementJustifications(baseUrl, project, lastSyncId);
     }
 
-    private List<YStatementJustificationWrapper> loadRemoteDecisions() throws UnirestException {
-        return connector.getLatestYStatementJustifications();
+    private List<YStatementJustificationWrapper> loadRemoteDecisions(String commitIdToSyncWith) throws UnirestException {
+        return YStatementSeItemHelper.getYStatementJustifications(baseUrl, project, commitIdToSyncWith);
     }
 
     private List<YStatementJustificationWrapper> loadLocalDecisions() throws IOException {
@@ -75,11 +69,12 @@ public class CodeRepo implements IRepo {
     }
 
     @Override
-    public String commit(User user, String message, boolean isForcing) throws EADLSyncException, UnsupportedEncodingException {
+    public String commit(User user, String message, boolean isForcing) throws EADLSyncException, IOException, UnirestException {
+        diffManager = initDiff(latestCommitId());
         if (!diffManager.hasRemoteDiff() || isForcing) {
             if (diffManager.hasLocalDiff()) {
                 diffManager.applyLocalDiff();
-                return connector.commitYStatement(user, message, diffManager.getCurrentDecisions());
+                return YStatementSeItemHelper.commitYStatement(user, message, diffManager.getCurrentDecisions(), baseUrl, project);
             } else {
                 throw EADLSyncException.ofState(EADLSyncException.EADLSyncOperationState.SYNCED);
             }
@@ -88,8 +83,18 @@ public class CodeRepo implements IRepo {
         }
     }
 
+    private String latestCommitId() throws UnirestException {
+        return SeRepoConector.getLatestCommitId(baseUrl, project);
+    }
+
     @Override
     public String pull() throws EADLSyncException, IOException, UnirestException {
+        return merge(latestCommitId());
+    }
+
+    @Override
+    public String merge(String mergeCommitId) throws IOException, UnirestException, EADLSyncException {
+        diffManager = initDiff(mergeCommitId);
         if (diffManager.hasRemoteDiff()) {
             if (diffManager.hasLocalDiff()) {
                 if (!diffManager.canAutoMerge()) {
@@ -97,7 +102,7 @@ public class CodeRepo implements IRepo {
                     if (new ConflictManagerView(diffManager).showDialog()) {
                         writeEadsToDisk();
                     } else {
-                        return seRepoUrlObject.SEREPO_COMMIT_ID;
+                        return lastSyncId;
                     }
                 } else {
                     diffManager.applyLocalDiff();
@@ -115,26 +120,19 @@ public class CodeRepo implements IRepo {
                 throw EADLSyncException.ofState(EADLSyncException.EADLSyncOperationState.UP_TO_DATE);
             }
         }
-        return connector.getLatestCommitId();
-    }
-
-    @Override
-    public String merge(String mergeCommitId) throws IOException, UnirestException, EADLSyncException {
-        connector.changeToCommit(mergeCommitId);
-        initDecisions();
-        return pull();
+        return mergeCommitId;
     }
 
     @Override
     public String reset(String resetCommitId) throws EADLSyncException, IOException, UnirestException {
-        connector.changeToCommit(resetCommitId);
-        initDecisions();
+        DiffManager diffManager = initDiff(resetCommitId);
         diffManager.applyRemoteDiff();
         writeEadsToDisk();
         return resetCommitId;
     }
 
-    public RepoStatus status() {
+    public RepoStatus status() throws IOException, UnirestException {
+        diffManager = initDiff(latestCommitId());
         return new RepoStatus(diffManager);
     }
 

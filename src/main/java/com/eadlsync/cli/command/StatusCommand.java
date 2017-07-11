@@ -21,7 +21,7 @@ public class StatusCommand extends EADLSyncCommand {
     public void printStatus() throws IOException, UnirestException {
         if (readConfig()) {
 
-            readDecisions();
+            initializeRepo();
 
             printStatusMessage(repo.status());
         }
