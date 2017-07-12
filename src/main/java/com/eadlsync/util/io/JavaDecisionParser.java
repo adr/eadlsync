@@ -43,6 +43,7 @@ public class JavaDecisionParser {
 
         YStatementJustificationWrapper decision = createYStatementJustificationFromAnnotationSource
                 (annotation);
+        LOG.info("Found YStatementJustification {}", decision);
         DecisionSourceMapping.putLocalSource(decision.getId(), path.toString());
         return decision;
     }

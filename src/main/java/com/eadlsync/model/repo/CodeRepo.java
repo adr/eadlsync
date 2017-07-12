@@ -126,6 +126,7 @@ public class CodeRepo implements IRepo {
     @Override
     public String reset(String resetCommitId) throws EADLSyncException, IOException, UnirestException {
         DiffManager diffManager = initDiff(resetCommitId);
+        diffManager.getLocalDiff().clear();
         diffManager.applyRemoteDiff();
         writeEadsToDisk();
         return resetCommitId;
