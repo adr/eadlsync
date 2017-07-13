@@ -170,7 +170,6 @@ public class EADLSyncMain extends Application {
                             LOG.debug("Command not found {}", commander.getParsedCommand());
                     }
                 }
-                CLI.println("done");
             } catch (IOException ioException) {
                 println("An error occurred when accessing some file on the local file system.");
                 printStacktraceInfo();

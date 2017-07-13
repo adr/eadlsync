@@ -1,8 +1,5 @@
 package com.eadlsync.cli.command;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import ch.hsr.isf.serepo.data.restinterface.common.User;
 import com.beust.jcommander.Parameters;
 import com.eadlsync.cli.CLI;
@@ -19,7 +16,7 @@ public class SyncCommand extends EADLSyncCommand {
 
     public static final String NAME = "sync";
     public static final String DESCRIPTION = "use 'eadlsync sync' to update the local decisions and afterwards update the decisions of the se-repo";
-    private static final String SYNC_MESSAGE = "Automatic sync message" + new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
+    private static final String SYNC_MESSAGE = "automatic sync";
 
     public void sync() throws Exception {
         if (readConfig()) {
