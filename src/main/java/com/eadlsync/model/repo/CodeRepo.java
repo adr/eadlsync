@@ -54,7 +54,8 @@ public class CodeRepo implements IRepo {
             writeEadToClass(yStatementJustificationWrapper);
         }
         for (YStatementJustificationWrapper yStatementJustificationWrapper : diffManager.getBaseDecisions().stream().filter(
-                decision -> !diffManager.getCurrentDecisions().contains(decision)).collect(Collectors.toList())) {
+                decision -> !diffManager.getCurrentDecisions().stream().map(YStatementJustificationWrapper::getId).collect(
+                        Collectors.toList()).contains(decision.getId())).collect(Collectors.toList())) {
             removeEadFromClass(yStatementJustificationWrapper);
         }
         /** so far no additional decisions are supported **/
@@ -125,7 +126,7 @@ public class CodeRepo implements IRepo {
 
     @Override
     public String reset(String resetCommitId) throws EADLSyncException, IOException, UnirestException {
-        DiffManager diffManager = initDiff(resetCommitId);
+        diffManager = initDiff(resetCommitId);
         diffManager.getLocalDiff().clear();
         diffManager.applyRemoteDiff();
         writeEadsToDisk();

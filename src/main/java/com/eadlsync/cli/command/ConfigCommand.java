@@ -44,7 +44,7 @@ public class ConfigCommand extends EADLSyncCommand {
             if (notBlank(name)) {
                 config.getConfigUser().setName(this.name);
             } else if (notBlank(email)) {
-                config.getConfigUser().setName(this.email);
+                config.getConfigUser().setEmail(this.email);
             } else if (notBlank(root)) {
                 Path absolute = Paths.get(root);
                 if (!absolute.isAbsolute()) root = PROJECT_ROOT.resolve(root).toString();

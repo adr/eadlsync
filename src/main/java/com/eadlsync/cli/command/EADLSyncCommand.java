@@ -111,7 +111,7 @@ class EADLSyncCommand {
     }
 
     void printHasToSyncConflict() {
-        CLI.println("The local decisions and the ones in the se-repo have both changed but you have to resolve merge conflicts.");
+        CLI.println("The local decisions and the ones in the se-repo have both changed and can not be automatically merged.");
         CLI.println(SyncCommand.class);
     }
 
