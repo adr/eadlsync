@@ -179,10 +179,6 @@ public class SeRepoConector {
         return id.substring(0, id.lastIndexOf("/") + 1).trim();
     }
 
-    public static String getIdFromFolderAndName(String folder, String name) {
-        return folder.trim() + UrlEscapers.urlFragmentEscaper().escape(name.trim());
-    }
-
     public static String commit(String message, List<SeItemWithContent> items, User user, CommitMode mode, String seRepoBaseUrl, String seRepoName) {
         WebTarget api = ClientBuilder.newClient()
                 .target(seRepoBaseUrl)
