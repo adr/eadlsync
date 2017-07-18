@@ -1,5 +1,7 @@
 package com.eadlsync.cli.option;
 
+import java.io.IOException;
+
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import com.beust.jcommander.Parameter;
@@ -49,7 +51,7 @@ public class MainOption {
         Logger root = (Logger) LoggerFactory.getLogger("com.eadlsync");
         root.setLevel(level);
     }
-    public void evaluateOptions() {
+    public void evaluateOptions() throws IOException {
         if (version) {
             displayVersionInformation();
         }
@@ -70,11 +72,12 @@ public class MainOption {
         }
     }
 
-    private void displayCopyright() {
+    private void displayCopyright() throws IOException {
         BuildInfo buildInfo = new BuildInfo();
         String year = buildInfo.getYear();
         String author = buildInfo.getAuthors();
         CLI.println(String.format("Copyright © 2016-%s %s", year, author));
+        CLI.println("Icons made by Freepik from www.flaticon.com");
     }
 
     private void displayAuthors() {
