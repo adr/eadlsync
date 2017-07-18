@@ -36,7 +36,6 @@ public class SyncCommand extends EADLSyncCommand {
             CLI.println(String.format("\tproject '%s' at %s", config.getConfigCore().getProjectName(), config.getConfigCore().getBaseUrl()));
             String pullId = repo.pull();
             updateCommitId(pullId);
-            CLI.println(String.format("\tsync id -> %s", pullId));
         } catch (EADLSyncException eadlSyncException) {
             printEadlSyncException(eadlSyncException);
         }
@@ -49,7 +48,6 @@ public class SyncCommand extends EADLSyncCommand {
             User user = new User(config.getConfigUser().getName(), config.getConfigUser().getEmail());
             String newId = repo.commit(user, message, forceOption);
             updateCommitId(newId);
-            CLI.println(String.format("\tsync id -> %s", newId));
         } catch (EADLSyncException eadlSyncException) {
             printEadlSyncException(eadlSyncException);
         }

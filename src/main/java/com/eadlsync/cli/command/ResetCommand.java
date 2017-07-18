@@ -31,7 +31,6 @@ public class ResetCommand extends EADLSyncCommand {
                 CLI.println(String.format("\tproject '%s' at %s", config.getConfigCore().getProjectName(), config.getConfigCore().getBaseUrl()));
                 repo.reset(commitId);
                 updateCommitId(commitId);
-                CLI.println(String.format("\tsync id -> %s", commitId));
             } catch (EADLSyncException e) {
                 printEadlSyncException(e);
             }

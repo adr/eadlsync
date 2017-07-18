@@ -29,7 +29,6 @@ public class MergeCommand extends EADLSyncCommand {
                 CLI.println("Merge with se-repo");
                 CLI.println(String.format("\tproject '%s' at %s", config.getConfigCore().getProjectName(), config.getConfigCore().getBaseUrl()));
                 repo.merge(commitId);
-                CLI.println(String.format("\tsync id -> %s", readCommitId()));
             } catch (EADLSyncException e) {
                 printEadlSyncException(e);
             }

@@ -18,6 +18,8 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.eadlsync.util.ystatement.YStatementConstants.COMMIT_ID_PATTERN;
+
 /**
  * Super class for any eadl-sync commands. Provides methods to read/write the config and the last commit id.
  */
@@ -80,11 +82,16 @@ class EADLSyncCommand {
     }
 
     void updateCommitId(String commitId) throws IOException{
-        try {
-            Files.write(EADL_REVISION, commitId.getBytes(), StandardOpenOption.CREATE);
-        } catch (IOException e) {
-            LOG.error("Error writing new commit revision to file.", e);
-            throw e;
+        if (COMMIT_ID_PATTERN.matcher(commitId).matches()) {
+            try {
+                Files.write(EADL_REVISION, commitId.getBytes(), StandardOpenOption.CREATE);
+                CLI.println(String.format("\tsync id -> %s", commitId));
+            } catch (IOException e) {
+                LOG.error("Error writing new commit revision to file.", e);
+                throw e;
+            }
+        } else {
+            CLI.println(String.format("Commit was rejected by the se-repo\n\t%s", commitId));
         }
     }
 
