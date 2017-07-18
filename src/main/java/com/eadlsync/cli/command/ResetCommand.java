@@ -3,6 +3,7 @@ package com.eadlsync.cli.command;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.eadlsync.cli.CLI;
+import com.eadlsync.cli.CommitIdValidator;
 import com.eadlsync.exception.EADLSyncException;
 
 import static com.eadlsync.cli.command.ResetCommand.DESCRIPTION;
@@ -18,7 +19,7 @@ public class ResetCommand extends EADLSyncCommand {
     public static final String NAME = "reset";
     public static final String DESCRIPTION = "use 'eadlsync reset <commit-id>' to reset the local decisions to the decisions of the selected commit from the se-repo";
 
-    @Parameter(required = true, description = "commit-id")
+    @Parameter(required = true, description = "commit-id", validateWith = CommitIdValidator.class)
     private String commitId;
 
     public void resetLocalChanges() throws Exception {

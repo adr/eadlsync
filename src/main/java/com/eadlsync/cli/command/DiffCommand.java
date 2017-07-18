@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.eadlsync.cli.CLI;
+import com.eadlsync.cli.CommitIdValidator;
 import com.eadlsync.gui.DiffView;
 import com.eadlsync.model.config.ConfigCore;
 import com.eadlsync.model.decision.YStatementJustificationComparisionObject;
 import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.util.io.JavaDecisionParser;
-import com.eadlsync.util.net.SeRepoLinkFactory;
 import com.eadlsync.util.net.YStatementSeItemHelper;
 import com.eadlsync.util.ystatement.YStatementJustificationComparator;
 
@@ -29,7 +29,7 @@ public class DiffCommand extends EADLSyncCommand {
     public static final String NAME = "diff";
     public static final String DESCRIPTION = "use 'eadlsync diff <commit-id>' to view the diff of the specified decisions compared to the local decisions";
 
-    @Parameter(required = true, description = "commit-id")
+    @Parameter(required = true, description = "commit-id", validateWith = CommitIdValidator.class)
     private String commitId;
 
     @Parameter(names = {"-g", "--gui"}, description = "display the diff in a JavaFX window")
