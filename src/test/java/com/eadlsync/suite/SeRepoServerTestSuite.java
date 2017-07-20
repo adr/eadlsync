@@ -1,8 +1,8 @@
 package com.eadlsync.suite;
 
-import com.eadlsync.cli.command.CommandTest;
+import com.eadlsync.cli.command.CommitCommandTest;
 import com.eadlsync.cli.command.InitCommandTest;
-import com.eadlsync.net.serepo.SeRepoTestServer;
+import com.eadlsync.cli.command.PullCommandTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -12,9 +12,9 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        SeRepoTestServer.class,
-        CommandTest.class,
-        InitCommandTest.class
+        InitCommandTest.class,
+        PullCommandTest.class,
+        CommitCommandTest.class
 })
 public class SeRepoServerTestSuite {
     // placeholder class to run all tests that are dependent on the se-repo server

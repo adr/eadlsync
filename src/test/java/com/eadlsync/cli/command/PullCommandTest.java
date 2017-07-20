@@ -1,40 +1,41 @@
 package com.eadlsync.cli.command;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.IOException;
 
 import ch.hsr.isf.serepo.data.restinterface.commit.CommitMode;
 import com.eadlsync.data.TestDataProvider;
-import com.eadlsync.model.decision.YStatementJustificationWrapper;
+import com.eadlsync.util.io.JavaDecisionParser;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import static com.eadlsync.data.TestDataProvider.createTestChangedModifiedYStatementJustificationWrapper;
-import static com.eadlsync.data.TestDataProvider.getBasicDecisionsAsEadl;
 
 /**
  *
  */
 public class PullCommandTest extends CommandTest {
 
+    private String commitId;
+
+    @Before
+    public void setCurrentCommitId() throws IOException {
+        commitId = PULL_COMMAND.readCommitId();
+    }
+
     @Test
     public void testPullUpToDateResultsInNoChange() throws Exception {
         PULL_COMMAND.pull();
 
-        Assert.assertTrue(assertYStatementJustificationListAreEqualIgnoringOrder
-                (getBasicDecisionsAsEadl(), codeRepoMock.readLocalDecisions()));
+        Assert.assertEquals(commitId, COMMIT_COMMAND.readCommitId());
     }
 
     @Test
     public void testPullLocalChangesOnlyResultsInNoChange() throws Exception {
-        codeRepoMock.createClassesForEadls(Arrays.asList(createTestChangedModifiedYStatementJustificationWrapper()));
+        JavaDecisionParser.writeModifiedYStatementToFile(createTestChangedModifiedYStatementJustificationWrapper());
         PULL_COMMAND.pull();
 
-        List<YStatementJustificationWrapper> base = getBasicDecisionsAsEadl();
-        base.add(createTestChangedModifiedYStatementJustificationWrapper());
-
-        Assert.assertTrue(assertYStatementJustificationListAreEqualIgnoringOrder
-                (base, codeRepoMock.readLocalDecisions()));
+        Assert.assertEquals(commitId, COMMIT_COMMAND.readCommitId());
     }
 
     @Test
@@ -44,8 +45,7 @@ public class PullCommandTest extends CommandTest {
 
         PULL_COMMAND.pull();
 
-        Assert.assertFalse(assertYStatementJustificationListAreEqualIgnoringOrder
-                (getBasicDecisionsAsEadl(), codeRepoMock.readLocalDecisions()));
+        Assert.assertNotEquals(commitId, COMMIT_COMMAND.readCommitId());
     }
 
 
