@@ -13,7 +13,7 @@ import com.eadlsync.model.diff.DiffManager;
 import static com.eadlsync.gui.DiffUtilFX.getDiffHighlightedTextNodes;
 
 /**
- * Created by tobias on 17/06/2017.
+ *
  */
 public class ConflictManagerController {
 

@@ -7,7 +7,7 @@ import com.eadlsync.model.diff.DiffManager;
 import java.util.Arrays;
 
 /**
- * Created by tobias on 18/06/2017.
+ *
  */
 public class DiffTest extends YStatementTestData {
 

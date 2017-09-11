@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Arrays;
 
 /**
- * Created by Tobias on 30.05.2017.
+ *
  */
 public class SeItemWithContent extends CreateSeItem {
 

@@ -6,8 +6,6 @@ import ch.hsr.isf.serepo.data.restinterface.common.User;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 /**
- * Created by tobias on 07/03/2017.
- * <p>
  * This interface specifies the methods a repository with architectural decisions has to implement to
  * synchronize and update its embedded architectural decisions.
  */

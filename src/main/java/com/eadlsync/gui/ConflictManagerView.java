@@ -11,7 +11,7 @@ import javafx.stage.Window;
 import com.eadlsync.model.diff.DiffManager;
 
 /**
- * Created by tobias on 18/06/2017.
+ *
  */
 public class ConflictManagerView {
 

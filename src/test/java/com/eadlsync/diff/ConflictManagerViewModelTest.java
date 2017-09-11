@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Created by tobias on 18/06/2017.
+ *
  */
 public class ConflictManagerViewModelTest extends DiffTest {
 

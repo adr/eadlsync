@@ -1,7 +1,7 @@
 package com.eadlsync.model.config;
 
 /**
- * Created by tobias on 02/06/2017.
+ *
  */
 public class ConfigCore {
 

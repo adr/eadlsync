@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Created by Tobias on 15.05.2017.
+ *
  */
 public class JavaDecisionParserTest {
 

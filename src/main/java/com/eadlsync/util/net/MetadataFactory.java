@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Tobias on 26.05.2017.
+ *
  */
 public abstract class MetadataFactory {
 

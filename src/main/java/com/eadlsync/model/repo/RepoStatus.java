@@ -9,7 +9,7 @@ import com.eadlsync.util.ystatement.YStatementJustificationComparator;
 import static com.eadlsync.model.decision.YStatementJustificationWrapper.deleted;
 
 /**
- * Created by tobias on 08/06/2017.
+ *
  */
 public class RepoStatus {
 

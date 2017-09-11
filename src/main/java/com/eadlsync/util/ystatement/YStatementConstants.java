@@ -3,7 +3,7 @@ package com.eadlsync.util.ystatement;
 import java.util.regex.Pattern;
 
 /**
- * Created by Tobias on 16.05.2017.
+ *
  */
 public class YStatementConstants {
 

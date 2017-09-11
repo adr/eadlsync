@@ -3,7 +3,7 @@ package com.eadlsync.util.net;
 import ch.hsr.isf.serepo.data.restinterface.seitem.Relation;
 
 /**
- * Created by Tobias on 26.05.2017.
+ *
  */
 public class RelationFactory {
 
