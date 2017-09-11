@@ -15,12 +15,12 @@ import com.eadlsync.model.decision.YStatementJustificationWrapper;
 import com.eadlsync.model.decision.YStatementJustificationWrapperBuilder;
 import com.eadlsync.util.ystatement.YStatementConstants;
 import com.eadlsync.util.ystatement.YStatementJustificationComparator;
+import io.github.adr.embedded.YStatementJustification;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import radar.ad.annotations.YStatementJustification;
 
 /**
  * Java decision parser that provides utility methods to add, modify and delete

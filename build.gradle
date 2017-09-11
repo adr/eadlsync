@@ -21,6 +21,7 @@ dependencies {
     compile 'org.jboss.forge.roaster:roaster-jdt:2.20.1.Final'
     compile 'com.google.guava:guava:22.0'
     compile 'com.googlecode.java-diff-utils:diffutils:1.3.0'
+    compile 'io.github.adr:e-adr:1.0.0'
 
     // dependencies for se-repo data
     compile 'org.jboss.resteasy:resteasy-atom-provider:3.1.3.Final'
@@ -30,8 +31,6 @@ dependencies {
     compile ('ch.hsr.isf.serepo:serepo-data-restinterface:1.0-SNAPSHOT') {
         exclude group: 'org.slf4j'
     }
-
-    compile project(':embedded-adl')
 
     // testing against se-repo
     testCompile 'junit:junit:4.12'
@@ -81,7 +80,6 @@ task generateTestSource(dependsOn: ["generateSource", "compileSeRepo"]) {
 
 test {
     exclude 'com/eadlsync/suite/**'
-    exclude 'radar/ad/**'
 }
 
 task testUnitTest(type: Test) {

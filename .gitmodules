@@ -2,6 +2,3 @@
 	path = serepo
 	url = git@github.com:andreas-buechler/serepo.git
 	branch = addstandaloneserver
-[submodule "embedded-adl"]
-	path = embedded-adl
-	url = git@github.com:koppor/embedded-adl.git
