@@ -3,7 +3,7 @@
 [![Dependency Status](https://www.versioneye.com/user/projects/58908950a23e810048f68204/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/58908950a23e810048f68204)
 
 # eadlsync
-This is the repository of the eadlsync tool which was created in the context of my bachelor thesis. It can be used to synchronize [embedded architectural decisions](https://github.com/adr/e-adr) with architectural decisions stored in a [SE-Repo](https://github.com/adr/serepo).
+This is the repository of the eadlsync tool which was created in the context of the bachelor thesis of [Tobias Boceck](https://github.com/boceckts). It can be used to synchronize [embedded architectural decisions](https://github.com/adr/e-adr) with architectural decisions stored in a [SE-Repo](https://github.com/adr/serepo).
 
 ## Developing
 Execute `gradlew generateSource` in the project root directory before writing source code
