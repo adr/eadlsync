@@ -1,4 +1,4 @@
 [submodule "serepo"]
 	path = serepo
-	url = git@github.com:andreas-buechler/serepo.git
+	url = https://github.com/adr/serepo.git
 	branch = addstandaloneserver
