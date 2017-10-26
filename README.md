@@ -1,6 +1,6 @@
 # eadlsync
 
-[![Build Status](https://travis-ci.org/adr/eadlsync.svg?branch=master)](https://travis-ci.com/adr/eadlsync)
+[![Build Status](https://travis-ci.org/adr/eadlsync.svg?branch=master)](https://travis-ci.org/adr/eadlsync)
 [![codecov](https://codecov.io/gh/adr/eadlsync/branch/master/graph/badge.svg)](https://codecov.io/gh/adr/eadlsync)
 
 `eadlsync` can be used to synchronize [embedded architectural decisions](https://adr.github.io/e-adr/) with architectural decisions stored in a [SE-Repo](https://github.com/adr/serepo).
