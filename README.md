@@ -1,8 +1,8 @@
-[![Build Status](https://travis-ci.com/boceckts/eadlsync.svg?token=peqtbSMtxkonhsy4FdNH&branch=master)](https://travis-ci.com/boceckts/eadlsync)
-[![codecov](https://codecov.io/gh/boceckts/eadlsync/branch/master/graph/badge.svg?token=ewehwOrAe3)](https://codecov.io/gh/boceckts/eadlsync)
-[![Dependency Status](https://www.versioneye.com/user/projects/58908950a23e810048f68204/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/58908950a23e810048f68204)
-
 # eadlsync
+
+[![Build Status](https://travis-ci.org/adr/eadlsync.svg?branch=master)](https://travis-ci.com/adr/eadlsync)
+[![codecov](https://codecov.io/gh/adr/eadlsync/branch/master/graph/badge.svg)](https://codecov.io/gh/adr/eadlsync)
+
 This is the repository of the eadlsync tool which was created in the context of the bachelor thesis of [Tobias Boceck](https://github.com/boceckts) which can be viewed [here](http://dx.doi.org/10.18419/opus-9224). The tool can be used to synchronize [embedded architectural decisions](https://github.com/adr/e-adr) with architectural decisions stored in a [SE-Repo](https://github.com/adr/serepo).
 
 ## Developing
